@@ -29,7 +29,7 @@ To download the latest image from the docker hub
 docker pull wazo-platform/wazo-router-confd
 ```
 
-### Running wazo-chatd
+### Running wazo-router-confd
 
 ```sh
 docker run wazo-platform/wazo-router-confd
