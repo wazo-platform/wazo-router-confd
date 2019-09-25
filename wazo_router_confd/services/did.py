@@ -27,6 +27,7 @@ def create_did(db: Session, did: schema.DIDCreate):
         did_regex=did.did_regex,
         carrier_trunk_id=did.carrier_trunk_id,
         tenant_id=did.tenant_id,
+        ipbx_id=did.ipbx_id,
     )
     db.add(db_did)
     db.commit()
