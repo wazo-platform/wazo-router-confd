@@ -23,12 +23,12 @@ class IPBX(Base):
     __table_args__ = (
         UniqueConstraint('tenant_id', 'id'),
         ForeignKeyConstraint(
-            ['tenant_id', 'domain_id'], ['domains.tenant_id', 'domains.id']
+            ['tenant_id', 'domain_id'], ['domains.tenant_id', 'domains.id'], ondelete='CASCADE'
         ),
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(Integer, ForeignKey('tenants.id'), nullable=False)
+    tenant_id = Column(Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False)
     tenant = relationship("Tenant")
     domain_id = Column(Integer, nullable=False)
     domain = relationship("Domain")
