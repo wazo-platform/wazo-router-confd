@@ -7,6 +7,8 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .tenant import Tenant  # noqa
+    from .ipbx import IPBX  # noqa
+    from .carrier_trunk import CarrierTrunk  # noqa
 
 
 class DID(Base):

@@ -29,8 +29,12 @@ def get_dids_by_tenant_id(
     return db.query(DID).filter(DID.tenant_id == tenant).offset(skip).limit(limit).all()
 
 
-def get_did_prefix_from_regex(did_regex: str) -> str:
-    did_prefix = re_did_prefix_from_regex.split(did_regex.lstrip('^'))[0]
+def get_did_prefix_from_regex(did_regex: Optional[str] = None) -> str:
+    did_prefix = (
+        re_did_prefix_from_regex.split(did_regex.lstrip('^'))[0]
+        if did_regex is not None
+        else ''
+    )
     return did_prefix
 
 
