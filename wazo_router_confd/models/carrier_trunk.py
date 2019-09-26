@@ -16,7 +16,7 @@ class CarrierTrunk(Base):
     carrier_id = Column(Integer, ForeignKey('carriers.id'), nullable=False)
     carrier = relationship('Carrier')
     name = Column(String, unique=True, index=True)
-    sip_proxy = Column(String, nullable=False)
+    sip_proxy = Column(String(128), nullable=False)
     registered = Column(Boolean, default=False)
     auth_username = Column(String(35), nullable=True)
     auth_password = Column(String(64), nullable=True)
