@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Integer, Text, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import Column, Integer, String, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -22,5 +22,5 @@ class DID(Base):
     ipbx = relationship('IPBX')
     carrier_trunk_id = Column(Integer, ForeignKey('carrier_trunks.id'), nullable=False)
     carrier_trunk = relationship('CarrierTrunk')
-    did_regex = Column(Text, unique=True)
-    did_prefix = Column(Text, index=True)
+    did_regex = Column(String, unique=True)
+    did_prefix = Column(String, index=True)

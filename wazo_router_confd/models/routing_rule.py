@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -19,5 +19,5 @@ class RoutingRule(Base):
     carrier_trunk = relationship('CarrierTrunk')
     ipbx_id = Column(Integer, ForeignKey('ipbx.id'), nullable=False)
     ipbx = relationship('IPBX')
-    did_regex = Column(Text, nullable=True)
+    did_regex = Column(String, nullable=True)
     route_type = Column(String(10), nullable=False, default='pstn')
