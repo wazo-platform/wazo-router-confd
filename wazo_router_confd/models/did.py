@@ -24,4 +24,5 @@ class DID(Base):
     ipbx = relationship('IPBX')
     carrier_trunk_id = Column(Integer, ForeignKey('carrier_trunks.id'), nullable=False)
     carrier_trunk = relationship('CarrierTrunk')
-    did_regex = Column(Text, unique=True, index=True)
+    did_regex = Column(Text, unique=True)
+    did_prefix = Column(Text, index=True)

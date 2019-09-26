@@ -30,6 +30,7 @@ def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
     )
     did = DID(
         did_regex=r'^39[0-9]+$',
+        did_prefix='39',
         tenant=tenant,
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
@@ -117,6 +118,7 @@ def test_kamailio_routing_did_with_no_matching_ipbx(app=None, client=None):
     )
     did = DID(
         did_regex=r'^39[0-9]+$',
+        did_prefix='39',
         tenant=tenant,
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,

@@ -1,9 +1,14 @@
+import re
+
 from typing import Optional
 
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.did import DID
 from wazo_router_confd.schemas import did as schema
+
+
+re_did_prefix_from_regex = re.compile('[^0-9]')
 
 
 def get_did(db: Session, did_id: int):
@@ -22,9 +27,15 @@ def get_dids_by_tenant_id(db: Session, tenant: int, skip: int = 0, limit: int = 
     return db.query(DID).filter(DID.tenant_id == tenant).offset(skip).limit(limit).all()
 
 
+def get_did_prefix_from_regex(did_regex: str) -> str:
+    did_prefix = re_did_prefix_from_regex.split(did_regex.lstrip('^'))[0]
+    return did_prefix
+
+
 def create_did(db: Session, did: schema.DIDCreate):
     db_did = DID(
         did_regex=did.did_regex,
+        did_prefix=get_did_prefix_from_regex(did.did_regex),
         carrier_trunk_id=did.carrier_trunk_id,
         tenant_id=did.tenant_id,
         ipbx_id=did.ipbx_id,
@@ -41,6 +52,7 @@ def update_did(db: Session, did_id: int, did: schema.DIDUpdate):
         db_did.did_regex = (
             did.did_regex if did.did_regex is not None else db_did.did_regex
         )
+        db_did.did_prefix = get_did_prefix_from_regex(db_did.did_regex)
         db_did.carrier_trunk_id = (
             did.carrier_trunk_id
             if did.carrier_trunk_id is not None
