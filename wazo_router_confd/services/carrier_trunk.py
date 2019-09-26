@@ -33,6 +33,7 @@ def create_carrier_trunk(db: Session, carrier_trunk: schema.CarrierTrunkCreate):
         carrier_id=carrier_trunk.carrier_id,
         name=carrier_trunk.name,
         sip_proxy=carrier_trunk.sip_proxy,
+        sip_proxy_port=carrier_trunk.sip_proxy_port,
         registered=carrier_trunk.registered,
         auth_username=carrier_trunk.auth_username,
         auth_password=carrier_trunk.auth_password,
@@ -65,6 +66,11 @@ def update_carrier_trunk(
             carrier_trunk.sip_proxy
             if carrier_trunk.sip_proxy is not None
             else db_carrier_trunk.sip_proxy
+        )
+        db_carrier_trunk.sip_proxy_port = (
+            carrier_trunk.sip_proxy_port
+            if carrier_trunk.sip_proxy_port is not None
+            else db_carrier_trunk.sip_proxy_port
         )
         db_carrier_trunk.registered = (
             carrier_trunk.registered

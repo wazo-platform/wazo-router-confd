@@ -4,6 +4,8 @@ from email.utils import parseaddr
 
 from sqlalchemy.orm import Session
 
+from wazo_router_confd.models.carrier import Carrier
+from wazo_router_confd.models.carrier_trunk import CarrierTrunk
 from wazo_router_confd.models.did import DID
 from wazo_router_confd.models.domain import Domain
 from wazo_router_confd.models.ipbx import IPBX
@@ -42,6 +44,30 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
         routes.append(
             {
                 "uri": "sip:%s:%s" % (ipbx.ip_fqdn, ipbx.port),
+                "path": "",
+                "socket": "",
+                "headers": {
+                    "from": {"display": request.from_name, "uri": request.from_uri},
+                    "to": {"display": request.to_name, "uri": request.to_uri},
+                    "extra": "",
+                },
+                "branch_flags": 8,
+                "fr_timer": 5000,
+                "fr_inv_timer": 30000,
+            }
+        )
+    # route by carrier trunk if the package is coming from a known IPBX
+    carrier_trunks = (
+        db.query(CarrierTrunk)
+        .join(Carrier)
+        .join(IPBX, Carrier.tenant_id == IPBX.tenant_id)
+        .filter(IPBX.ip_fqdn == request.source_ip)
+    )
+    for carrier_trunk in carrier_trunks:
+        routes.append(
+            {
+                "uri": "sip:%s:%s"
+                % (carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
                 "path": "",
                 "socket": "",
                 "headers": {
