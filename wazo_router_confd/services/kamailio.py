@@ -29,7 +29,11 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
     list_of_all_ipbx = db.query(IPBX)
     for ipbx in list_of_all_ipbx:
         prefixes = [local_part[:i] for i in range(0, min(10, len(local_part)))]
-        dids = db.query(DID).filter(DID.ipbx_id == ipbx.id).filter(DID.did_prefix.in_(prefixes))
+        dids = (
+            db.query(DID)
+            .filter(DID.ipbx_id == ipbx.id)
+            .filter(DID.did_prefix.in_(prefixes))
+        )
         for did in dids:
             if re.match(did.did_regex, local_part):
                 ipbxs.add(ipbx)

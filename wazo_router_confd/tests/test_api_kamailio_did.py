@@ -26,7 +26,7 @@ def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com',
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
         did_regex=r'^39[0-9]+$',
@@ -35,14 +35,7 @@ def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([
-        tenant,
-        domain,
-        ipbx,
-        carrier,
-        carrier_trunk,
-        did,
-    ])
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     request_from_name = "From name"
@@ -114,7 +107,7 @@ def test_kamailio_routing_did_with_no_matching_ipbx(app=None, client=None):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com',
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
         did_regex=r'^39[0-9]+$',
@@ -123,14 +116,7 @@ def test_kamailio_routing_did_with_no_matching_ipbx(app=None, client=None):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([
-        tenant,
-        domain,
-        ipbx,
-        carrier,
-        carrier_trunk,
-        did,
-    ])
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     request_from_name = "From name"

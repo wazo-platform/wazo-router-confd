@@ -12,9 +12,7 @@ if TYPE_CHECKING:
 class DID(Base):
     __tablename__ = "dids"
     __table_args__ = (
-        ForeignKeyConstraint(
-            ['tenant_id', 'ipbx_id'], ['ipbx.tenant_id', 'ipbx.id']
-        ),
+        ForeignKeyConstraint(['tenant_id', 'ipbx_id'], ['ipbx.tenant_id', 'ipbx.id']),
     )
 
     id = Column(Integer, primary_key=True, index=True)

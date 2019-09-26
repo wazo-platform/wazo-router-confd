@@ -25,15 +25,9 @@ def test_create_did(app=None, client=None):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com',
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
-    session.add_all([
-        tenant,
-        domain,
-        ipbx,
-        carrier,
-        carrier_trunk,
-    ])
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk])
     session.commit()
     #
     response = client.post(
@@ -80,7 +74,7 @@ def test_create_duplicated_did(app=None, client=None):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com',
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
         did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
@@ -88,14 +82,7 @@ def test_create_duplicated_did(app=None, client=None):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([
-        tenant,
-        domain,
-        ipbx,
-        carrier,
-        carrier_trunk,
-        did
-    ])
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     response = client.post(
@@ -135,7 +122,7 @@ def test_get_did(app=None, client=None):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com',
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
         did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
@@ -143,14 +130,7 @@ def test_get_did(app=None, client=None):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([
-        tenant,
-        domain,
-        ipbx,
-        carrier,
-        carrier_trunk,
-        did
-    ])
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     response = client.get("/dids/1")
@@ -195,7 +175,7 @@ def test_get_dids(app=None, client=None):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com',
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
         did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
@@ -203,14 +183,7 @@ def test_get_dids(app=None, client=None):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([
-        tenant,
-        domain,
-        ipbx,
-        carrier,
-        carrier_trunk,
-        did
-    ])
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     response = client.get("/dids/")
@@ -251,7 +224,7 @@ def test_update_did(app=None, client=None):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com',
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
         did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
@@ -259,14 +232,7 @@ def test_update_did(app=None, client=None):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([
-        tenant,
-        domain,
-        ipbx,
-        carrier,
-        carrier_trunk,
-        did
-    ])
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     response = client.put(
