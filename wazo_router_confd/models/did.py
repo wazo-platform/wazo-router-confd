@@ -12,15 +12,21 @@ if TYPE_CHECKING:
 class DID(Base):
     __tablename__ = "dids"
     __table_args__ = (
-        ForeignKeyConstraint(['tenant_id', 'ipbx_id'], ['ipbx.tenant_id', 'ipbx.id'], ondelete='CASCADE'),
+        ForeignKeyConstraint(
+            ['tenant_id', 'ipbx_id'], ['ipbx.tenant_id', 'ipbx.id'], ondelete='CASCADE'
+        ),
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False)
+    tenant_id = Column(
+        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    )
     tenant = relationship('Tenant')
     ipbx_id = Column(Integer, nullable=False)
     ipbx = relationship('IPBX')
-    carrier_trunk_id = Column(Integer, ForeignKey('carrier_trunks.id', ondelete='CASCADE'), nullable=False)
+    carrier_trunk_id = Column(
+        Integer, ForeignKey('carrier_trunks.id', ondelete='CASCADE'), nullable=False
+    )
     carrier_trunk = relationship('CarrierTrunk')
     did_regex = Column(String, unique=True)
     did_prefix = Column(String, index=True)

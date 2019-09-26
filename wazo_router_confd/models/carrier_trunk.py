@@ -13,7 +13,9 @@ class CarrierTrunk(Base):
     __tablename__ = "carrier_trunks"
 
     id = Column(Integer, primary_key=True, index=True)
-    carrier_id = Column(Integer, ForeignKey('carriers.id', ondelete='CASCADE'), nullable=False)
+    carrier_id = Column(
+        Integer, ForeignKey('carriers.id', ondelete='CASCADE'), nullable=False
+    )
     carrier = relationship('Carrier')
     name = Column(String, unique=True, index=True)
     sip_proxy = Column(String, nullable=False)
