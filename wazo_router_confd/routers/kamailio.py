@@ -12,4 +12,7 @@ router = APIRouter()
 @router.post("/kamailio/routing")
 def kamailio(request: schema.RoutingRequest, db: Session = Depends(get_db)):
     response = service.routing(db, request=request)
-    return response
+    return {
+        "success": bool(response['routes']),
+        "rtjson": response if response['routes'] else None,
+    }

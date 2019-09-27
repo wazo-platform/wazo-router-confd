@@ -55,24 +55,27 @@ def test_kamailio_routing_outbound_with_single_ipbx(app=None, client=None):
     )
     assert response.status_code == 200
     assert response.json() == {
-        "version": "1.0",
-        "routing": "serial",
-        "routes": [
-            {
-                "uri": "sip:%s:%s"
-                % (carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
-                "path": "",
-                "socket": "",
-                "headers": {
-                    "from": {"display": request_from_name, "uri": request_from_uri},
-                    "to": {"display": request_to_name, "uri": request_to_uri},
-                    "extra": "",
-                },
-                "branch_flags": 8,
-                "fr_timer": 5000,
-                "fr_inv_timer": 30000,
-            }
-        ],
+        "success": True,
+        "rtjson": {
+            "version": "1.0",
+            "routing": "serial",
+            "routes": [
+                {
+                    "uri": "sip:%s:%s"
+                    % (carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
+                    "path": "",
+                    "socket": "",
+                    "headers": {
+                        "from": {"display": request_from_name, "uri": request_from_uri},
+                        "to": {"display": request_to_name, "uri": request_to_uri},
+                        "extra": "",
+                    },
+                    "branch_flags": 8,
+                    "fr_timer": 5000,
+                    "fr_inv_timer": 30000,
+                }
+            ],
+        }
     }
 
 
@@ -122,4 +125,7 @@ def test_kamailio_routing_outbound_with_no_matching_ipbx(app=None, client=None):
         },
     )
     assert response.status_code == 200
-    assert response.json() == {"version": "1.0", "routing": "serial", "routes": []}
+    assert response.json() == {
+        "success": False,
+        "rtjson": None,
+    }
