@@ -29,7 +29,6 @@ def setup_database(app: FastAPI, config: dict):
         {"check_same_thread": False} if database_uri.startswith('sqlite:') else {}
     )
     engine = create_engine(database_uri, connect_args=connect_args)
-    Base.metadata.create_all(bind=engine)
     setattr(app, 'engine', engine)
 
     @app.middleware("http")

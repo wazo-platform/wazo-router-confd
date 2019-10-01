@@ -36,7 +36,11 @@ from .app import get_app
     show_default=True,
 )
 @click.option(
-    "--database-upgrade", is_flag=True, default=True, help="Run database migrations at startup", show_default=True
+    "--database-upgrade",
+    is_flag=True,
+    default=True,
+    help="Run database migrations at startup",
+    show_default=True,
 )
 @click.option(
     "--debug", is_flag=True, default=False, help="Enable debug mode", hidden=True

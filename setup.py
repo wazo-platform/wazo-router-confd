@@ -35,6 +35,7 @@ setup(
         'uvicorn>=0.9.0',
     ],
     packages=find_packages(),
+    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
