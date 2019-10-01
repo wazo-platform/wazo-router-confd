@@ -15,5 +15,7 @@ class Domain(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     domain = Column(String(64), unique=True, index=True)
-    tenant_id = Column(Integer, ForeignKey('tenants.id'), nullable=False)
+    tenant_id = Column(
+        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    )
     tenant = relationship('Tenant')

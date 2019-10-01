@@ -1,24 +1,28 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.carrier_trunk import CarrierTrunk
 from wazo_router_confd.schemas import carrier_trunk as schema
 
 
-def get_carrier_trunk(db: Session, carrier_trunk_id: int):
+def get_carrier_trunk(db: Session, carrier_trunk_id: int) -> CarrierTrunk:
     return db.query(CarrierTrunk).filter(CarrierTrunk.id == carrier_trunk_id).first()
 
 
-def get_carrier_trunk_by_name(db: Session, name: str):
+def get_carrier_trunk_by_name(db: Session, name: str) -> CarrierTrunk:
     return db.query(CarrierTrunk).filter(CarrierTrunk.name == name).first()
 
 
-def get_carrier_trunks(db: Session, skip: int = 0, limit: int = 100):
+def get_carrier_trunks(
+    db: Session, skip: int = 0, limit: int = 100
+) -> List[CarrierTrunk]:
     return db.query(CarrierTrunk).offset(skip).limit(limit).all()
 
 
 def get_carrier_trunks_by_carrier(
     db: Session, carrier_id: int, skip: int = 0, limit: int = 100
-):
+) -> List[CarrierTrunk]:
     return (
         db.query(CarrierTrunk)
         .filter(CarrierTrunk.carrier_id == carrier_id)
@@ -28,11 +32,14 @@ def get_carrier_trunks_by_carrier(
     )
 
 
-def create_carrier_trunk(db: Session, carrier_trunk: schema.CarrierTrunkCreate):
+def create_carrier_trunk(
+    db: Session, carrier_trunk: schema.CarrierTrunkCreate
+) -> CarrierTrunk:
     db_carrier_trunk = CarrierTrunk(
         carrier_id=carrier_trunk.carrier_id,
         name=carrier_trunk.name,
         sip_proxy=carrier_trunk.sip_proxy,
+        sip_proxy_port=carrier_trunk.sip_proxy_port,
         registered=carrier_trunk.registered,
         auth_username=carrier_trunk.auth_username,
         auth_password=carrier_trunk.auth_password,
@@ -51,7 +58,7 @@ def create_carrier_trunk(db: Session, carrier_trunk: schema.CarrierTrunkCreate):
 
 def update_carrier_trunk(
     db: Session, carrier_trunk_id: int, carrier_trunk: schema.CarrierTrunkUpdate
-):
+) -> CarrierTrunk:
     db_carrier_trunk = (
         db.query(CarrierTrunk).filter(CarrierTrunk.id == carrier_trunk_id).first()
     )
@@ -65,6 +72,11 @@ def update_carrier_trunk(
             carrier_trunk.sip_proxy
             if carrier_trunk.sip_proxy is not None
             else db_carrier_trunk.sip_proxy
+        )
+        db_carrier_trunk.sip_proxy_port = (
+            carrier_trunk.sip_proxy_port
+            if carrier_trunk.sip_proxy_port is not None
+            else db_carrier_trunk.sip_proxy_port
         )
         db_carrier_trunk.registered = (
             carrier_trunk.registered
@@ -113,4 +125,14 @@ def update_carrier_trunk(
         )
         db.commit()
         db.refresh(db_carrier_trunk)
+    return db_carrier_trunk
+
+
+def delete_carrier_trunk(db: Session, carrier_trunk_id: int) -> CarrierTrunk:
+    db_carrier_trunk = (
+        db.query(CarrierTrunk).filter(CarrierTrunk.id == carrier_trunk_id).first()
+    )
+    if db_carrier_trunk is not None:
+        db.delete(db_carrier_trunk)
+        db.commit()
     return db_carrier_trunk

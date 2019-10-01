@@ -26,6 +26,7 @@ def test_create_carrier_trunk(app=None, client=None):
         "name": "carrier_trunk1",
         "carrier_id": 1,
         "sip_proxy": "proxy.somedomain.com",
+        "sip_proxy_port": 5060,
         "registered": True,
         "auth_username": "user",
         "auth_password": "pass",
@@ -93,6 +94,7 @@ def test_get_carrier_trunk(app=None, client=None):
         "name": "carrier_trunk1",
         "carrier_id": 1,
         "sip_proxy": "proxy.somedomain.com",
+        "sip_proxy_port": 5060,
         "registered": True,
         "auth_username": "user",
         "auth_password": "pass",
@@ -132,6 +134,7 @@ def test_get_carrier_trunks(app=None, client=None):
             'name': 'carrier_trunk1',
             'carrier_id': 1,
             'sip_proxy': 'proxy.somedomain.com',
+            "sip_proxy_port": 5060,
             'registered': False,
             'auth_username': None,
             'auth_password': None,
@@ -168,6 +171,7 @@ def test_update_carrier_trunk(app=None, client=None):
             'name': 'updated_carrier_trunk1',
             "carrier_id": 1,
             "sip_proxy": "proxy.somedomain.com",
+            "sip_proxy_port": 5061,
             "registered": True,
             'auth_username': 'username2',
             'auth_password': 'password2',
@@ -185,6 +189,7 @@ def test_update_carrier_trunk(app=None, client=None):
         'name': 'updated_carrier_trunk1',
         'carrier_id': 1,
         'sip_proxy': 'proxy.somedomain.com',
+        "sip_proxy_port": 5061,
         'auth_username': 'username2',
         'auth_password': 'password2',
         'auth_ha1': "ha1pass",
@@ -216,4 +221,47 @@ def test_update_carrier_trunk_not_found(app=None, client=None):
             "retry_seconds": 10,
         },
     )
+    assert response.status_code == 404
+
+
+@get_app_and_client
+def test_delete_carrier_trunk(app=None, client=None):
+    from wazo_router_confd.database import SessionLocal
+    from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+
+    session = SessionLocal(bind=app.engine)
+    session.add(
+        CarrierTrunk(
+            name='carrier_trunk1',
+            carrier_id=1,
+            sip_proxy='proxy.somedomain.com',
+            auth_username='username1',
+            auth_password='password1',
+        )
+    )
+    session.commit()
+    #
+    response = client.delete("/carrier_trunks/1")
+    assert response.status_code == 200
+    assert response.json() == {
+        'id': 1,
+        'name': 'carrier_trunk1',
+        'carrier_id': 1,
+        'sip_proxy': 'proxy.somedomain.com',
+        'sip_proxy_port': 5060,
+        'auth_username': 'username1',
+        'auth_password': 'password1',
+        'auth_ha1': None,
+        'expire_seconds': 3600,
+        'retry_seconds': 30,
+        'from_domain': None,
+        'realm': None,
+        'registered': False,
+        'registrar_proxy': None,
+    }
+
+
+@get_app_and_client
+def test_delete_carrier_trunk_not_found(app=None, client=None):
+    response = client.delete("/carrier_trunks/1")
     assert response.status_code == 404
