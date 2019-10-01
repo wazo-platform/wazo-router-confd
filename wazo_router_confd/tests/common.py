@@ -10,7 +10,9 @@ def get_app_and_client(f):
     @wraps(f)
     def wrapper(*args, **kw):
         with NamedTemporaryFile(suffix=".db") as tmp:
-            config = dict(database_uri='sqlite:///' + tmp.name, database_upgrade=True)
+            config = dict(
+                database_uri='sqlite:///' + tmp.name, database_upgrade=True, debug=True
+            )
             app = get_app(config)
             client = TestClient(app)
             return f(*args, app=app, client=client, **kw)

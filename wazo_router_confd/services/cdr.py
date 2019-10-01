@@ -17,7 +17,9 @@ def get_cdrs(db: Session, offset: int = 0, limit: int = 100) -> List[CDR]:
 def get_cdrs_by_tenant_id(
     db: Session, tenant: int, offset: int = 0, limit: int = 100
 ) -> List[CDR]:
-    return db.query(CDR).filter(CDR.tenant_id == tenant).offset(offset).limit(limit).all()
+    return (
+        db.query(CDR).filter(CDR.tenant_id == tenant).offset(offset).limit(limit).all()
+    )
 
 
 def create_cdr(db: Session, cdr: schema.CDRCreate) -> CDR:

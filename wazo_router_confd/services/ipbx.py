@@ -21,7 +21,9 @@ def get_ipbxs(db: Session, offset: int = 0, limit: int = 100) -> List[IPBX]:
 def get_ipbxs_by_tenant(
     db: Session, tenant: int, offset: int = 0, limit: int = 100
 ) -> List[IPBX]:
-    return db.query(IPBX).filter(IPBX.tenant == tenant).offset(offset).limit(limit).all()
+    return (
+        db.query(IPBX).filter(IPBX.tenant == tenant).offset(offset).limit(limit).all()
+    )
 
 
 def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:

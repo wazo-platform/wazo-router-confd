@@ -19,7 +19,9 @@ def create_routing_group(
 
 
 @router.get("/routing_groups/", response_model=List[schema.RoutingGroup])
-def read_routing_groups(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_routing_groups(
+    offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
+):
     routing_groups = service.get_routing_groups(db, offset=offset, limit=limit)
     return routing_groups
 

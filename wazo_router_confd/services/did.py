@@ -26,7 +26,9 @@ def get_dids(db: Session, offset: int = 0, limit: int = 100) -> List[DID]:
 def get_dids_by_tenant_id(
     db: Session, tenant: int, offset: int = 0, limit: int = 100
 ) -> List[DID]:
-    return db.query(DID).filter(DID.tenant_id == tenant).offset(offset).limit(limit).all()
+    return (
+        db.query(DID).filter(DID.tenant_id == tenant).offset(offset).limit(limit).all()
+    )
 
 
 def get_did_prefix_from_regex(did_regex: Optional[str] = None) -> str:
