@@ -8,6 +8,7 @@ class CarrierTrunk(BaseModel):
     carrier_id: int
     name: str
     sip_proxy: str
+    sip_proxy_port: int = 5060
     registered: bool = False
     auth_username: Optional[str] = None
     auth_password: Optional[str] = None
@@ -26,6 +27,7 @@ class CarrierTrunkCreate(BaseModel):
     carrier_id: int
     name: str
     sip_proxy: str
+    sip_proxy_port: int = 5060
     registered: bool = False
     auth_username: Optional[str] = None
     auth_password: Optional[str] = None
@@ -40,6 +42,7 @@ class CarrierTrunkCreate(BaseModel):
 class CarrierTrunkUpdate(BaseModel):
     name: str
     sip_proxy: str
+    sip_proxy_port: int = 5060
     registered: bool = False
     auth_username: Optional[str] = None
     auth_password: Optional[str] = None

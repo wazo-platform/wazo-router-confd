@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class DID(BaseModel):
     id: int
     tenant_id: int
+    ipbx_id: int
     carrier_trunk_id: int
     did_regex: Optional[str] = None
 
@@ -15,11 +16,13 @@ class DID(BaseModel):
 
 class DIDCreate(BaseModel):
     tenant_id: int
+    ipbx_id: int
     carrier_trunk_id: int
     did_regex: Optional[str] = None
 
 
 class DIDUpdate(BaseModel):
     tenant_id: int
+    ipbx_id: int
     carrier_trunk_id: int
     did_regex: Optional[str] = None
