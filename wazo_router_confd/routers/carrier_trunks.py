@@ -41,9 +41,9 @@ def create_carrier_trunk(
 
 @router.get("/carrier_trunks/", response_model=List[schema.CarrierTrunk])
 def read_carrier_trunkss(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
-    carrier_trunks = service.get_carrier_trunks(db, skip=skip, limit=limit)
+    carrier_trunks = service.get_carrier_trunks(db, offset=offset, limit=limit)
     return carrier_trunks
 
 

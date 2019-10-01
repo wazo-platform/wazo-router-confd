@@ -17,8 +17,8 @@ def create_cdr(cdr: schema.CDRCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/cdrs/", response_model=List[schema.CDR])
-def read_cdrs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    cdrs = service.get_cdrs(db, skip=skip, limit=limit)
+def read_cdrs(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    cdrs = service.get_cdrs(db, offset=offset, limit=limit)
     return cdrs
 
 

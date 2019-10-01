@@ -14,8 +14,8 @@ def get_tenant_by_name(db: Session, name: str) -> Tenant:
     return db.query(Tenant).filter(Tenant.name == name).first()
 
 
-def get_tenants(db: Session, skip: int = 0, limit: int = 100) -> List[Tenant]:
-    return db.query(Tenant).offset(skip).limit(limit).all()
+def get_tenants(db: Session, offset: int = 0, limit: int = 100) -> List[Tenant]:
+    return db.query(Tenant).offset(offset).limit(limit).all()
 
 
 def create_tenant(db: Session, tenant: schema.TenantCreate) -> Tenant:

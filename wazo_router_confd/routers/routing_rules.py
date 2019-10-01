@@ -19,8 +19,8 @@ def create_routing_rule(
 
 
 @router.get("/routing_rules/", response_model=List[schema.RoutingRule])
-def read_routing_rules(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    routing_rules = service.get_routing_rules(db, skip=skip, limit=limit)
+def read_routing_rules(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    routing_rules = service.get_routing_rules(db, offset=offset, limit=limit)
     return routing_rules
 
 

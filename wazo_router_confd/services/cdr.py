@@ -10,14 +10,14 @@ def get_cdr(db: Session, cdr_id: int) -> CDR:
     return db.query(CDR).filter(CDR.id == cdr_id).first()
 
 
-def get_cdrs(db: Session, skip: int = 0, limit: int = 100) -> List[CDR]:
-    return db.query(CDR).offset(skip).limit(limit).all()
+def get_cdrs(db: Session, offset: int = 0, limit: int = 100) -> List[CDR]:
+    return db.query(CDR).offset(offset).limit(limit).all()
 
 
 def get_cdrs_by_tenant_id(
-    db: Session, tenant: int, skip: int = 0, limit: int = 100
+    db: Session, tenant: int, offset: int = 0, limit: int = 100
 ) -> List[CDR]:
-    return db.query(CDR).filter(CDR.tenant_id == tenant).offset(skip).limit(limit).all()
+    return db.query(CDR).filter(CDR.tenant_id == tenant).offset(offset).limit(limit).all()
 
 
 def create_cdr(db: Session, cdr: schema.CDRCreate) -> CDR:

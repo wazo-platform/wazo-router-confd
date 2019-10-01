@@ -38,8 +38,8 @@ def create_domain(domain: schema.DomainCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/domains/", response_model=List[schema.Domain])
-def read_domains(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    domains = service.get_domains(db, skip=skip, limit=limit)
+def read_domains(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    domains = service.get_domains(db, offset=offset, limit=limit)
     return domains
 
 

@@ -17,8 +17,8 @@ def create_ipbx(ipbx: schema.IPBXCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/ipbx/", response_model=List[schema.IPBX])
-def read_ipbxs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    ipbxs = service.get_ipbxs(db, skip=skip, limit=limit)
+def read_ipbxs(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    ipbxs = service.get_ipbxs(db, offset=offset, limit=limit)
     return ipbxs
 
 

@@ -38,8 +38,8 @@ def create_carrier(carrier: schema.CarrierCreate, db: Session = Depends(get_db))
 
 
 @router.get("/carriers/", response_model=List[schema.Carrier])
-def read_carriers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    carriers = service.get_carriers(db, skip=skip, limit=limit)
+def read_carriers(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    carriers = service.get_carriers(db, offset=offset, limit=limit)
     return carriers
 
 

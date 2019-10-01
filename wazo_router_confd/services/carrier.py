@@ -14,17 +14,17 @@ def get_carrier_by_name(db: Session, name: str) -> Carrier:
     return db.query(Carrier).filter(Carrier.name == name).first()
 
 
-def get_carriers(db: Session, skip: int = 0, limit: int = 100) -> List[Carrier]:
-    return db.query(Carrier).offset(skip).limit(limit).all()
+def get_carriers(db: Session, offset: int = 0, limit: int = 100) -> List[Carrier]:
+    return db.query(Carrier).offset(offset).limit(limit).all()
 
 
 def get_carriers_by_tenant(
-    db: Session, tenant_id: int, skip: int = 0, limit: int = 100
+    db: Session, tenant_id: int, offset: int = 0, limit: int = 100
 ) -> List[Carrier]:
     return (
         db.query(Carrier)
         .filter(Carrier.tenant_id == tenant_id)
-        .offset(skip)
+        .offset(offset)
         .limit(limit)
         .all()
     )

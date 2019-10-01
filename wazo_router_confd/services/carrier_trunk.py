@@ -15,18 +15,18 @@ def get_carrier_trunk_by_name(db: Session, name: str) -> CarrierTrunk:
 
 
 def get_carrier_trunks(
-    db: Session, skip: int = 0, limit: int = 100
+    db: Session, offset: int = 0, limit: int = 100
 ) -> List[CarrierTrunk]:
-    return db.query(CarrierTrunk).offset(skip).limit(limit).all()
+    return db.query(CarrierTrunk).offset(offset).limit(limit).all()
 
 
 def get_carrier_trunks_by_carrier(
-    db: Session, carrier_id: int, skip: int = 0, limit: int = 100
+    db: Session, carrier_id: int, offset: int = 0, limit: int = 100
 ) -> List[CarrierTrunk]:
     return (
         db.query(CarrierTrunk)
         .filter(CarrierTrunk.carrier_id == carrier_id)
-        .offset(skip)
+        .offset(offset)
         .limit(limit)
         .all()
     )

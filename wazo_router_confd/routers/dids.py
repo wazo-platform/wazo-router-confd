@@ -38,8 +38,8 @@ def create_did(did: schema.DIDCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/dids/", response_model=List[schema.DID])
-def read_dids(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    dids = service.get_dids(db, skip=skip, limit=limit)
+def read_dids(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    dids = service.get_dids(db, offset=offset, limit=limit)
     return dids
 
 

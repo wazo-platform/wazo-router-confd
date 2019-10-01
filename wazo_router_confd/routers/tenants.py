@@ -38,8 +38,8 @@ def create_tenant(tenant: schema.TenantCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/tenants/", response_model=List[schema.Tenant])
-def read_tenants(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    tenants = service.get_tenants(db, skip=skip, limit=limit)
+def read_tenants(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    tenants = service.get_tenants(db, offset=offset, limit=limit)
     return tenants
 
 

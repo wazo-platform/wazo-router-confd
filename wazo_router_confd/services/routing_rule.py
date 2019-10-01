@@ -11,9 +11,9 @@ def get_routing_rule(db: Session, routing_rule_id: int) -> RoutingRule:
 
 
 def get_routing_rules(
-    db: Session, skip: int = 0, limit: int = 100
+    db: Session, offset: int = 0, limit: int = 100
 ) -> List[RoutingRule]:
-    return db.query(RoutingRule).offset(skip).limit(limit).all()
+    return db.query(RoutingRule).offset(offset).limit(limit).all()
 
 
 def create_routing_rule(

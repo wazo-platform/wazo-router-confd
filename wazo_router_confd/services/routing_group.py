@@ -11,9 +11,9 @@ def get_routing_group(db: Session, routing_group_id: int) -> RoutingGroup:
 
 
 def get_routing_groups(
-    db: Session, skip: int = 0, limit: int = 100
+    db: Session, offset: int = 0, limit: int = 100
 ) -> List[RoutingGroup]:
-    return db.query(RoutingGroup).offset(skip).limit(limit).all()
+    return db.query(RoutingGroup).offset(offset).limit(limit).all()
 
 
 def create_routing_group(
