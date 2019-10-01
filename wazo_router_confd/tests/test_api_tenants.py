@@ -18,7 +18,7 @@ def test_create_duplicated_tenant(app=None, client=None):
     session.commit()
     #
     response = client.post("/tenants/", json={"name": "fabio"})
-    assert response.status_code == 400
+    assert response.status_code == 409
 
 
 @get_app_and_client

@@ -1,3 +1,4 @@
+from time import time
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -17,7 +18,24 @@ def create_carrier_trunk(
 ):
     db_carrier_trunk = service.get_carrier_trunk_by_name(db, name=carrier_trunk.name)
     if db_carrier_trunk:
-        raise HTTPException(status_code=400, detail="Name already registered")
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error_id": "invalid-data",
+                "message": "Duplicated name",
+                "resource": "carrier_trunk",
+                "timestamp": time(),
+                "details": {
+                    "config": {
+                        "name": {
+                            "constraing_id": "name",
+                            "constraint": {"unique": True},
+                            "message": "Duplicated name",
+                        }
+                    }
+                },
+            },
+        )
     return service.create_carrier_trunk(db=db, carrier_trunk=carrier_trunk)
 
 

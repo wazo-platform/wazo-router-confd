@@ -25,7 +25,7 @@ def test_create_duplicated_domain(app=None, client=None):
     response = client.post(
         "/domains/", json={"domain": "testdomain.com", "tenant_id": 1}
     )
-    assert response.status_code == 400
+    assert response.status_code == 409
 
 
 @get_app_and_client

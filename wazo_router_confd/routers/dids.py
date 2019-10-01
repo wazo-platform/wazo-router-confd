@@ -1,3 +1,4 @@
+from time import time
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -15,7 +16,24 @@ router = APIRouter()
 def create_did(did: schema.DIDCreate, db: Session = Depends(get_db)):
     db_did = service.get_did_by_regex(db, regex=did.did_regex)
     if db_did:
-        raise HTTPException(status_code=400, detail="Name already registered")
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error_id": "invalid-data",
+                "message": "Duplicated did_regex",
+                "resource": "did",
+                "timestamp": time(),
+                "details": {
+                    "config": {
+                        "did_regex": {
+                            "constraing_id": "did_regex",
+                            "constraint": {"unique": True},
+                            "message": "Duplicated did_regex",
+                        }
+                    }
+                },
+            },
+        )
     return service.create_did(db=db, did=did)
 
 

@@ -60,7 +60,7 @@ def test_create_duplicated_carrier_trunk(app=None, client=None):
             "sip_proxy": "proxy.somedomain.com",
         },
     )
-    assert response.status_code == 400
+    assert response.status_code == 409
 
 
 @get_app_and_client

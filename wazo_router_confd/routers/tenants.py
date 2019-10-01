@@ -1,3 +1,4 @@
+from time import time
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -15,7 +16,24 @@ router = APIRouter()
 def create_tenant(tenant: schema.TenantCreate, db: Session = Depends(get_db)):
     db_tenant = service.get_tenant_by_name(db, name=tenant.name)
     if db_tenant:
-        raise HTTPException(status_code=400, detail="Name already registered")
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error_id": "invalid-data",
+                "message": "Duplicated name",
+                "resource": "tenant",
+                "timestamp": time(),
+                "details": {
+                    "config": {
+                        "name": {
+                            "constraing_id": "name",
+                            "constraint": {"unique": True},
+                            "message": "Duplicated name",
+                        }
+                    }
+                },
+            },
+        )
     return service.create_tenant(db=db, tenant=tenant)
 
 
