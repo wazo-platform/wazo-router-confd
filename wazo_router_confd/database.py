@@ -1,9 +1,9 @@
 import logging
 import os
 
-import alembic.config
-import alembic.command
-import alembic.migration
+import alembic.config  # type: ignore
+import alembic.command  # type: ignore
+import alembic.migration  # type: ignore
 
 from fastapi import FastAPI
 from starlette.requests import Request
@@ -11,7 +11,13 @@ from starlette.responses import Response
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
+from tenacity import (  # type: ignore
+    after_log,
+    before_log,
+    retry,
+    stop_after_attempt,
+    wait_fixed,
+)
 
 from wazo_router_confd.models.base import Base
 
