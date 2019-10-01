@@ -81,7 +81,7 @@ def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
                     "fr_inv_timer": 30000,
                 }
             ],
-        }
+        },
     }
 
 
@@ -145,7 +145,4 @@ def test_kamailio_routing_did_with_no_matching_ipbx(app=None, client=None):
         },
     )
     assert response.status_code == 200
-    assert response.json() == {
-        "success": False,
-        "rtjson": None,
-    }
+    assert response.json() == {"success": False, "rtjson": None}
