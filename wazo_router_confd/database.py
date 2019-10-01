@@ -1,13 +1,28 @@
+import logging
+import os
+
+import alembic.config  # type: ignore
+import alembic.command  # type: ignore
+import alembic.migration  # type: ignore
+
 from fastapi import FastAPI
 from starlette.requests import Request
 from starlette.responses import Response
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from tenacity import (  # type: ignore
+    after_log,
+    before_log,
+    retry,
+    stop_after_attempt,
+    wait_fixed,
+)
 
 from wazo_router_confd.models.base import Base
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False)
+logger = logging.getLogger(__name__)
 
 
 def get_db(request: Request):
@@ -20,7 +35,6 @@ def setup_database(app: FastAPI, config: dict):
         {"check_same_thread": False} if database_uri.startswith('sqlite:') else {}
     )
     engine = create_engine(database_uri, connect_args=connect_args)
-    Base.metadata.create_all(bind=engine)
     setattr(app, 'engine', engine)
 
     @app.middleware("http")
@@ -34,3 +48,36 @@ def setup_database(app: FastAPI, config: dict):
         return response
 
     return app
+
+
+def upgrade_database(app: FastAPI, config: dict):
+    cur_dir = os.path.dirname(__file__)
+    cfg = alembic.config.Config("{}/migrations/alembic.ini".format(cur_dir))
+    cfg.set_main_option("script_location", "{}/migrations/alembic".format(cur_dir))
+    cfg.set_main_option("sqlalchemy.url", config['database_uri'])
+
+    engine = getattr(app, "engine")
+    wait_for_database(engine)
+    with engine.begin() as connection:
+        ctxt = alembic.migration.MigrationContext.configure(connection)
+        current_version = ctxt.get_current_revision()
+        if current_version is None:
+            Base.metadata.create_all(bind=engine)
+            alembic.command.stamp(cfg, "head")
+        else:
+            alembic.command.upgrade(cfg, "head")
+    logger.info("Database upgraded")
+
+
+@retry(
+    stop=stop_after_attempt(60 * 5),
+    wait=wait_fixed(1),
+    before=before_log(logger, logging.INFO),
+    after=after_log(logger, logging.WARN),
+)
+def wait_for_database(connection):
+    try:
+        connection.execute("SELECT 1")
+    except Exception as e:
+        logger.warning("fail to connect to the database: %s", e)
+        raise

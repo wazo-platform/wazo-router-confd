@@ -1,3 +1,5 @@
 [run]
 source = wazo_router_confd
-omit = *tests*
+omit =
+    *tests*
+    *alembic*
