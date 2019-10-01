@@ -36,13 +36,17 @@ from .app import get_app
     show_default=True,
 )
 @click.option(
-    "--debug", is_flag=True, default=False, help="Enable debug mode.", hidden=True
+    "--database-upgrade", is_flag=True, default=True, help="Run database migrations at startup", show_default=True
+)
+@click.option(
+    "--debug", is_flag=True, default=False, help="Enable debug mode", hidden=True
 )
 def main(
     host: Optional[str] = None,
     port: Optional[int] = None,
     consul_uri: Optional[str] = None,
     database_uri: Optional[str] = None,
+    database_upgrade: bool = True,
     debug: bool = False,
 ):
     config = dict(
@@ -50,6 +54,7 @@ def main(
         port=port,
         consul_uri=consul_uri,
         database_uri=database_uri,
+        database_upgrade=database_upgrade,
         debug=debug,
     )
     app = get_app(config)
@@ -64,4 +69,4 @@ def main(
 
 
 def main_with_env():
-    main(auto_envvar_prefix="WAZO_ROUTER_confd")
+    main(auto_envvar_prefix="WAZO_ROUTER_CONFD")

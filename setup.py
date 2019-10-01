@@ -23,6 +23,7 @@ setup(
     license=license,
     url='http://www.wazo-platform.org/',
     install_requires=[
+        'alembic>=1.2.1',
         'Click>=7.0',
         'fastapi>=0.38.0',
         'python-consul>=1.1.0',
@@ -30,6 +31,7 @@ setup(
         'psycopg2-binary>=2.8.0',
         'requests>=2.22.0',
         'SQLAlchemy>=1.3.0',
+        'tenacity>=1.12.0',
         'uvicorn>=0.9.0',
     ],
     packages=find_packages(),
