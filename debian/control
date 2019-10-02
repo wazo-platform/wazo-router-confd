@@ -2,7 +2,7 @@ Source: wazo-router-confd
 Section: python
 Priority: extra
 Maintainer: Wazo Maintainers <dev+pkg@wazo.community>
-Build-Depends: debhelper (>= 11), dh-virtualenv, python3-all, python3-setuptools
+Build-Depends: debhelper (>= 11), dh-virtualenv, python3-all, python3-setuptools, libhttp-parser-dev
 Standards-Version: 3.9.6
 X-Python3-Version: >= 3.7
 
