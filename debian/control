@@ -2,14 +2,14 @@ Source: wazo-router-confd
 Section: python
 Priority: extra
 Maintainer: Wazo Maintainers <dev+pkg@wazo.community>
-Build-Depends: debhelper (>= 11), dh-virtualenv, python3-all, python3-setuptools, libhttp-parser-dev
+Build-Depends: debhelper (>= 11), dh-virtualenv, python3-all, python3-dev, python3-setuptools, libhttp-parser-dev
 Standards-Version: 3.9.6
 X-Python3-Version: >= 3.7
 
 Package: wazo-router-confd
 Architecture: any
 Pre-Depends: dpkg (>= 1.16.1), python3.7, ${misc:Pre-Depends}
-Depends: ${python3:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Wazo call server for C4 infrastructure
  Wazo is a system based on a powerful IPBX, to bring an easy to
  install solution for telephony and related services.
