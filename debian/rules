@@ -5,4 +5,12 @@ export PYBUILD_NAME=wazo-router-confd
 export PYBUILD_DISABLE=test
 
 %:
-	dh $@ --with python3,systemd --buildsystem=pybuild
+	dh $@ --with python-virtualenv --buildsystem=pybuild
+
+override_dh_virtualenv:
+	dh_virtualenv \
+		--python=python3 \
+		--setuptools \
+		--extras=undirect_deps \
+		--extra-pip-arg=-c --extra-pip-arg=constraint-debian.txt \
+		--extra-pip-arg=-c --extra-pip-arg=constraint-tarballs.txt
