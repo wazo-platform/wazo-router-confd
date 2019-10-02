@@ -1,3 +1,4 @@
+from configparser import ConfigParser, Error as ConfigParserError
 from typing import Optional
 
 import click
@@ -7,6 +8,7 @@ from .app import get_app
 
 
 @click.command()
+@click.option("-c", "--config-file", type=click.Path(), help="Path to the configuration file")
 @click.option(
     "--host",
     type=str,
@@ -46,6 +48,7 @@ from .app import get_app
     "--debug", is_flag=True, default=False, help="Enable debug mode", hidden=True
 )
 def main(
+    config_file: Optional[str] = None,
     host: Optional[str] = None,
     port: Optional[int] = None,
     consul_uri: Optional[str] = None,
@@ -61,6 +64,14 @@ def main(
         database_upgrade=database_upgrade,
         debug=debug,
     )
+    if config_file is not None:
+        parser = ConfigParser()
+        try:
+            parser.read(config_file)
+        except ConfigParserError:
+            raise click.UsageError("Invalid configuration file")
+        for k, v in parser['DEFAULT'].items():
+            config[k] = v
     app = get_app(config)
     log_level = "info" if not config['debug'] else "debug"
     uvicorn.run(
