@@ -11,6 +11,4 @@ override_dh_virtualenv:
 	dh_virtualenv \
 		--python=python3 \
 		--setuptools \
-		--extras=undirect_deps \
-		--extra-pip-arg=-c --extra-pip-arg=constraint-debian.txt \
-		--extra-pip-arg=-c --extra-pip-arg=constraint-tarballs.txt
+		--extras=undirect_deps
