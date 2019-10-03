@@ -18,7 +18,8 @@ Depends: ${python3:Depends}, ${misc:Depends}, ${shlibs:Depends},
  python3-requests,
  python3-sqlalchemy,
  python3-tenacity,
- python3-uvicorn
+ python3-uvicorn,
+ python3-fastapi
 Description: Wazo call server for C4 infrastructure
  Wazo is a system based on a powerful IPBX, to bring an easy to
  install solution for telephony and related services.
