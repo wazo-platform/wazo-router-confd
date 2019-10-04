@@ -28,7 +28,7 @@ setup(
         'fastapi',
         'python-consul',
         'python-dateutil',
-        'psycopg2-binary',
+        'psycopg2',
         'requests',
         'SQLAlchemy',
         'tenacity',
