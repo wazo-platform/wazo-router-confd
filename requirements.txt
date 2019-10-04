@@ -29,7 +29,7 @@ mypy==0.720
 mypy-extensions==0.4.1
 packaging==19.1
 pluggy==0.13.0
-psycopg2-binary==2.8.3
+psycopg2==2.7.7
 py==1.8.0
 pycodestyle==2.5.0
 pydantic==0.32.2
