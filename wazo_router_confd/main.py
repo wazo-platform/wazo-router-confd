@@ -8,7 +8,9 @@ from .app import get_app
 
 
 @click.command()
-@click.option("-c", "--config-file", type=click.Path(), help="Path to the configuration file")
+@click.option(
+    "-c", "--config-file", type=click.Path(), help="Path to the configuration file"
+)
 @click.option(
     "--host",
     type=str,
