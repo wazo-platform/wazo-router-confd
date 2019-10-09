@@ -2,7 +2,7 @@ FROM python:3.7-slim-buster
 WORKDIR /
 COPY . /
 RUN true && \
-    apt-get update -qq && apt-get install -y --no-install-recommends bash build-essential && \
+    apt-get update -qq && apt-get install -y --no-install-recommends bash build-essential libpq-dev && \
     rm -rf /var/lib/apt/lists/* && \
     make setup dist
 
@@ -12,7 +12,7 @@ ENV VERSION 1.0.0
 COPY --from=0 /dist/wazo_router_confd-1.0-py3-none-any.whl /tmp/wazo_router_confd-1.0-py3-none-any.whl
 RUN true && \
     apt-get update -qq && \
-    apt-get install -y --no-install-recommends bash build-essential netcat && \
+    apt-get install -y --no-install-recommends bash build-essential netcat libpq-dev && \
     rm -rf /var/lib/apt/lists/* && \
     pip install /tmp/wazo_router_confd-1.0-py3-none-any.whl && \
     rm /tmp/wazo_router_confd-1.0-py3-none-any.whl
