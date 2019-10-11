@@ -3,6 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.domain import Domain
+from wazo_router_confd.models.tenant import Tenant
 from wazo_router_confd.schemas import domain as schema
 
 
@@ -16,6 +17,10 @@ def get_domain(db: Session, domain: str) -> Domain:
 
 def get_domains(db: Session, offset: int = 0, limit: int = 100) -> List[Domain]:
     return db.query(Domain).offset(offset).limit(limit).all()
+
+
+def get_tenant_by_domains(db: Session, domains: List[str]) -> Tenant:
+    return db.query(Tenant).join(Domain).filter(Domain.domain.in_(domains)).first()
 
 
 def get_domains_by_tenant(

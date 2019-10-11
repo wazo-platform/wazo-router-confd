@@ -12,11 +12,16 @@ from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import kamailio as schema
 
 
+def local_part_and_domain_from_uri(uri: str) -> str:
+    _, address = parseaddr(uri)
+    local_part, domain_name = address.rsplit('@', 1)
+    return (local_part, domain_name)
+
+
 def routing(db: Session, request: schema.RoutingRequest) -> dict:
     routes = []
     # get the domain name from the to uri
-    _, address = parseaddr(request.to_uri)
-    local_part, domain_name = address.rsplit('@', 1)
+    local_part, domain_name = local_part_and_domain_from_uri(request.to_uri)
     # get all the ipbxs linked to that domain
     ipbxs = set()
     ipbxs_by_domain = (

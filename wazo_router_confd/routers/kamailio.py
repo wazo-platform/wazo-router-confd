@@ -2,8 +2,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.database import get_db
-from wazo_router_confd.schemas import kamailio as schema, cdr as cdr_schema
-from wazo_router_confd.services import kamailio as service, cdr as cdr_service
+from wazo_router_confd.schemas import kamailio as schema
+from wazo_router_confd.schemas import cdr as cdr_schema
+from wazo_router_confd.services import kamailio as service
+from wazo_router_confd.services import cdr as cdr_service
+from wazo_router_confd.services import domain as domain_service
 
 
 router = APIRouter()
@@ -20,8 +23,15 @@ def kamailio_routing(request: schema.RoutingRequest, db: Session = Depends(get_d
 
 @router.post("/kamailio/cdr")
 def kamailio_cdr(request: schema.CDRRequest, db: Session = Depends(get_db)):
+    domains = [
+        service.local_part_and_domain_from_uri(request.from_uri)[1],
+        service.local_part_and_domain_from_uri(request.to_uri)[1],
+    ]
+    tenant = domain_service.get_tenant_by_domains(db=db, domains=domains)
+    if tenant is None:
+        return {"success": False, "cdr": None}
     cdr = cdr_schema.CDRCreate(
-        tenant_id=1,
+        tenant_id=tenant.id,
         source_ip=request.source_ip,
         source_port=request.source_port,
         from_uri=request.from_uri,
@@ -31,4 +41,4 @@ def kamailio_cdr(request: schema.CDRRequest, db: Session = Depends(get_db)):
         duration=request.duration,
     )
     response = cdr_service.create_cdr(db, cdr=cdr)
-    return {"success": bool(response)}
+    return {"success": bool(response), "cdr": cdr}
