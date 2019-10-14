@@ -45,3 +45,8 @@ def kamailio_cdr(request: schema.CDRRequest, db: Session = Depends(get_db)):
     )
     response = cdr_service.create_cdr(db, cdr=cdr)
     return {"success": bool(response), "cdr": cdr}
+
+
+@router.post("/kamailio/auth")
+def kamailio_auth(request: schema.AuthRequest, db: Session = Depends(get_db)):
+    return service.auth(db, request=request)

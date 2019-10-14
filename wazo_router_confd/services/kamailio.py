@@ -14,6 +14,7 @@ from wazo_router_confd.models.did import DID
 from wazo_router_confd.models.domain import Domain
 from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import kamailio as schema
+from wazo_router_confd.services import password as password_service
 
 
 def local_part_and_domain_from_uri(uri: str) -> Tuple[str, str]:
@@ -91,3 +92,19 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
         )
     # return the JSON document, compatible with the rtjson Kamailio module form
     return {"version": "1.0", "routing": "serial", "routes": routes}
+
+
+def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
+    found_ipbx = None
+    if request.username is not None and request.password is not None:
+        ipbxs = (
+            db.query(IPBX)
+            .filter(IPBX.username == request.username)
+            .filter(IPBX.password.isnot(None))
+            .order_by(IPBX.id)
+        )
+        for ipbx in ipbxs:
+            if password_service.verify(ipbx.password, request.password):
+                found_ipbx = ipbx
+                break
+    return schema.AuthResponse(success=found_ipbx is not None, ipbx=found_ipbx)
