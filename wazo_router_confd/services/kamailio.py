@@ -4,6 +4,7 @@
 import re
 
 from email.utils import parseaddr
+from typing import Tuple
 
 from sqlalchemy.orm import Session
 
@@ -15,7 +16,7 @@ from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import kamailio as schema
 
 
-def local_part_and_domain_from_uri(uri: str) -> str:
+def local_part_and_domain_from_uri(uri: str) -> Tuple[str, str]:
     _, address = parseaddr(uri)
     local_part, domain_name = address.rsplit('@', 1)
     return (local_part, domain_name)

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import ipbx as schema
+from wazo_router_confd.services import password as password_service
 
 
 def get_ipbx(db: Session, ipbx_id: int) -> IPBX:
@@ -38,8 +39,7 @@ def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
         port=ipbx.port,
         registered=ipbx.registered,
         username=ipbx.username,
-        sha1=ipbx.sha1,
-        sha1b=ipbx.sha1b,
+        password=password_service.hash(ipbx.password),
     )
     db.add(db_ipbx)
     db.commit()
@@ -67,8 +67,8 @@ def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
         db_ipbx.username = (
             ipbx.username if ipbx.username is not None else db_ipbx.username
         )
-        db_ipbx.sha1 = ipbx.sha1 if ipbx.sha1 is not None else db_ipbx.sha1
-        db_ipbx.sha1b = ipbx.sha1b if ipbx.sha1b is not None else db_ipbx.sha1b
+        if ipbx.password is not None:
+            db_ipbx.password = password_service.hash(ipbx.password)
         db.commit()
         db.refresh(db_ipbx)
     return db_ipbx

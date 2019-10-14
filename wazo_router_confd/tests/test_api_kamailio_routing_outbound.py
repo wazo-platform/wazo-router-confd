@@ -27,8 +27,7 @@ def test_kamailio_routing_outbound_with_single_ipbx(app=None, client=None):
         domain=domain,
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
         tenant=tenant,
     )
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk])
@@ -98,8 +97,7 @@ def test_kamailio_routing_outbound_with_no_matching_ipbx(app=None, client=None):
         domain=domain,
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
         tenant=tenant,
     )
     session.add_all([tenant, domain, ipbx])

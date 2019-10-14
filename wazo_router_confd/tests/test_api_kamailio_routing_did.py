@@ -24,8 +24,7 @@ def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
         ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
@@ -108,8 +107,7 @@ def test_kamailio_routing_did_with_no_matching_ipbx(app=None, client=None):
         ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(

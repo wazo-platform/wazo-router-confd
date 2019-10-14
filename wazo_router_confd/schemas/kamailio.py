@@ -13,9 +13,9 @@ class RoutingRequest(BaseModel):
     source_port: Optional[int] = None
     call_id: Optional[str] = None
     from_name: Optional[str] = None
-    from_uri: Optional[str] = None
+    from_uri: str
     from_tag: Optional[str] = None
-    to_uri: Optional[str] = None
+    to_uri: str
     to_name: Optional[str] = None
     to_tag: Optional[str] = None
 
@@ -25,7 +25,7 @@ class CDRRequest(BaseModel):
     source_ip: Optional[str] = None
     source_port: Optional[int] = None
     call_id: Optional[str] = None
-    from_uri: Optional[str] = None
-    to_uri: Optional[str] = None
+    from_uri: str
+    to_uri: str
     call_start: Optional[datetime] = None
     duration: Optional[int] = None

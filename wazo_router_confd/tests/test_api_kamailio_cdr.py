@@ -21,8 +21,7 @@ def test_kamailio_cdr(app=None, client=None):
         ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
@@ -92,8 +91,7 @@ def test_kamailio_cdr_failed_no_domain(app=None, client=None):
         ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(

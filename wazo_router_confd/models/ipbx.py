@@ -44,5 +44,4 @@ class IPBX(Base):
     port = Column(Integer, nullable=False, default=5060)
     registered = Column(Boolean, default=False, nullable=False)
     username = Column(String(50), nullable=True)
-    sha1 = Column(String(128), nullable=True)
-    sha1b = Column(String(128), nullable=True)
+    password = Column(String(192), nullable=True)
