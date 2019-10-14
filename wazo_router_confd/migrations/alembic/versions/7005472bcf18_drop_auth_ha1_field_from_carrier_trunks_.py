@@ -17,12 +17,26 @@ depends_on = None
 
 
 def upgrade():
-    op.drop_column('ipbx', 'auth_ha1')
+    op.drop_column('carrier_trunks', 'auth_ha1')
+    op.drop_column('carrier_trunks', 'auth_password')
+    op.add_column(
+        'carrier_trunks',
+        sa.Column(
+            'auth_password', sa.VARCHAR(length=192), autoincrement=False, nullable=True
+        ),
+    )
 
 
 def downgrade():
+    op.drop_column('carrier_trunks', 'auth_password')
     op.add_column(
-        'ipbx',
+        'carrier_trunks',
+        sa.Column(
+            'auth_password', sa.VARCHAR(length=64), autoincrement=False, nullable=True
+        ),
+    )
+    op.add_column(
+        'carrier_trunks',
         sa.Column(
             'auth_ha1', sa.VARCHAR(length=128), autoincrement=False, nullable=True
         ),
