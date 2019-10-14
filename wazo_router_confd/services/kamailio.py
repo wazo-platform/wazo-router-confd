@@ -53,7 +53,7 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
     for ipbx in ipbxs:
         routes.append(
             {
-                "uri": "sip:%s@%s:%s" % (local_part, ipbx.ip_fqdn, ipbx.port),
+                "dst_uri": "sip:%s:%s" % (ipbx.ip_fqdn, ipbx.port),
                 "path": "",
                 "socket": "",
                 "headers": {
@@ -76,8 +76,7 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
     for carrier_trunk in carrier_trunks:
         routes.append(
             {
-                "uri": "sip:%s@%s:%s"
-                % (local_part, carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
+                "dst_uri": "sip:%s:%s" % (carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
                 "path": "",
                 "socket": "",
                 "headers": {

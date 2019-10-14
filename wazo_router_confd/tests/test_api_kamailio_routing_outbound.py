@@ -63,7 +63,7 @@ def test_kamailio_routing_outbound_with_single_ipbx(app=None, client=None):
             "routing": "serial",
             "routes": [
                 {
-                    "uri": "sip:200@%s:%s"
+                    "dst_uri": "sip:%s:%s"
                     % (carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
                     "path": "",
                     "socket": "",

@@ -56,7 +56,7 @@ def test_kamailio_routing_domain_with_single_ipbx(app=None, client=None):
             "routing": "serial",
             "routes": [
                 {
-                    "uri": "sip:200@%s:5060" % (ipbx.ip_fqdn),
+                    "dst_uri": "sip:%s:5060" % (ipbx.ip_fqdn),
                     "path": "",
                     "socket": "",
                     "headers": {
