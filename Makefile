@@ -23,6 +23,10 @@ black:
 flake8:
 	flake8 --ignore=E501,E402,W503 wazo_router_confd
 
+.PHONY: mypy
+mypy:
+	mypy wazo_router_confd
+
 .PHONY: pylint
 pylint:
 	pylint wazo_router_confd
