@@ -1,3 +1,6 @@
+# Copyright 2019 The Wazo Authors  (see the AUTHORS file)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from configparser import ConfigParser, Error as ConfigParserError
 from typing import Optional
 
@@ -8,7 +11,9 @@ from .app import get_app
 
 
 @click.command()
-@click.option("-c", "--config-file", type=click.Path(), help="Path to the configuration file")
+@click.option(
+    "-c", "--config-file", type=click.Path(), help="Path to the configuration file"
+)
 @click.option(
     "--host",
     type=str,

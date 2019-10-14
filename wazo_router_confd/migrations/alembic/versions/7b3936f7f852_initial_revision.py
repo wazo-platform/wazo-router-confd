@@ -1,3 +1,6 @@
+# Copyright 2019 The Wazo Authors  (see the AUTHORS file)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 """Initial revision
 
 Revision ID: 7b3936f7f852

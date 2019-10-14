@@ -51,3 +51,5 @@ venv/
 
 # docker-compose data dir
 data/
+pycodestyle.txt
+pylint.txt
