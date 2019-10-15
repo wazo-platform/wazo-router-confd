@@ -47,6 +47,46 @@ def downgrade():
 
 def upgrade():
     op.create_table(
+        'tenants',
+        sa.Column(
+            'id',
+            sa.INTEGER(),
+            server_default=sa.text("nextval('tenants_id_seq'::regclass)"),
+            autoincrement=True,
+            nullable=False,
+        ),
+        sa.Column('name', sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.PrimaryKeyConstraint('id', name='tenants_pkey'),
+        postgresql_ignore_search_path=False,
+    )
+    op.create_index('ix_tenants_name', 'tenants', ['name'], unique=True)
+    op.create_index('ix_tenants_id', 'tenants', ['id'], unique=False)
+    #
+    op.create_table(
+        'domains',
+        sa.Column(
+            'id',
+            sa.INTEGER(),
+            server_default=sa.text("nextval('domains_id_seq'::regclass)"),
+            autoincrement=True,
+            nullable=False,
+        ),
+        sa.Column('domain', sa.VARCHAR(length=64), autoincrement=False, nullable=True),
+        sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.ForeignKeyConstraint(
+            ['tenant_id'],
+            ['tenants.id'],
+            name='domains_tenant_id_fkey',
+            ondelete='CASCADE',
+        ),
+        sa.PrimaryKeyConstraint('id', name='domains_pkey'),
+        sa.UniqueConstraint('tenant_id', 'id', name='domains_tenant_id_id_key'),
+        postgresql_ignore_search_path=False,
+    )
+    op.create_index('ix_domains_id', 'domains', ['id'], unique=False)
+    op.create_index('ix_domains_domain', 'domains', ['domain'], unique=True)
+    #
+    op.create_table(
         'carriers',
         sa.Column(
             'id',
@@ -68,76 +108,7 @@ def upgrade():
     )
     op.create_index('ix_carriers_name', 'carriers', ['name'], unique=True)
     op.create_index('ix_carriers_id', 'carriers', ['id'], unique=False)
-    op.create_table(
-        'ipbx',
-        sa.Column(
-            'id',
-            sa.INTEGER(),
-            server_default=sa.text("nextval('ipbx_id_seq'::regclass)"),
-            autoincrement=True,
-            nullable=False,
-        ),
-        sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('domain_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('customer', sa.INTEGER(), autoincrement=False, nullable=True),
-        sa.Column('ip_fqdn', sa.VARCHAR(), autoincrement=False, nullable=False),
-        sa.Column('port', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('registered', sa.BOOLEAN(), autoincrement=False, nullable=False),
-        sa.Column(
-            'username', sa.VARCHAR(length=50), autoincrement=False, nullable=True
-        ),
-        sa.Column('sha1', sa.VARCHAR(length=128), autoincrement=False, nullable=True),
-        sa.Column('sha1b', sa.VARCHAR(length=128), autoincrement=False, nullable=True),
-        sa.ForeignKeyConstraint(
-            ['tenant_id', 'domain_id'],
-            ['domains.tenant_id', 'domains.id'],
-            name='ipbx_tenant_id_fkey',
-            ondelete='CASCADE',
-        ),
-        sa.ForeignKeyConstraint(
-            ['tenant_id'],
-            ['tenants.id'],
-            name='ipbx_tenant_id_fkey1',
-            ondelete='CASCADE',
-        ),
-        sa.PrimaryKeyConstraint('id', name='ipbx_pkey'),
-        sa.UniqueConstraint('tenant_id', 'id', name='ipbx_tenant_id_id_key'),
-        postgresql_ignore_search_path=False,
-    )
-    op.create_index('ix_ipbx_id', 'ipbx', ['id'], unique=False)
-    op.create_table(
-        'dids',
-        sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
-        sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('ipbx_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column(
-            'carrier_trunk_id', sa.INTEGER(), autoincrement=False, nullable=False
-        ),
-        sa.Column('did_regex', sa.VARCHAR(), autoincrement=False, nullable=True),
-        sa.Column('did_prefix', sa.VARCHAR(), autoincrement=False, nullable=True),
-        sa.ForeignKeyConstraint(
-            ['carrier_trunk_id'],
-            ['carrier_trunks.id'],
-            name='dids_carrier_trunk_id_fkey',
-            ondelete='CASCADE',
-        ),
-        sa.ForeignKeyConstraint(
-            ['tenant_id', 'ipbx_id'],
-            ['ipbx.tenant_id', 'ipbx.id'],
-            name='dids_tenant_id_fkey',
-            ondelete='CASCADE',
-        ),
-        sa.ForeignKeyConstraint(
-            ['tenant_id'],
-            ['tenants.id'],
-            name='dids_tenant_id_fkey1',
-            ondelete='CASCADE',
-        ),
-        sa.PrimaryKeyConstraint('id', name='dids_pkey'),
-        sa.UniqueConstraint('did_regex', name='dids_did_regex_key'),
-    )
-    op.create_index('ix_dids_id', 'dids', ['id'], unique=False)
-    op.create_index('ix_dids_did_prefix', 'dids', ['did_prefix'], unique=False)
+    #
     op.create_table(
         'carrier_trunks',
         sa.Column(
@@ -184,6 +155,79 @@ def upgrade():
     )
     op.create_index('ix_carrier_trunks_name', 'carrier_trunks', ['name'], unique=True)
     op.create_index('ix_carrier_trunks_id', 'carrier_trunks', ['id'], unique=False)
+    #
+    op.create_table(
+        'ipbx',
+        sa.Column(
+            'id',
+            sa.INTEGER(),
+            server_default=sa.text("nextval('ipbx_id_seq'::regclass)"),
+            autoincrement=True,
+            nullable=False,
+        ),
+        sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.Column('domain_id', sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.Column('customer', sa.INTEGER(), autoincrement=False, nullable=True),
+        sa.Column('ip_fqdn', sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column('port', sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.Column('registered', sa.BOOLEAN(), autoincrement=False, nullable=False),
+        sa.Column(
+            'username', sa.VARCHAR(length=50), autoincrement=False, nullable=True
+        ),
+        sa.Column('sha1', sa.VARCHAR(length=128), autoincrement=False, nullable=True),
+        sa.Column('sha1b', sa.VARCHAR(length=128), autoincrement=False, nullable=True),
+        sa.ForeignKeyConstraint(
+            ['tenant_id', 'domain_id'],
+            ['domains.tenant_id', 'domains.id'],
+            name='ipbx_tenant_id_fkey',
+            ondelete='CASCADE',
+        ),
+        sa.ForeignKeyConstraint(
+            ['tenant_id'],
+            ['tenants.id'],
+            name='ipbx_tenant_id_fkey1',
+            ondelete='CASCADE',
+        ),
+        sa.PrimaryKeyConstraint('id', name='ipbx_pkey'),
+        sa.UniqueConstraint('tenant_id', 'id', name='ipbx_tenant_id_id_key'),
+        postgresql_ignore_search_path=False,
+    )
+    op.create_index('ix_ipbx_id', 'ipbx', ['id'], unique=False)
+    #
+    op.create_table(
+        'dids',
+        sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
+        sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.Column('ipbx_id', sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.Column(
+            'carrier_trunk_id', sa.INTEGER(), autoincrement=False, nullable=False
+        ),
+        sa.Column('did_regex', sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column('did_prefix', sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.ForeignKeyConstraint(
+            ['carrier_trunk_id'],
+            ['carrier_trunks.id'],
+            name='dids_carrier_trunk_id_fkey',
+            ondelete='CASCADE',
+        ),
+        sa.ForeignKeyConstraint(
+            ['tenant_id', 'ipbx_id'],
+            ['ipbx.tenant_id', 'ipbx.id'],
+            name='dids_tenant_id_fkey',
+            ondelete='CASCADE',
+        ),
+        sa.ForeignKeyConstraint(
+            ['tenant_id'],
+            ['tenants.id'],
+            name='dids_tenant_id_fkey1',
+            ondelete='CASCADE',
+        ),
+        sa.PrimaryKeyConstraint('id', name='dids_pkey'),
+        sa.UniqueConstraint('did_regex', name='dids_did_regex_key'),
+    )
+    op.create_index('ix_dids_id', 'dids', ['id'], unique=False)
+    op.create_index('ix_dids_did_prefix', 'dids', ['did_prefix'], unique=False)
+    #
     op.create_table(
         'cdrs',
         sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
@@ -206,21 +250,7 @@ def upgrade():
         sa.PrimaryKeyConstraint('id', name='cdrs_pkey'),
     )
     op.create_index('ix_cdrs_id', 'cdrs', ['id'], unique=False)
-    op.create_table(
-        'tenants',
-        sa.Column(
-            'id',
-            sa.INTEGER(),
-            server_default=sa.text("nextval('tenants_id_seq'::regclass)"),
-            autoincrement=True,
-            nullable=False,
-        ),
-        sa.Column('name', sa.VARCHAR(), autoincrement=False, nullable=True),
-        sa.PrimaryKeyConstraint('id', name='tenants_pkey'),
-        postgresql_ignore_search_path=False,
-    )
-    op.create_index('ix_tenants_name', 'tenants', ['name'], unique=True)
-    op.create_index('ix_tenants_id', 'tenants', ['id'], unique=False)
+    #
     op.create_table(
         'routing_rules',
         sa.Column(
@@ -255,29 +285,7 @@ def upgrade():
         postgresql_ignore_search_path=False,
     )
     op.create_index('ix_routing_rules_id', 'routing_rules', ['id'], unique=False)
-    op.create_table(
-        'domains',
-        sa.Column(
-            'id',
-            sa.INTEGER(),
-            server_default=sa.text("nextval('domains_id_seq'::regclass)"),
-            autoincrement=True,
-            nullable=False,
-        ),
-        sa.Column('domain', sa.VARCHAR(length=64), autoincrement=False, nullable=True),
-        sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.ForeignKeyConstraint(
-            ['tenant_id'],
-            ['tenants.id'],
-            name='domains_tenant_id_fkey',
-            ondelete='CASCADE',
-        ),
-        sa.PrimaryKeyConstraint('id', name='domains_pkey'),
-        sa.UniqueConstraint('tenant_id', 'id', name='domains_tenant_id_id_key'),
-        postgresql_ignore_search_path=False,
-    )
-    op.create_index('ix_domains_id', 'domains', ['id'], unique=False)
-    op.create_index('ix_domains_domain', 'domains', ['domain'], unique=True)
+    #
     op.create_table(
         'routing_groups',
         sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),

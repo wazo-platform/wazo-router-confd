@@ -5,40 +5,46 @@ from .common import get_app_and_client
 
 
 @get_app_and_client
-def test_kamailio_routing_outbound_with_single_ipbx(app=None, client=None):
+def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
-    from wazo_router_confd.models.tenant import Tenant
-    from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+    from wazo_router_confd.models.domain import Domain
+    from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.ipbx import IPBX
+    from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
     tenant = Tenant(name='fabio')
     domain = Domain(domain='testdomain.com', tenant=tenant)
-    carrier = Carrier(name='carrier1', tenant=tenant)
-    carrier_trunk = CarrierTrunk(
-        name='trunk1', carrier=carrier, sip_proxy='192.168.1.1'
-    )
-
     ipbx = IPBX(
-        customer=1,
-        ip_fqdn='10.0.0.1',
+        tenant=tenant,
         domain=domain,
+        customer=1,
+        ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
-        tenant=tenant,
+        password='password',
     )
-    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk])
+    carrier = Carrier(name='carrier', tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
+    )
+    did = DID(
+        did_regex=r'^39[0-9]+$',
+        did_prefix='39',
+        tenant=tenant,
+        ipbx=ipbx,
+        carrier_trunk=carrier_trunk,
+    )
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     request_from_name = "From name"
     request_from_uri = "100@sourcedomain.com"
     request_from_tag = "from_tag"
     request_to_name = "to name"
-    request_to_uri = "200@destinationdomain.com"
+    request_to_uri = "39123456789@dummy.com"
     request_to_tag = "to_tag"
     #
     response = client.post(
@@ -64,8 +70,7 @@ def test_kamailio_routing_outbound_with_single_ipbx(app=None, client=None):
             "routing": "serial",
             "routes": [
                 {
-                    "uri": "sip:200@%s:%s"
-                    % (carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
+                    "dst_uri": "sip:%s:5060" % (ipbx.ip_fqdn),
                     "path": "",
                     "socket": "",
                     "headers": {
@@ -83,33 +88,46 @@ def test_kamailio_routing_outbound_with_single_ipbx(app=None, client=None):
 
 
 @get_app_and_client
-def test_kamailio_routing_outbound_with_no_matching_ipbx(app=None, client=None):
+def test_kamailio_routing_did_with_no_matching_ipbx(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
-    from wazo_router_confd.models.tenant import Tenant
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.carrier_trunk import CarrierTrunk
     from wazo_router_confd.models.domain import Domain
+    from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.ipbx import IPBX
+    from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
     tenant = Tenant(name='fabio')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
-        customer=1,
-        ip_fqdn='10.0.0.2',
+        tenant=tenant,
         domain=domain,
+        customer=1,
+        ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
-        tenant=tenant,
+        password='password',
     )
-    session.add_all([tenant, domain, ipbx])
+    carrier = Carrier(name='carrier', tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
+    )
+    did = DID(
+        did_regex=r'^39[0-9]+$',
+        did_prefix='39',
+        tenant=tenant,
+        ipbx=ipbx,
+        carrier_trunk=carrier_trunk,
+    )
+    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
     request_from_name = "From name"
     request_from_uri = "100@sourcedomain.com"
     request_from_tag = "from_tag"
     request_to_name = "to name"
-    request_to_uri = "200@anotherdomain.com"
+    request_to_uri = "36123456789@dummy.com"
     request_to_tag = "to_tag"
     #
     response = client.post(

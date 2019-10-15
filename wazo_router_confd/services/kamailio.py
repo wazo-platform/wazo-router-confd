@@ -4,6 +4,7 @@
 import re
 
 from email.utils import parseaddr
+from typing import Tuple
 
 from sqlalchemy.orm import Session
 
@@ -13,13 +14,19 @@ from wazo_router_confd.models.did import DID
 from wazo_router_confd.models.domain import Domain
 from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import kamailio as schema
+from wazo_router_confd.services import password as password_service
+
+
+def local_part_and_domain_from_uri(uri: str) -> Tuple[str, str]:
+    _, address = parseaddr(uri)
+    local_part, domain_name = address.rsplit('@', 1)
+    return (local_part, domain_name)
 
 
 def routing(db: Session, request: schema.RoutingRequest) -> dict:
     routes = []
     # get the domain name from the to uri
-    _, address = parseaddr(request.to_uri)
-    local_part, domain_name = address.rsplit('@', 1)
+    local_part, domain_name = local_part_and_domain_from_uri(request.to_uri)
     # get all the ipbxs linked to that domain
     ipbxs = set()
     ipbxs_by_domain = (
@@ -46,7 +53,7 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
     for ipbx in ipbxs:
         routes.append(
             {
-                "uri": "sip:%s@%s:%s" % (local_part, ipbx.ip_fqdn, ipbx.port),
+                "dst_uri": "sip:%s:%s" % (ipbx.ip_fqdn, ipbx.port),
                 "path": "",
                 "socket": "",
                 "headers": {
@@ -69,8 +76,8 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
     for carrier_trunk in carrier_trunks:
         routes.append(
             {
-                "uri": "sip:%s@%s:%s"
-                % (local_part, carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
+                "dst_uri": "sip:%s:%s"
+                % (carrier_trunk.sip_proxy, carrier_trunk.sip_proxy_port),
                 "path": "",
                 "socket": "",
                 "headers": {
@@ -85,3 +92,19 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
         )
     # return the JSON document, compatible with the rtjson Kamailio module form
     return {"version": "1.0", "routing": "serial", "routes": routes}
+
+
+def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
+    found_ipbx = None
+    if request.username is not None and request.password is not None:
+        ipbxs = (
+            db.query(IPBX)
+            .filter(IPBX.username == request.username)
+            .filter(IPBX.password.isnot(None))
+            .order_by(IPBX.id)
+        )
+        for ipbx in ipbxs:
+            if password_service.verify(ipbx.password, request.password):
+                found_ipbx = ipbx
+                break
+    return schema.AuthResponse(success=found_ipbx is not None, ipbx=found_ipbx)

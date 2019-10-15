@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.carrier_trunk import CarrierTrunk
 from wazo_router_confd.schemas import carrier_trunk as schema
+from wazo_router_confd.services import password as password_service
 
 
 def get_carrier_trunk(db: Session, carrier_trunk_id: int) -> CarrierTrunk:
@@ -45,8 +46,7 @@ def create_carrier_trunk(
         sip_proxy_port=carrier_trunk.sip_proxy_port,
         registered=carrier_trunk.registered,
         auth_username=carrier_trunk.auth_username,
-        auth_password=carrier_trunk.auth_password,
-        auth_ha1=carrier_trunk.auth_ha1,
+        auth_password=password_service.hash(carrier_trunk.auth_password),
         realm=carrier_trunk.realm,
         registrar_proxy=carrier_trunk.registrar_proxy,
         from_domain=carrier_trunk.from_domain,
@@ -91,16 +91,10 @@ def update_carrier_trunk(
             if carrier_trunk.auth_username is not None
             else db_carrier_trunk.auth_username
         )
-        db_carrier_trunk.auth_password = (
-            carrier_trunk.auth_password
-            if carrier_trunk.auth_password is not None
-            else db_carrier_trunk.auth_password
-        )
-        db_carrier_trunk.auth_ha1 = (
-            carrier_trunk.auth_ha1
-            if carrier_trunk.auth_ha1 is not None
-            else db_carrier_trunk.auth_ha1
-        )
+        if carrier_trunk.auth_password is not None:
+            db_carrier_trunk.auth_password = password_service.hash(
+                carrier_trunk.auth_password
+            )
         db_carrier_trunk.realm = (
             carrier_trunk.realm
             if carrier_trunk.realm is not None

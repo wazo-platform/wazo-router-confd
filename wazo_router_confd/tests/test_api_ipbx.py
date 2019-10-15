@@ -26,8 +26,7 @@ def test_create_ipbx(app=None, client=None):
             "port": 5060,
             "registered": True,
             "username": "user",
-            "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-            "sha1b": "f10e2821bbbea527ea02200352313bc059445190",
+            "password": "password",
         },
     )
     assert response.status_code == 200
@@ -40,8 +39,6 @@ def test_create_ipbx(app=None, client=None):
         "port": 5060,
         "registered": True,
         "username": "user",
-        "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-        "sha1b": "f10e2821bbbea527ea02200352313bc059445190",
     }
 
 
@@ -61,8 +58,7 @@ def test_get_ipbx(app=None, client=None):
         ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
     )
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain, ipbx])
@@ -79,8 +75,6 @@ def test_get_ipbx(app=None, client=None):
         "tenant_id": tenant.id,
         "registered": True,
         "username": "user",
-        "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-        "sha1b": "f10e2821bbbea527ea02200352313bc059445190",
     }
 
 
@@ -106,8 +100,7 @@ def test_update_ipbx(app=None, client=None):
         ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
     )
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain, ipbx])
@@ -133,8 +126,6 @@ def test_update_ipbx(app=None, client=None):
         "tenant_id": 2,
         "registered": False,
         "username": "otheruser",
-        "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-        "sha1b": "f10e2821bbbea527ea02200352313bc059445190",
     }
 
 
@@ -169,8 +160,7 @@ def test_delete_ipbx(app=None, client=None):
         ip_fqdn='mypbx.com',
         registered=True,
         username='user',
-        sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709',
-        sha1b='f10e2821bbbea527ea02200352313bc059445190',
+        password='password',
     )
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain, ipbx])
@@ -187,8 +177,6 @@ def test_delete_ipbx(app=None, client=None):
         "tenant_id": 1,
         "registered": True,
         "username": "user",
-        "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-        "sha1b": "f10e2821bbbea527ea02200352313bc059445190",
     }
 
 

@@ -15,7 +15,7 @@ from wazo_router_confd.services import carrier_trunk as service
 router = APIRouter()
 
 
-@router.post("/carrier_trunks/", response_model=schema.CarrierTrunk)
+@router.post("/carrier_trunks/", response_model=schema.CarrierTrunkRead)
 def create_carrier_trunk(
     carrier_trunk: schema.CarrierTrunkCreate, db: Session = Depends(get_db)
 ):
@@ -42,7 +42,7 @@ def create_carrier_trunk(
     return service.create_carrier_trunk(db=db, carrier_trunk=carrier_trunk)
 
 
-@router.get("/carrier_trunks/", response_model=List[schema.CarrierTrunk])
+@router.get("/carrier_trunks/", response_model=List[schema.CarrierTrunkRead])
 def read_carrier_trunkss(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
@@ -50,7 +50,9 @@ def read_carrier_trunkss(
     return carrier_trunks
 
 
-@router.get("/carrier_trunks/{carrier_trunk_id}", response_model=schema.CarrierTrunk)
+@router.get(
+    "/carrier_trunks/{carrier_trunk_id}", response_model=schema.CarrierTrunkRead
+)
 def read_carrier_trunk(carrier_trunk_id: int, db: Session = Depends(get_db)):
     db_carrier_trunk = service.get_carrier_trunk(db, carrier_trunk_id=carrier_trunk_id)
     if db_carrier_trunk is None:
@@ -58,7 +60,9 @@ def read_carrier_trunk(carrier_trunk_id: int, db: Session = Depends(get_db)):
     return db_carrier_trunk
 
 
-@router.put("/carrier_trunks/{carrier_trunk_id}", response_model=schema.CarrierTrunk)
+@router.put(
+    "/carrier_trunks/{carrier_trunk_id}", response_model=schema.CarrierTrunkRead
+)
 def update_carrier_trunk(
     carrier_trunk_id: int,
     carrier_trunk: schema.CarrierTrunkUpdate,
@@ -72,7 +76,9 @@ def update_carrier_trunk(
     return db_carrier_trunk
 
 
-@router.delete("/carrier_trunks/{carrier_trunk_id}", response_model=schema.CarrierTrunk)
+@router.delete(
+    "/carrier_trunks/{carrier_trunk_id}", response_model=schema.CarrierTrunkRead
+)
 def delete_carrier_trunk(carrier_trunk_id: int, db: Session = Depends(get_db)):
     db_carrier_trunk = service.delete_carrier_trunk(
         db, carrier_trunk_id=carrier_trunk_id
