@@ -39,6 +39,7 @@ def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
         customer=ipbx.customer,
         ip_fqdn=ipbx.ip_fqdn,
         port=ipbx.port,
+        ip_address=ipbx.ip_address,
         registered=ipbx.registered,
         username=ipbx.username,
         password=password_service.hash(ipbx.password),
@@ -66,6 +67,9 @@ def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
         )
         db_ipbx.ip_fqdn = ipbx.ip_fqdn if ipbx.ip_fqdn is not None else db_ipbx.ip_fqdn
         db_ipbx.port = ipbx.port if ipbx.port is not None else db_ipbx.port
+        db_ipbx.ip_address = (
+            ipbx.ip_address if ipbx.ip_address is not None else db_ipbx.ip_address
+        )
         db_ipbx.registered = (
             ipbx.registered if ipbx.registered is not None else db_ipbx.registered
         )

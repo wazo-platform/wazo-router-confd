@@ -23,6 +23,7 @@ class CarrierTrunk(Base):
     name = Column(String(256), unique=True, index=True)
     sip_proxy = Column(String(128), nullable=False)
     sip_proxy_port = Column(Integer, nullable=False, default=5060)
+    ip_address = Column(String(256), nullable=True)
     registered = Column(Boolean, default=False)
     auth_username = Column(String(35), nullable=True)
     auth_password = Column(String(64), nullable=True)

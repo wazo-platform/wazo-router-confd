@@ -33,6 +33,8 @@ class CDRRequest(BaseModel):
 
 class AuthRequest(BaseModel):
     source_ip: Optional[str] = None
+    source_port: Optional[int] = 5060
+    domain: Optional[str] = None
     username: Optional[str] = None
     password: Optional[str] = None
 
@@ -40,6 +42,8 @@ class AuthRequest(BaseModel):
 class AuthResponse(BaseModel):
     success: bool
     tenant_id: Optional[int] = None
+    carrier_trunk_id: Optional[int] = None
     ipbx_id: Optional[int] = None
+    domain: Optional[str] = None
     username: Optional[str] = None
     password_ha1: Optional[str] = None

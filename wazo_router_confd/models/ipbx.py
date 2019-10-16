@@ -42,6 +42,7 @@ class IPBX(Base):
     domain = relationship("Domain")
     customer = Column(Integer, nullable=True)
     ip_fqdn = Column(String(256), nullable=False)
+    ip_address = Column(String(256), nullable=True)
     port = Column(Integer, nullable=False, default=5060)
     registered = Column(Boolean, default=False, nullable=False)
     username = Column(String(50), nullable=True)

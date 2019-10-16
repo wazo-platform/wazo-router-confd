@@ -6,6 +6,7 @@ import re
 from email.utils import parseaddr
 from typing import Tuple
 
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.carrier import Carrier
@@ -95,22 +96,51 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
 
 
 def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
-    found_ipbx = None
-    if request.username is not None and request.password is not None:
-        ipbxs = (
-            db.query(IPBX)
-            .filter(IPBX.username == request.username)
-            .filter(IPBX.password.isnot(None))
-            .order_by(IPBX.id)
-        )
+    if request.source_ip is not None or request.username is not None:
+        found_ipbx = None
+        ipbxs = db.query(IPBX).order_by(IPBX.id)
+        if request.source_ip is not None:
+            ipbxs = ipbxs.filter(
+                or_(IPBX.ip_address.is_(None), IPBX.ip_address == request.source_ip)
+            )
+        if request.domain is not None:
+            ipbxs = ipbxs.join(Domain).filter(Domain.domain == request.domain)
+        if request.username is not None:
+            ipbxs = ipbxs.filter(
+                or_(
+                    and_(IPBX.password_ha1.is_(None), IPBX.username.is_(None)),
+                    IPBX.username == request.username,
+                )
+            )
         for ipbx in ipbxs:
-            if password_service.verify(ipbx.password, request.password):
+            if (
+                request.password is None
+                or ipbx.password is not None
+                and password_service.verify(ipbx.password, request.password)
+            ):
                 found_ipbx = ipbx
                 break
-    return schema.AuthResponse(
-        success=found_ipbx is not None,
-        tenant_id=found_ipbx.tenant_id if found_ipbx is not None else None,
-        ipbx_id=found_ipbx.id if found_ipbx is not None else None,
-        username=found_ipbx.username if found_ipbx is not None else None,
-        password_ha1=found_ipbx.password_ha1 if found_ipbx is not None else None,
-    )
+        if found_ipbx is not None:
+            return schema.AuthResponse(
+                success=True,
+                tenant_id=found_ipbx.tenant_id,
+                ipbx_id=found_ipbx.id,
+                domain=found_ipbx.domain.domain,
+                username=found_ipbx.username,
+                password_ha1=found_ipbx.password_ha1,
+            )
+    #
+    if request.source_ip is not None:
+        carrier_trunk = (
+            db.query(CarrierTrunk)
+            .filter(CarrierTrunk.ip_address == request.source_ip)
+            .order_by(CarrierTrunk.id)
+            .first()
+        )
+        if carrier_trunk is not None:
+            return schema.AuthResponse(
+                success=True,
+                tenant_id=carrier_trunk.carrier.tenant_id,
+                carrier_trunk_id=carrier_trunk.id,
+            )
+    return schema.AuthResponse(success=False)
