@@ -92,19 +92,27 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
             }
         )
     # build the JSON document, compatible with the rtjson Kamailio module form
-    rtjson = {"success": True, "version": "1.0", "routing": "serial", "routes": routes} if routes else {"success": False}
-    # auth the request, if needed
-    auth_response = auth(db, request=schema.AuthRequest(
-        source_ip=request.source_ip,
-        source_port=request.source_port,
-        domain=request.domain,
-        username=request.username,
-    )) if request.auth else None
-    # return the routing response
-    return schema.RoutingResponse(
-        auth=auth_response,
-        rtjson=rtjson,
+    rtjson = (
+        {"success": True, "version": "1.0", "routing": "serial", "routes": routes}
+        if routes
+        else {"success": False}
     )
+    # auth the request, if needed
+    auth_response = (
+        auth(
+            db,
+            request=schema.AuthRequest(
+                source_ip=request.source_ip,
+                source_port=request.source_port,
+                domain=request.domain,
+                username=request.username,
+            ),
+        )
+        if request.auth
+        else None
+    )
+    # return the routing response
+    return schema.RoutingResponse(auth=auth_response, rtjson=rtjson)
 
 
 def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
