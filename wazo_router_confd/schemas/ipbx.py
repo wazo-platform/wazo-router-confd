@@ -16,6 +16,7 @@ class IPBX(BaseModel):
     registered: bool = False
     username: Optional[str] = None
     password: Optional[str] = None
+    password_ha1: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -44,6 +45,7 @@ class IPBXCreate(BaseModel):
     registered: bool = False
     username: Optional[str] = None
     password: Optional[str] = None
+    password_ha1: Optional[str] = None
 
 
 class IPBXUpdate(BaseModel):
@@ -55,3 +57,4 @@ class IPBXUpdate(BaseModel):
     registered: bool = False
     username: Optional[str] = None
     password: Optional[str] = None
+    password_ha1: Optional[str] = None

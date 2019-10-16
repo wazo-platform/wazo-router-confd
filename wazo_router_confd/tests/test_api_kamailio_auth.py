@@ -22,6 +22,7 @@ def test_kamailio_auth_username_password(app=None, client=None):
         registered=True,
         username='user',
         password=password.hash('password'),
+        password_ha1=password.hash_ha1('user', domain.domain, 'password'),
         tenant=tenant,
     )
     session.add_all([tenant, domain, ipbx])
@@ -34,16 +35,10 @@ def test_kamailio_auth_username_password(app=None, client=None):
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "ipbx": {
-            "id": ipbx.id,
-            "customer": ipbx.customer,
-            "ip_fqdn": ipbx.ip_fqdn,
-            "port": ipbx.port,
-            "domain_id": ipbx.domain_id,
-            "tenant_id": ipbx.tenant_id,
-            "registered": ipbx.registered,
-            "username": ipbx.username,
-        },
+        "tenant_id": ipbx.tenant_id,
+        "ipbx_id": ipbx.id,
+        "username": ipbx.username,
+        "password_ha1": ipbx.password_ha1,
     }
 
 
@@ -64,7 +59,7 @@ def test_kamailio_auth_username_password_fails(app=None, client=None):
         domain=domain,
         registered=True,
         username='user',
-        password=password.hash('password'),
+        password_ha1=password.hash_ha1('user', domain.domain, 'password'),
         tenant=tenant,
     )
     session.add_all([tenant, domain, ipbx])
@@ -79,4 +74,10 @@ def test_kamailio_auth_username_password_fails(app=None, client=None):
         },
     )
     assert response.status_code == 200
-    assert response.json() == {"success": False, "ipbx": None}
+    assert response.json() == {
+        "success": False,
+        "tenant_id": None,
+        "ipbx_id": None,
+        "username": None,
+        "password_ha1": None,
+    }

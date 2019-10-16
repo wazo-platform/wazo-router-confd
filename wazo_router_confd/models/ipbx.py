@@ -25,6 +25,7 @@ class IPBX(Base):
     __tablename__ = "ipbx"
     __table_args__ = (
         UniqueConstraint('tenant_id', 'id'),
+        UniqueConstraint('domain_id', 'username'),
         ForeignKeyConstraint(
             ['tenant_id', 'domain_id'],
             ['domains.tenant_id', 'domains.id'],
@@ -45,3 +46,4 @@ class IPBX(Base):
     registered = Column(Boolean, default=False, nullable=False)
     username = Column(String(50), nullable=True)
     password = Column(String(192), nullable=True)
+    password_ha1 = Column(String(64), nullable=True)

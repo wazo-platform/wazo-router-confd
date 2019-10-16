@@ -107,4 +107,10 @@ def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
             if password_service.verify(ipbx.password, request.password):
                 found_ipbx = ipbx
                 break
-    return schema.AuthResponse(success=found_ipbx is not None, ipbx=found_ipbx)
+    return schema.AuthResponse(
+        success=found_ipbx is not None,
+        tenant_id=found_ipbx.tenant_id if found_ipbx is not None else None,
+        ipbx_id=found_ipbx.id if found_ipbx is not None else None,
+        username=found_ipbx.username if found_ipbx is not None else None,
+        password_ha1=found_ipbx.password_ha1 if found_ipbx is not None else None,
+    )

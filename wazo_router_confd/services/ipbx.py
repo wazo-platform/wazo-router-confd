@@ -5,6 +5,7 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
+from wazo_router_confd.models.domain import Domain
 from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import ipbx as schema
 from wazo_router_confd.services import password as password_service
@@ -31,6 +32,7 @@ def get_ipbxs_by_tenant(
 
 
 def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
+    domain = db.query(Domain).filter(Domain.id == ipbx.domain_id).first()
     db_ipbx = IPBX(
         tenant_id=ipbx.tenant_id,
         domain_id=ipbx.domain_id,
@@ -40,6 +42,9 @@ def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
         registered=ipbx.registered,
         username=ipbx.username,
         password=password_service.hash(ipbx.password),
+        password_ha1=password_service.hash_ha1(
+            ipbx.username, domain.domain, ipbx.password
+        ),
     )
     db.add(db_ipbx)
     db.commit()
@@ -68,7 +73,11 @@ def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
             ipbx.username if ipbx.username is not None else db_ipbx.username
         )
         if ipbx.password is not None:
+            domain = db.query(Domain).filter(Domain.id == ipbx.domain_id).first()
             db_ipbx.password = password_service.hash(ipbx.password)
+            db_ipbx.password_ha1 = (
+                password_service.hash_ha1(ipbx.username, domain.domain, ipbx.password),
+            )
         db.commit()
         db.refresh(db_ipbx)
     return db_ipbx

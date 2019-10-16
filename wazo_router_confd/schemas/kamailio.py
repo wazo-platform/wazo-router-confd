@@ -6,8 +6,6 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from wazo_router_confd.schemas import ipbx as ipbx_schema
-
 
 class RoutingRequest(BaseModel):
     event: Optional[str] = None
@@ -41,4 +39,7 @@ class AuthRequest(BaseModel):
 
 class AuthResponse(BaseModel):
     success: bool
-    ipbx: Optional[ipbx_schema.IPBXRead]
+    tenant_id: Optional[int] = None
+    ipbx_id: Optional[int] = None
+    username: Optional[str] = None
+    password_ha1: Optional[str] = None
