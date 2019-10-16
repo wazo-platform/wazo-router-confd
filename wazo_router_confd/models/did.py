@@ -33,5 +33,5 @@ class DID(Base):
         Integer, ForeignKey('carrier_trunks.id', ondelete='CASCADE'), nullable=False
     )
     carrier_trunk = relationship('CarrierTrunk')
-    did_regex = Column(String, unique=True)
-    did_prefix = Column(String, index=True)
+    did_regex = Column(String(256), unique=True)
+    did_prefix = Column(String(128), index=True)

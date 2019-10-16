@@ -24,5 +24,5 @@ class RoutingRule(Base):
     carrier_trunk = relationship('CarrierTrunk')
     ipbx_id = Column(Integer, ForeignKey('ipbx.id', ondelete='CASCADE'), nullable=False)
     ipbx = relationship('IPBX')
-    did_regex = Column(String, nullable=True)
+    did_regex = Column(String(256), nullable=True)
     route_type = Column(String(10), nullable=False, default='pstn')

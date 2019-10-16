@@ -20,7 +20,7 @@ class CarrierTrunk(Base):
         Integer, ForeignKey('carriers.id', ondelete='CASCADE'), nullable=False
     )
     carrier = relationship('Carrier')
-    name = Column(String, unique=True, index=True)
+    name = Column(String(256), unique=True, index=True)
     sip_proxy = Column(String(128), nullable=False)
     sip_proxy_port = Column(Integer, nullable=False, default=5060)
     registered = Column(Boolean, default=False)
