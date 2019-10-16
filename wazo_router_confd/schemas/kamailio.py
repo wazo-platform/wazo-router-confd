@@ -7,30 +7,6 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class RoutingRequest(BaseModel):
-    event: Optional[str] = None
-    source_ip: Optional[str] = None
-    source_port: Optional[int] = None
-    call_id: Optional[str] = None
-    from_name: Optional[str] = None
-    from_uri: str
-    from_tag: Optional[str] = None
-    to_uri: str
-    to_name: Optional[str] = None
-    to_tag: Optional[str] = None
-
-
-class CDRRequest(BaseModel):
-    event: Optional[str] = None
-    source_ip: Optional[str] = None
-    source_port: Optional[int] = None
-    call_id: Optional[str] = None
-    from_uri: str
-    to_uri: str
-    call_start: Optional[datetime] = None
-    duration: Optional[int] = None
-
-
 class AuthRequest(BaseModel):
     source_ip: Optional[str] = None
     source_port: Optional[int] = 5060
@@ -47,3 +23,35 @@ class AuthResponse(BaseModel):
     domain: Optional[str] = None
     username: Optional[str] = None
     password_ha1: Optional[str] = None
+
+
+class CDRRequest(BaseModel):
+    event: Optional[str] = None
+    source_ip: Optional[str] = None
+    source_port: Optional[int] = None
+    call_id: Optional[str] = None
+    from_uri: str
+    to_uri: str
+    call_start: Optional[datetime] = None
+    duration: Optional[int] = None
+
+
+class RoutingRequest(BaseModel):
+    event: Optional[str] = None
+    auth: bool = False
+    source_ip: Optional[str] = None
+    source_port: Optional[int] = None
+    domain: Optional[str] = None
+    username: Optional[str] = None
+    call_id: Optional[str] = None
+    from_name: Optional[str] = None
+    from_uri: str
+    from_tag: Optional[str] = None
+    to_uri: str
+    to_name: Optional[str] = None
+    to_tag: Optional[str] = None
+
+
+class RoutingResponse(BaseModel):
+    rtjson: Optional[dict]
+    auth: Optional[AuthResponse] = None

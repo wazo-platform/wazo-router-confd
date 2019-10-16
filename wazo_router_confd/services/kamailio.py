@@ -24,7 +24,7 @@ def local_part_and_domain_from_uri(uri: str) -> Tuple[str, str]:
     return (local_part, domain_name)
 
 
-def routing(db: Session, request: schema.RoutingRequest) -> dict:
+def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingResponse:
     routes = []
     # get the domain name from the to uri
     local_part, domain_name = local_part_and_domain_from_uri(request.to_uri)
@@ -91,21 +91,33 @@ def routing(db: Session, request: schema.RoutingRequest) -> dict:
                 "fr_inv_timer": 30000,
             }
         )
-    # return the JSON document, compatible with the rtjson Kamailio module form
-    return {"version": "1.0", "routing": "serial", "routes": routes}
+    # build the JSON document, compatible with the rtjson Kamailio module form
+    rtjson = {"success": True, "version": "1.0", "routing": "serial", "routes": routes} if routes else {"success": False}
+    # auth the request, if needed
+    auth_response = auth(db, request=schema.AuthRequest(
+        source_ip=request.source_ip,
+        source_port=request.source_port,
+        domain=request.domain,
+        username=request.username,
+    )) if request.auth else None
+    # return the routing response
+    return schema.RoutingResponse(
+        auth=auth_response,
+        rtjson=rtjson,
+    )
 
 
 def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
-    if request.source_ip is not None or request.username is not None:
+    if request.source_ip or request.username:
         found_ipbx = None
         ipbxs = db.query(IPBX).order_by(IPBX.id)
-        if request.source_ip is not None:
+        if request.source_ip:
             ipbxs = ipbxs.filter(
                 or_(IPBX.ip_address.is_(None), IPBX.ip_address == request.source_ip)
             )
-        if request.domain is not None:
+        if request.domain:
             ipbxs = ipbxs.join(Domain).filter(Domain.domain == request.domain)
-        if request.username is not None:
+        if request.username:
             ipbxs = ipbxs.filter(
                 or_(
                     and_(IPBX.password_ha1.is_(None), IPBX.username.is_(None)),
@@ -114,8 +126,8 @@ def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
             )
         for ipbx in ipbxs:
             if (
-                request.password is None
-                or ipbx.password is not None
+                not request.password
+                or ipbx.password
                 and password_service.verify(ipbx.password, request.password)
             ):
                 found_ipbx = ipbx
@@ -130,7 +142,7 @@ def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
                 password_ha1=found_ipbx.password_ha1,
             )
     #
-    if request.source_ip is not None:
+    if request.source_ip:
         carrier_trunk = (
             db.query(CarrierTrunk)
             .filter(CarrierTrunk.ip_address == request.source_ip)
