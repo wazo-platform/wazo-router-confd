@@ -26,7 +26,7 @@ class CarrierTrunk(Base):
     ip_address = Column(String(256), nullable=True)
     registered = Column(Boolean, default=False)
     auth_username = Column(String(35), nullable=True)
-    auth_password = Column(String(64), nullable=True)
+    auth_password = Column(String(192), nullable=True)
     realm = Column(String(64), nullable=True)
     registrar_proxy = Column(String(128), nullable=True)
     from_domain = Column(String(64), nullable=True)
