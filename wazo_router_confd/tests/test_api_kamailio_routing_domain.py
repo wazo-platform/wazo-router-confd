@@ -50,8 +50,9 @@ def test_kamailio_routing_domain_with_single_ipbx(app=None, client=None):
     )
     assert response.status_code == 200
     assert response.json() == {
-        "success": True,
+        "auth": None,
         "rtjson": {
+            "success": True,
             "version": "1.0",
             "routing": "serial",
             "routes": [
@@ -118,4 +119,4 @@ def test_kamailio_routing_domain_with_no_matching_ipbx(app=None, client=None):
         },
     )
     assert response.status_code == 200
-    assert response.json() == {"success": False, "rtjson": None}
+    assert response.json() == {"auth": None, "rtjson": {"success": False}}

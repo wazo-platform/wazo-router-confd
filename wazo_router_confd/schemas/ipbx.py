@@ -13,9 +13,11 @@ class IPBX(BaseModel):
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060
+    ip_address: Optional[str] = None
     registered: bool = False
     username: Optional[str] = None
     password: Optional[str] = None
+    password_ha1: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -28,6 +30,7 @@ class IPBXRead(BaseModel):
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060
+    ip_address: Optional[str] = None
     registered: bool = False
     username: Optional[str] = None
 
@@ -41,9 +44,11 @@ class IPBXCreate(BaseModel):
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060
+    ip_address: Optional[str] = None
     registered: bool = False
     username: Optional[str] = None
     password: Optional[str] = None
+    password_ha1: Optional[str] = None
 
 
 class IPBXUpdate(BaseModel):
@@ -52,6 +57,8 @@ class IPBXUpdate(BaseModel):
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060
+    ip_address: Optional[str] = None
     registered: bool = False
     username: Optional[str] = None
     password: Optional[str] = None
+    password_ha1: Optional[str] = None

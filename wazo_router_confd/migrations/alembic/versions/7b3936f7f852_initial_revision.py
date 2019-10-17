@@ -55,7 +55,7 @@ def upgrade():
             autoincrement=True,
             nullable=False,
         ),
-        sa.Column('name', sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column('name', sa.VARCHAR(length=256), autoincrement=False, nullable=True),
         sa.PrimaryKeyConstraint('id', name='tenants_pkey'),
         postgresql_ignore_search_path=False,
     )
@@ -96,7 +96,7 @@ def upgrade():
             nullable=False,
         ),
         sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('name', sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column('name', sa.VARCHAR(length=256), autoincrement=False, nullable=True),
         sa.ForeignKeyConstraint(
             ['tenant_id'],
             ['tenants.id'],
@@ -119,8 +119,10 @@ def upgrade():
             nullable=False,
         ),
         sa.Column('carrier_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('name', sa.VARCHAR(), autoincrement=False, nullable=True),
-        sa.Column('sip_proxy', sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column('name', sa.VARCHAR(length=256), autoincrement=False, nullable=True),
+        sa.Column(
+            'sip_proxy', sa.VARCHAR(length=256), autoincrement=False, nullable=False
+        ),
         sa.Column('sip_proxy_port', sa.INTEGER(), autoincrement=False, nullable=False),
         sa.Column('registered', sa.BOOLEAN(), autoincrement=False, nullable=True),
         sa.Column(
@@ -168,7 +170,9 @@ def upgrade():
         sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
         sa.Column('domain_id', sa.INTEGER(), autoincrement=False, nullable=False),
         sa.Column('customer', sa.INTEGER(), autoincrement=False, nullable=True),
-        sa.Column('ip_fqdn', sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column(
+            'ip_fqdn', sa.VARCHAR(length=256), autoincrement=False, nullable=False
+        ),
         sa.Column('port', sa.INTEGER(), autoincrement=False, nullable=False),
         sa.Column('registered', sa.BOOLEAN(), autoincrement=False, nullable=False),
         sa.Column(
@@ -202,8 +206,12 @@ def upgrade():
         sa.Column(
             'carrier_trunk_id', sa.INTEGER(), autoincrement=False, nullable=False
         ),
-        sa.Column('did_regex', sa.VARCHAR(), autoincrement=False, nullable=True),
-        sa.Column('did_prefix', sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column(
+            'did_regex', sa.VARCHAR(length=256), autoincrement=False, nullable=True
+        ),
+        sa.Column(
+            'did_prefix', sa.VARCHAR(length=128), autoincrement=False, nullable=True
+        ),
         sa.ForeignKeyConstraint(
             ['carrier_trunk_id'],
             ['carrier_trunks.id'],
@@ -232,11 +240,19 @@ def upgrade():
         'cdrs',
         sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
         sa.Column('tenant_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('source_ip', sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column(
+            'source_ip', sa.VARCHAR(length=64), autoincrement=False, nullable=False
+        ),
         sa.Column('source_port', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('from_uri', sa.VARCHAR(), autoincrement=False, nullable=False),
-        sa.Column('to_uri', sa.VARCHAR(), autoincrement=False, nullable=False),
-        sa.Column('call_id', sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column(
+            'from_uri', sa.VARCHAR(length=256), autoincrement=False, nullable=False
+        ),
+        sa.Column(
+            'to_uri', sa.VARCHAR(length=256), autoincrement=False, nullable=False
+        ),
+        sa.Column(
+            'call_id', sa.VARCHAR(length=256), autoincrement=False, nullable=False
+        ),
         sa.Column(
             'call_start', postgresql.TIMESTAMP(), autoincrement=False, nullable=True
         ),
@@ -265,7 +281,9 @@ def upgrade():
             'carrier_trunk_id', sa.INTEGER(), autoincrement=False, nullable=False
         ),
         sa.Column('ipbx_id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('did_regex', sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column(
+            'did_regex', sa.VARCHAR(length=256), autoincrement=False, nullable=True
+        ),
         sa.Column(
             'route_type', sa.VARCHAR(length=10), autoincrement=False, nullable=False
         ),

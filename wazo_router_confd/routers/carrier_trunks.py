@@ -43,7 +43,7 @@ def create_carrier_trunk(
 
 
 @router.get("/carrier_trunks/", response_model=List[schema.CarrierTrunkRead])
-def read_carrier_trunkss(
+def read_carrier_trunks(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
     carrier_trunks = service.get_carrier_trunks(db, offset=offset, limit=limit)

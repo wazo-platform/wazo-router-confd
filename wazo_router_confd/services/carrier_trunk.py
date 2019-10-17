@@ -44,6 +44,7 @@ def create_carrier_trunk(
         name=carrier_trunk.name,
         sip_proxy=carrier_trunk.sip_proxy,
         sip_proxy_port=carrier_trunk.sip_proxy_port,
+        ip_address=carrier_trunk.ip_address,
         registered=carrier_trunk.registered,
         auth_username=carrier_trunk.auth_username,
         auth_password=password_service.hash(carrier_trunk.auth_password),
@@ -80,6 +81,11 @@ def update_carrier_trunk(
             carrier_trunk.sip_proxy_port
             if carrier_trunk.sip_proxy_port is not None
             else db_carrier_trunk.sip_proxy_port
+        )
+        db_carrier_trunk.ip_address = (
+            carrier_trunk.ip_address
+            if carrier_trunk.ip_address is not None
+            else db_carrier_trunk.ip_address
         )
         db_carrier_trunk.registered = (
             carrier_trunk.registered

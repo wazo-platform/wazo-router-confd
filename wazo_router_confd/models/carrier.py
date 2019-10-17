@@ -20,4 +20,4 @@ class Carrier(Base):
         Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
-    name = Column(String, unique=True, index=True)
+    name = Column(String(256), unique=True, index=True)
