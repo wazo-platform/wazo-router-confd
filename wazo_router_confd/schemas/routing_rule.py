@@ -10,9 +10,9 @@ class RoutingRule(BaseModel):
     id: int
     carrier_trunk_id: int
     ipbx_id: int
-    prefix: Optional[constr(max_length=128)] = None
-    did_regex: Optional[constr(max_length=256)] = None
-    route_type: constr(max_length=10)
+    prefix: Optional[constr(max_length=128)] = None  # type: ignore
+    did_regex: Optional[constr(max_length=256)] = None  # type: ignore
+    route_type: constr(max_length=10)  # type: ignore
 
     class Config:
         orm_mode = True
@@ -21,14 +21,14 @@ class RoutingRule(BaseModel):
 class RoutingRuleCreate(BaseModel):
     carrier_trunk_id: int
     ipbx_id: int
-    prefix: Optional[constr(max_length=128)] = None
-    did_regex: Optional[constr(max_length=256)] = None
-    route_type: constr(max_length=10)
+    prefix: Optional[constr(max_length=128)] = None  # type: ignore
+    did_regex: Optional[constr(max_length=256)] = None  # type: ignore
+    route_type: constr(max_length=10)  # type: ignore
 
 
 class RoutingRuleUpdate(BaseModel):
     carrier_trunk_id: int
     ipbx_id: int
-    prefix: Optional[constr(max_length=128)] = None
-    did_regex: Optional[constr(max_length=256)] = None
-    route_type: constr(max_length=10)
+    prefix: Optional[constr(max_length=128)] = None  # type: ignore
+    did_regex: Optional[constr(max_length=256)] = None  # type: ignore
+    route_type: constr(max_length=10)  # type: ignore

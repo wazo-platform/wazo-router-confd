@@ -6,7 +6,7 @@ from pydantic import BaseModel, constr
 
 class Tenant(BaseModel):
     id: int
-    name: constr(max_length=256)
+    name: constr(max_length=256)  # type: ignore
 
     class Config:
         orm_mode = True

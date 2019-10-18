@@ -9,16 +9,16 @@ from pydantic import BaseModel, constr
 class CarrierTrunk(BaseModel):
     id: int
     carrier_id: int
-    name: constr(max_length=256)
-    sip_proxy: constr(max_length=128)
+    name: constr(max_length=256)  # type: ignore
+    sip_proxy: constr(max_length=128)  # type: ignore
     sip_proxy_port: int = 5060
-    ip_address: Optional[constr(max_length=256)] = None
+    ip_address: Optional[constr(max_length=256)] = None  # type: ignore
     registered: bool = False
-    auth_username: Optional[constr(max_length=35)] = None
-    auth_password: Optional[constr(max_length=192)] = None
-    realm: Optional[constr(max_length=64)] = None
-    registrar_proxy: Optional[constr(max_length=128)] = None
-    from_domain: Optional[constr(max_length=64)] = None
+    auth_username: Optional[constr(max_length=35)] = None  # type: ignore
+    auth_password: Optional[constr(max_length=192)] = None  # type: ignore
+    realm: Optional[constr(max_length=64)] = None  # type: ignore
+    registrar_proxy: Optional[constr(max_length=128)] = None  # type: ignore
+    from_domain: Optional[constr(max_length=64)] = None  # type: ignore
     expire_seconds: int = 3600
     retry_seconds: int = 30
 
@@ -29,15 +29,15 @@ class CarrierTrunk(BaseModel):
 class CarrierTrunkRead(BaseModel):
     id: int
     carrier_id: int
-    name: constr(max_length=256)
-    sip_proxy: constr(max_length=128)
+    name: constr(max_length=256)  # type: ignore
+    sip_proxy: constr(max_length=128)  # type: ignore
     sip_proxy_port: int = 5060
-    ip_address: Optional[constr(max_length=256)] = None
+    ip_address: Optional[constr(max_length=256)] = None  # type: ignore
     registered: bool = False
-    auth_username: Optional[constr(max_length=35)] = None
-    realm: Optional[constr(max_length=64)] = None
-    registrar_proxy: Optional[constr(max_length=128)] = None
-    from_domain: Optional[constr(max_length=64)] = None
+    auth_username: Optional[constr(max_length=35)] = None  # type: ignore
+    realm: Optional[constr(max_length=64)] = None  # type: ignore
+    registrar_proxy: Optional[constr(max_length=128)] = None  # type: ignore
+    from_domain: Optional[constr(max_length=64)] = None  # type: ignore
     expire_seconds: int = 3600
     retry_seconds: int = 30
 
@@ -62,15 +62,15 @@ class CarrierTrunkCreate(BaseModel):
 
 
 class CarrierTrunkUpdate(BaseModel):
-    name: constr(max_length=256)
-    sip_proxy: constr(max_length=128)
+    name: constr(max_length=256)  # type: ignore
+    sip_proxy: constr(max_length=128)  # type: ignore
     sip_proxy_port: int = 5060
-    ip_address: Optional[constr(max_length=256)] = None
+    ip_address: Optional[constr(max_length=256)] = None  # type: ignore
     registered: bool = False
-    auth_username: Optional[constr(max_length=35)] = None
-    auth_password: Optional[constr(max_length=192)] = None
-    realm: Optional[constr(max_length=64)] = None
-    registrar_proxy: Optional[constr(max_length=128)] = None
-    from_domain: Optional[constr(max_length=64)] = None
+    auth_username: Optional[constr(max_length=35)] = None  # type: ignore
+    auth_password: Optional[constr(max_length=192)] = None  # type: ignore
+    realm: Optional[constr(max_length=64)] = None  # type: ignore
+    registrar_proxy: Optional[constr(max_length=128)] = None  # type: ignore
+    from_domain: Optional[constr(max_length=64)] = None  # type: ignore
     expire_seconds: int = 3600
     retry_seconds: int = 30

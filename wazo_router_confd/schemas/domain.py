@@ -6,7 +6,7 @@ from pydantic import BaseModel, constr
 
 class Domain(BaseModel):
     id: int
-    domain: constr(max_length=64)
+    domain: constr(max_length=64)  # type: ignore
     tenant_id: int
 
     class Config:
@@ -14,10 +14,10 @@ class Domain(BaseModel):
 
 
 class DomainCreate(BaseModel):
-    domain: constr(max_length=64)
+    domain: constr(max_length=64)  # type: ignore
     tenant_id: int
 
 
 class DomainUpdate(BaseModel):
-    domain: constr(max_length=64)
+    domain: constr(max_length=64)  # type: ignore
     tenant_id: int

@@ -11,13 +11,13 @@ class IPBX(BaseModel):
     tenant_id: int
     domain_id: int
     customer: Optional[int] = None
-    ip_fqdn: constr(max_length=256)
+    ip_fqdn: constr(max_length=256)  # type: ignore
     port: int = 5060
-    ip_address: Optional[constr(max_length=256)] = None
+    ip_address: Optional[constr(max_length=256)] = None  # type: ignore
     registered: bool = False
-    username: Optional[constr(max_length=50)] = None
-    password: Optional[constr(max_length=192)] = None
-    password_ha1: Optional[constr(max_length=64)] = None
+    username: Optional[constr(max_length=50)] = None  # type: ignore
+    password: Optional[constr(max_length=192)] = None  # type: ignore
+    password_ha1: Optional[constr(max_length=64)] = None  # type: ignore
 
     class Config:
         orm_mode = True
@@ -28,11 +28,11 @@ class IPBXRead(BaseModel):
     tenant_id: int
     domain_id: int
     customer: Optional[int] = None
-    ip_fqdn: constr(max_length=256)
+    ip_fqdn: constr(max_length=256)  # type: ignore
     port: int = 5060
-    ip_address: Optional[constr(max_length=256)] = None
+    ip_address: Optional[constr(max_length=256)] = None  # type: ignore
     registered: bool = False
-    username: Optional[constr(max_length=50)] = None
+    username: Optional[constr(max_length=50)] = None  # type: ignore
 
     class Config:
         orm_mode = True
@@ -42,13 +42,13 @@ class IPBXCreate(BaseModel):
     tenant_id: int
     domain_id: int
     customer: Optional[int] = None
-    ip_fqdn: constr(max_length=256)
+    ip_fqdn: constr(max_length=256)  # type: ignore
     port: int = 5060
-    ip_address: Optional[constr(max_length=256)] = None
+    ip_address: Optional[constr(max_length=256)] = None  # type: ignore
     registered: bool = False
-    username: Optional[constr(max_length=50)] = None
-    password: Optional[constr(max_length=192)] = None
-    password_ha1: Optional[constr(max_length=64)] = None
+    username: Optional[constr(max_length=50)] = None  # type: ignore
+    password: Optional[constr(max_length=192)] = None  # type: ignore
+    password_ha1: Optional[constr(max_length=64)] = None  # type: ignore
 
 
 class IPBXUpdate(BaseModel):
@@ -57,8 +57,8 @@ class IPBXUpdate(BaseModel):
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060
-    ip_address: Optional[str] = None
+    ip_address: Optional[str] = None  # type: ignore
     registered: bool = False
-    username: Optional[str] = None
-    password: Optional[str] = None
-    password_ha1: Optional[str] = None
+    username: Optional[str] = None  # type: ignore
+    password: Optional[str] = None  # type: ignore
+    password_ha1: Optional[str] = None  # type: ignore

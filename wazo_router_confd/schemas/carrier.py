@@ -8,7 +8,7 @@ from pydantic import BaseModel, constr
 
 class Carrier(BaseModel):
     id: int
-    name: constr(max_length=256)
+    name: constr(max_length=256)  # type: ignore
     tenant_id: int
 
     class Config:
@@ -16,10 +16,10 @@ class Carrier(BaseModel):
 
 
 class CarrierCreate(BaseModel):
-    name: constr(max_length=256)
+    name: constr(max_length=256)  # type: ignore
     tenant_id: int
 
 
 class CarrierUpdate(BaseModel):
-    name: Optional[constr(max_length=256)] = None
+    name: Optional[constr(max_length=256)] = None  # type: ignore
     tenant_id: int

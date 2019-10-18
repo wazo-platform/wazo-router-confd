@@ -11,11 +11,11 @@ from datetime import datetime
 class CDR(BaseModel):
     id: int
     tenant_id: int
-    source_ip: constr(max_length=64)
+    source_ip: constr(max_length=64)  # type: ignore
     source_port: int
-    from_uri: constr(max_length=256)
-    to_uri: constr(max_length=256)
-    call_id: constr(max_length=256)
+    from_uri: constr(max_length=256)  # type: ignore
+    to_uri: constr(max_length=256)  # type: ignore
+    call_id: constr(max_length=256)  # type: ignore
     call_start: Optional[datetime] = None
     duration: Optional[int] = None
 
@@ -25,21 +25,21 @@ class CDR(BaseModel):
 
 class CDRCreate(BaseModel):
     tenant_id: int
-    source_ip: constr(max_length=64)
+    source_ip: constr(max_length=64)  # type: ignore
     source_port: int
-    from_uri: constr(max_length=256)
-    to_uri: constr(max_length=256)
-    call_id: constr(max_length=256)
+    from_uri: constr(max_length=256)  # type: ignore
+    to_uri: constr(max_length=256)  # type: ignore
+    call_id: constr(max_length=256)  # type: ignore
     call_start: Optional[datetime] = None
     duration: Optional[int] = None
 
 
 class CDRUpdate(BaseModel):
     tenant_id: int
-    source_ip: constr(max_length=64)
+    source_ip: constr(max_length=64)  # type: ignore
     source_port: int
-    from_uri: constr(max_length=256)
-    to_uri: constr(max_length=256)
-    call_id: constr(max_length=256)
+    from_uri: constr(max_length=256)  # type: ignore
+    to_uri: constr(max_length=256)  # type: ignore
+    call_id: constr(max_length=256)  # type: ignore
     call_start: Optional[datetime] = None
     duration: Optional[int] = None
