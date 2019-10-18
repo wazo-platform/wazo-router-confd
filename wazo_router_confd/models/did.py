@@ -3,7 +3,15 @@
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Integer, String, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Index,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -17,6 +25,8 @@ if TYPE_CHECKING:
 class DID(Base):
     __tablename__ = "dids"
     __table_args__ = (
+        Index('tenant_id', 'did_prefix'),
+        UniqueConstraint('tenant_id', 'did_regex'),
         ForeignKeyConstraint(
             ['tenant_id', 'ipbx_id'], ['ipbx.tenant_id', 'ipbx.id'], ondelete='CASCADE'
         ),
@@ -33,5 +43,5 @@ class DID(Base):
         Integer, ForeignKey('carrier_trunks.id', ondelete='CASCADE'), nullable=False
     )
     carrier_trunk = relationship('CarrierTrunk')
-    did_regex = Column(String(256), unique=True)
-    did_prefix = Column(String(128), index=True)
+    did_regex = Column(String(256))
+    did_prefix = Column(String(128))

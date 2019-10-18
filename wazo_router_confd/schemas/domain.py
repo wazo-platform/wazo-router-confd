@@ -1,12 +1,12 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 
 class Domain(BaseModel):
     id: int
-    domain: str
+    domain: constr(max_length=64)
     tenant_id: int
 
     class Config:
@@ -14,10 +14,10 @@ class Domain(BaseModel):
 
 
 class DomainCreate(BaseModel):
-    domain: str
+    domain: constr(max_length=64)
     tenant_id: int
 
 
 class DomainUpdate(BaseModel):
-    domain: str
+    domain: constr(max_length=64)
     tenant_id: int

@@ -3,16 +3,16 @@
 
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 
 class RoutingRule(BaseModel):
     id: int
     carrier_trunk_id: int
     ipbx_id: int
-    prefix: Optional[str] = None
-    did_regex: Optional[str] = None
-    route_type: str
+    prefix: Optional[constr(max_length=128)] = None
+    did_regex: Optional[constr(max_length=256)] = None
+    route_type: constr(max_length=10)
 
     class Config:
         orm_mode = True
@@ -21,14 +21,14 @@ class RoutingRule(BaseModel):
 class RoutingRuleCreate(BaseModel):
     carrier_trunk_id: int
     ipbx_id: int
-    prefix: Optional[str] = None
-    did_regex: Optional[str] = None
-    route_type: str
+    prefix: Optional[constr(max_length=128)] = None
+    did_regex: Optional[constr(max_length=256)] = None
+    route_type: constr(max_length=10)
 
 
 class RoutingRuleUpdate(BaseModel):
     carrier_trunk_id: int
     ipbx_id: int
-    prefix: Optional[str] = None
-    did_regex: Optional[str] = None
-    route_type: str
+    prefix: Optional[constr(max_length=128)] = None
+    did_regex: Optional[constr(max_length=256)] = None
+    route_type: constr(max_length=10)

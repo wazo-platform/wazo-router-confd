@@ -25,7 +25,7 @@ class IPBX(Base):
     __tablename__ = "ipbx"
     __table_args__ = (
         UniqueConstraint('tenant_id', 'id'),
-        UniqueConstraint('domain_id', 'username'),
+        UniqueConstraint('tenant_id', 'domain_id', 'username'),
         ForeignKeyConstraint(
             ['tenant_id', 'domain_id'],
             ['domains.tenant_id', 'domains.id'],

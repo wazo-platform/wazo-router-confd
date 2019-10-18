@@ -3,12 +3,12 @@
 
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 
 class Carrier(BaseModel):
     id: int
-    name: str
+    name: constr(max_length=256)
     tenant_id: int
 
     class Config:
@@ -16,10 +16,10 @@ class Carrier(BaseModel):
 
 
 class CarrierCreate(BaseModel):
-    name: str
+    name: constr(max_length=256)
     tenant_id: int
 
 
 class CarrierUpdate(BaseModel):
-    name: Optional[str] = None
+    name: Optional[constr(max_length=256)] = None
     tenant_id: int

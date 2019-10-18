@@ -3,7 +3,7 @@
 
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 
 class DID(BaseModel):
@@ -11,7 +11,7 @@ class DID(BaseModel):
     tenant_id: int
     ipbx_id: int
     carrier_trunk_id: int
-    did_regex: Optional[str] = None
+    did_regex: Optional[constr(max_length=256)] = None
 
     class Config:
         orm_mode = True
@@ -21,11 +21,11 @@ class DIDCreate(BaseModel):
     tenant_id: int
     ipbx_id: int
     carrier_trunk_id: int
-    did_regex: Optional[str] = None
+    did_regex: Optional[constr(max_length=256)] = None
 
 
 class DIDUpdate(BaseModel):
     tenant_id: int
     ipbx_id: int
     carrier_trunk_id: int
-    did_regex: Optional[str] = None
+    did_regex: Optional[constr(max_length=256)] = None

@@ -70,7 +70,7 @@ def test_create_ipbx_password_too_long(app=None, client=None):
             "password": 'a' * 248,  # String(192)
         },
     )
-    assert response.status_code == 400
+    assert response.status_code >= 400 and response.status_code < 500
 
 
 @get_app_and_client

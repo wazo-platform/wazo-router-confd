@@ -17,7 +17,7 @@ class RoutingRule(Base):
     __tablename__ = "routing_rules"
 
     id = Column(Integer, primary_key=True, index=True)
-    prefix = Column(String(15), nullable=True)
+    prefix = Column(String(128), nullable=True)
     carrier_trunk_id = Column(
         Integer, ForeignKey('carrier_trunks.id', ondelete='CASCADE'), nullable=False
     )

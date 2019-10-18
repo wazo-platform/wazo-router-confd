@@ -8,6 +8,7 @@ from typing import Tuple
 
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import func
 
 from wazo_router_confd.models.carrier import Carrier
 from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -25,17 +26,32 @@ def local_part_and_domain_from_uri(uri: str) -> Tuple[str, str]:
 
 
 def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingResponse:
+    # auth the request, if needed
+    auth_response = (
+        auth(
+            db,
+            request=schema.AuthRequest(
+                source_ip=request.source_ip,
+                source_port=request.source_port,
+                domain=request.domain,
+                username=request.username,
+            ),
+        )
+        if request.auth
+        else None
+    )
+    # routing
     routes = []
     # get the domain name from the to uri
     local_part, domain_name = local_part_and_domain_from_uri(request.to_uri)
     # get all the ipbxs linked to that domain
     ipbxs = set()
-    ipbxs_by_domain = (
-        db.query(IPBX)
-        .join(Domain)
-        .filter(Domain.domain == domain_name)
-        .order_by(IPBX.id)
-    )
+    ipbxs_by_domain = db.query(IPBX).join(Domain).filter(Domain.domain == domain_name)
+    # filter by tenant, if the request is authenticated
+    if auth_response is not None and auth_response.tenant_id:
+        ipbxs_by_domain.filter(IPBX.tenant_id == auth_response.tenant_id)
+    # get the list of ipbx, ordered by id
+    ipbxs_by_domain = ipbxs_by_domain.order_by(IPBX.id)
     for ipbx in ipbxs_by_domain:
         ipbxs.add(ipbx)
     # get all the ipbxs linked to that DID
@@ -47,6 +63,11 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
             .filter(DID.ipbx_id == ipbx.id)
             .filter(DID.did_prefix.in_(prefixes))
         )
+        # filter by tenant, if the request is authenticated
+        if auth_response is not None and auth_response.tenant_id:
+            dids.filter(DID.tenant_id == auth_response.tenant_id)
+        # get the list of dids, ordered by id
+        dids = dids.order_by(func.length(DID.did_prefix).desc(), DID.id)
         for did in dids:
             if re.match(did.did_regex, local_part):
                 ipbxs.add(ipbx)
@@ -74,6 +95,10 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
         .join(IPBX, Carrier.tenant_id == IPBX.tenant_id)
         .filter(IPBX.ip_fqdn == request.source_ip)
     )
+    # filter by tenant, if the request is authenticated
+    if auth_response is not None and auth_response.tenant_id:
+        carrier_trunks.filter(Carrier.tenant_id == auth_response.tenant_id)
+    # get the list of carrier trunks, ordered by id
     for carrier_trunk in carrier_trunks:
         routes.append(
             {
@@ -97,21 +122,7 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
         if routes
         else {"success": False}
     )
-    # auth the request, if needed
-    auth_response = (
-        auth(
-            db,
-            request=schema.AuthRequest(
-                source_ip=request.source_ip,
-                source_port=request.source_port,
-                domain=request.domain,
-                username=request.username,
-            ),
-        )
-        if request.auth
-        else None
-    )
-    # return the routing response
+    # return the routing and auth responses
     return schema.RoutingResponse(auth=auth_response, rtjson=rtjson)
 
 

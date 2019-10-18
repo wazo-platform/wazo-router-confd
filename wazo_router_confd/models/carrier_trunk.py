@@ -14,10 +14,14 @@ if TYPE_CHECKING:
 
 class CarrierTrunk(Base):
     __tablename__ = "carrier_trunks"
+    __table_args__ = ()
 
     id = Column(Integer, primary_key=True, index=True)
     carrier_id = Column(
-        Integer, ForeignKey('carriers.id', ondelete='CASCADE'), nullable=False
+        Integer,
+        ForeignKey('carriers.id', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
     )
     carrier = relationship('Carrier')
     name = Column(String(256), unique=True, index=True)

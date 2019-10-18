@@ -21,6 +21,12 @@ class CDR(Base):
         Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
+    ipbx_id = Column(Integer, ForeignKey('ipbx.id', ondelete='CASCADE'), nullable=True)
+    ipbx = relationship('IPBX')
+    carrier_trunk_id = Column(
+        Integer, ForeignKey('carrier_trunks.id', ondelete='CASCADE'), nullable=True
+    )
+    carrier_trunk = relationship('CarrierTrunk')
     source_ip = Column(String(64), nullable=False)
     source_port = Column(Integer, nullable=False, default=5060)
     from_uri = Column(String(256), nullable=False)
