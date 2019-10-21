@@ -14,6 +14,7 @@ from wazo_router_confd.models.normalization import (
 from wazo_router_confd.schemas import normalization as schema
 
 
+re_clean_number = re.compile('[^0-9,]').sub
 re_match_prefix_from_regex = re.compile('[^0-9]')
 
 
@@ -61,6 +62,7 @@ def create_normalization_profile(
         intl_prefix=normalization_profile.intl_prefix,
         ld_prefix=normalization_profile.ld_prefix,
         always_ld=normalization_profile.always_ld,
+        always_intl_prefix_plus=normalization_profile.always_intl_prefix_plus,
     )
     db.add(db_normalization_profile)
     db.commit()
@@ -114,6 +116,11 @@ def update_normalization_profile(
             if normalization_profile.always_ld is not None
             else db_normalization_profile.always_ld
         )
+        db_normalization_profile.always_intl_prefix_plus = (
+            normalization_profile.always_intl_prefix_plus
+            if normalization_profile.always_intl_prefix_plus is not None
+            else db_normalization_profile.always_intl_prefix_plus
+        )
         db.commit()
         db.refresh(db_normalization_profile)
     return db_normalization_profile
@@ -164,6 +171,8 @@ def create_normalization_rule(
 ) -> NormalizationRule:
     db_normalization_rule = NormalizationRule(
         profile_id=normalization_rule.profile_id,
+        rule_type=normalization_rule.rule_type,
+        priority=normalization_rule.priority,
         match_regex=normalization_rule.match_regex,
         match_prefix=get_match_prefix_from_regex(normalization_rule.match_regex),
         replace_regex=normalization_rule.replace_regex,
@@ -189,6 +198,16 @@ def update_normalization_rule(
             normalization_rule.profile_id
             if normalization_rule.profile_id is not None
             else db_normalization_rule.profile_id
+        )
+        db_normalization_rule.rule_type = (
+            normalization_rule.rule_type
+            if normalization_rule.rule_type is not None
+            else db_normalization_rule.rule_type
+        )
+        db_normalization_rule.priority = (
+            normalization_rule.priority
+            if normalization_rule.priority is not None
+            else db_normalization_rule.priority
         )
         db_normalization_rule.match_regex = (
             normalization_rule.match_regex
@@ -220,3 +239,29 @@ def delete_normalization_rule(
         db.delete(db_normalization_rule)
         db.commit()
     return db_normalization_rule
+
+
+def normalize_local_number_to_e164(
+    db: Session, number: str, profile: Optional[NormalizationProfile] = None
+) -> str:
+    number = re_clean_number('', number)
+    if profile is not None:
+        prefixes = [number[:i] for i in range(0, min(10, len(number)))]
+        rules = db.query(NormalizationRule).filter(NormalizationRule.profile_id == profile.id).filter(NormalizationRule.match_prefix.in_(prefixes)).filter(NormalizationRule.rule_type == 1).order_by(NormalizationRule.priority).order_by(NormalizationRule.id)
+        for rule in rules:
+            number = re.sub(rule.match_regex, rule.replace_regex, number)
+    return number
+
+
+def normalize_e164_to_local_number(
+    db: Session, number: str, profile: Optional[NormalizationProfile] = None
+) -> str:
+    number = re_clean_number('', number)
+    if profile is not None:
+        prefixes = [number[:i] for i in range(0, min(10, len(number)))]
+        rules = db.query(NormalizationRule).filter(NormalizationRule.profile_id == profile.id).filter(NormalizationRule.match_prefix.in_(prefixes)).filter(NormalizationRule.rule_type == 2).order_by(NormalizationRule.priority).order_by(NormalizationRule.id)
+        for rule in rules:
+            number = re.sub(rule.match_regex, rule.replace_regex, number)
+        if profile.always_intl_prefix_plus:
+            number = "+%s" % number
+    return number

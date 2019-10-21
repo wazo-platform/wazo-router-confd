@@ -26,6 +26,7 @@ class NormalizationProfile(Base):
     area_code = Column(String(64), nullable=True)
     intl_prefix = Column(String(64), nullable=True)
     ld_prefix = Column(String(64), nullable=True)
+    always_intl_prefix_plus = Column(Boolean, nullable=False, default=False)
     always_ld = Column(Boolean, nullable=False, default=False)
 
 
@@ -40,6 +41,8 @@ class NormalizationRule(Base):
         nullable=False,
     )
     profile = relationship('NormalizationProfile')
+    rule_type = Column(Integer, nullable=False, default=1)
+    priority = Column(Integer, nullable=False, default=0)
     match_regex = Column(String(256), nullable=False)
     match_prefix = Column(String(256), nullable=False)
     replace_regex = Column(String(256), nullable=False)

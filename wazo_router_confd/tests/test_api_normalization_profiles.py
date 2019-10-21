@@ -24,6 +24,7 @@ def test_create_normalization_profile(app=None, client=None):
             "intl_prefix": "00",
             "ld_prefix": "0",
             "always_ld": True,
+            "always_intl_prefix_plus": False,
         },
     )
     assert response.status_code == 200
@@ -36,6 +37,7 @@ def test_create_normalization_profile(app=None, client=None):
         "intl_prefix": "00",
         "ld_prefix": "0",
         "always_ld": True,
+        "always_intl_prefix_plus": False,
     }
 
 
@@ -80,6 +82,7 @@ def test_get_normalization_profile(app=None, client=None):
         "intl_prefix": None,
         "ld_prefix": None,
         "always_ld": False,
+        "always_intl_prefix_plus": False,
     }
 
 
@@ -113,6 +116,7 @@ def test_get_normalization_profiles(app=None, client=None):
             "intl_prefix": None,
             "ld_prefix": None,
             "always_ld": False,
+            "always_intl_prefix_plus": False,
         }
     ]
 
@@ -142,6 +146,7 @@ def test_update_normalization_profile(app=None, client=None):
         "intl_prefix": None,
         "ld_prefix": None,
         "always_ld": False,
+        "always_intl_prefix_plus": False,
     }
 
 
@@ -176,6 +181,7 @@ def test_delete_normalization_profile(app=None, client=None):
         "intl_prefix": None,
         "ld_prefix": None,
         "always_ld": False,
+        "always_intl_prefix_plus": False,
     }
 
 

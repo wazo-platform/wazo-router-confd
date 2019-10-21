@@ -20,6 +20,8 @@ def test_create_normalization_rule(app=None, client=None):
         "/normalization-rules/",
         json={
             "profile_id": normalization_profile.id,
+            "rule_type": 1,
+            "priority": 1,
             "match_regex": "^11",
             "replace_regex": "",
         },
@@ -28,6 +30,8 @@ def test_create_normalization_rule(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "profile_id": normalization_profile.id,
+        "rule_type": 1,
+        "priority": 1,
         "match_regex": "^11",
         "replace_regex": "",
     }
@@ -86,6 +90,8 @@ def test_get_normalization_rule(app=None, client=None):
     assert response.status_code == 200
     assert response.json() == {
         "id": 1,
+        "rule_type": 1,
+        "priority": 0,
         "profile_id": normalization_profile.id,
         "match_regex": "^11",
         "replace_regex": '',
@@ -123,6 +129,8 @@ def test_get_normalization_rules(app=None, client=None):
         {
             "id": 1,
             "profile_id": normalization_profile.id,
+            "rule_type": 1,
+            "priority": 0,
             "match_regex": "^11",
             "replace_regex": '',
         }
@@ -159,6 +167,8 @@ def test_update_normalization_rule(app=None, client=None):
     assert response.status_code == 200
     assert response.json() == {
         "id": 1,
+        "rule_type": 1,
+        "priority": 0,
         "profile_id": normalization_profile.id,
         "match_regex": "^22",
         "replace_regex": "",
@@ -197,6 +207,8 @@ def test_delete_normalization_rule(app=None, client=None):
     assert response.status_code == 200
     assert response.json() == {
         "id": 1,
+        "rule_type": 1,
+        "priority": 0,
         "profile_id": normalization_profile.id,
         "match_regex": "^11",
         "replace_regex": '',
