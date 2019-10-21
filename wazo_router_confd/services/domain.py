@@ -26,18 +26,6 @@ def get_tenant_by_domains(db: Session, domains: List[str]) -> Tenant:
     return db.query(Tenant).join(Domain).filter(Domain.domain.in_(domains)).first()
 
 
-def get_domains_by_tenant(
-    db: Session, tenant_id: int, offset: int = 0, limit: int = 100
-) -> List[Domain]:
-    return (
-        db.query(Domain)
-        .filter(Domain.tenant_id == tenant_id)
-        .offset(offset)
-        .limit(limit)
-        .all()
-    )
-
-
 def create_domain(db: Session, domain: schema.DomainCreate) -> Domain:
     db_domain = Domain(domain=domain.domain, tenant_id=domain.tenant_id)
     db.add(db_domain)

@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 
 from .base import Base
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .carrier_trunk import CarrierTrunk  # noqa
     from .ipbx import IPBX  # noqa
 

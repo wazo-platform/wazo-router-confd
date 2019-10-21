@@ -15,20 +15,8 @@ def get_ipbx(db: Session, ipbx_id: int) -> IPBX:
     return db.query(IPBX).filter(IPBX.id == ipbx_id).first()
 
 
-def get_ipbx_by_ip_fqdn(db: Session, ip_fqdn: str) -> IPBX:
-    return db.query(IPBX).filter(IPBX.ip_fqdn == ip_fqdn).first()
-
-
 def get_ipbxs(db: Session, offset: int = 0, limit: int = 100) -> List[IPBX]:
     return db.query(IPBX).offset(offset).limit(limit).all()
-
-
-def get_ipbxs_by_tenant(
-    db: Session, tenant: int, offset: int = 0, limit: int = 100
-) -> List[IPBX]:
-    return (
-        db.query(IPBX).filter(IPBX.tenant == tenant).offset(offset).limit(limit).all()
-    )
 
 
 def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:

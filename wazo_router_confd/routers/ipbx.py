@@ -34,9 +34,7 @@ def read_ipbx(ipbx_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/ipbx/{ipbx_id}", response_model=schema.IPBXRead)
-def update_carrier(
-    ipbx_id: int, ipbx: schema.IPBXUpdate, db: Session = Depends(get_db)
-):
+def update_ipbx(ipbx_id: int, ipbx: schema.IPBXUpdate, db: Session = Depends(get_db)):
     db_ipbx = service.update_ipbx(db, ipbx=ipbx, ipbx_id=ipbx_id)
     if db_ipbx is None:
         raise HTTPException(status_code=404, detail="IPBX not found")
@@ -44,7 +42,7 @@ def update_carrier(
 
 
 @router.delete("/ipbx/{ipbx_id}", response_model=schema.IPBXRead)
-def delete_carrier(ipbx_id: int, db: Session = Depends(get_db)):
+def delete_ipbx(ipbx_id: int, db: Session = Depends(get_db)):
     db_ipbx = service.delete_ipbx(db, ipbx_id=ipbx_id)
     if db_ipbx is None:
         raise HTTPException(status_code=404, detail="IPBX not found")

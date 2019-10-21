@@ -55,7 +55,7 @@ def read_did(did_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/dids/{did_id}", response_model=schema.DID)
-def update_carrier(did_id: int, did: schema.DIDUpdate, db: Session = Depends(get_db)):
+def update_did(did_id: int, did: schema.DIDUpdate, db: Session = Depends(get_db)):
     db_did = service.update_did(db, did=did, did_id=did_id)
     if db_did is None:
         raise HTTPException(status_code=404, detail="DID not found")
@@ -63,7 +63,7 @@ def update_carrier(did_id: int, did: schema.DIDUpdate, db: Session = Depends(get
 
 
 @router.delete("/dids/{did_id}", response_model=schema.DID)
-def delete_carrier(did_id: int, db: Session = Depends(get_db)):
+def delete_did(did_id: int, db: Session = Depends(get_db)):
     db_did = service.delete_did(db, did_id=did_id)
     if db_did is None:
         raise HTTPException(status_code=404, detail="DID not found")
