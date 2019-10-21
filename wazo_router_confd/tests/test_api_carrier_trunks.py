@@ -10,6 +10,7 @@ def test_create_carrier_trunk(app=None, client=None):
         "/carrier_trunks/",
         json={
             "name": "carrier_trunk1",
+            "tenant_id": 1,
             "carrier_id": 1,
             "sip_proxy": "proxy.somedomain.com",
             "ip_address": "10.0.0.1",
@@ -27,7 +28,9 @@ def test_create_carrier_trunk(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "name": "carrier_trunk1",
+        "tenant_id": 1,
         "carrier_id": 1,
+        "normalization_profile_id": None,
         "sip_proxy": "proxy.somedomain.com",
         "sip_proxy_port": 5060,
         "ip_address": "10.0.0.1",
@@ -49,7 +52,7 @@ def test_create_duplicated_carrier_trunk(app=None, client=None):
     session = SessionLocal(bind=app.engine)
     session.add(
         CarrierTrunk(
-            name='carrier_trunk1', carrier_id=1, sip_proxy='proxy.somedomain.com'
+            name='carrier_trunk1', tenant_id=1, carrier_id=1, sip_proxy='proxy.somedomain.com'
         )
     )
     session.commit()
@@ -58,6 +61,7 @@ def test_create_duplicated_carrier_trunk(app=None, client=None):
         "/carrier_trunks/",
         json={
             "name": "carrier_trunk1",
+            "tenant_id": 1,
             "carrier_id": 1,
             "sip_proxy": "proxy.somedomain.com",
         },
@@ -74,6 +78,7 @@ def test_get_carrier_trunk(app=None, client=None):
     session.add(
         CarrierTrunk(
             name='carrier_trunk1',
+            tenant_id=1,
             carrier_id=1,
             sip_proxy='proxy.somedomain.com',
             registered=True,
@@ -94,7 +99,9 @@ def test_get_carrier_trunk(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "name": "carrier_trunk1",
+        "tenant_id": 1,
         "carrier_id": 1,
+        "normalization_profile_id": None,
         "sip_proxy": "proxy.somedomain.com",
         "sip_proxy_port": 5060,
         "ip_address": "10.0.0.1",
@@ -122,7 +129,7 @@ def test_get_carrier_trunks(app=None, client=None):
     session = SessionLocal(bind=app.engine)
     session.add(
         CarrierTrunk(
-            name='carrier_trunk1', carrier_id=1, sip_proxy='proxy.somedomain.com'
+            name='carrier_trunk1', tenant_id=1, carrier_id=1, sip_proxy='proxy.somedomain.com'
         )
     )
     session.commit()
@@ -133,7 +140,9 @@ def test_get_carrier_trunks(app=None, client=None):
         {
             'id': 1,
             'name': 'carrier_trunk1',
+            "tenant_id": 1,
             'carrier_id': 1,
+            "normalization_profile_id": None,
             'sip_proxy': 'proxy.somedomain.com',
             "sip_proxy_port": 5060,
             "ip_address": None,
@@ -157,6 +166,7 @@ def test_update_carrier_trunk(app=None, client=None):
     session.add(
         CarrierTrunk(
             name='carrier_trunk1',
+            tenant_id=1,
             carrier_id=1,
             sip_proxy='proxy.somedomain.com',
             auth_username='username1',
@@ -169,7 +179,9 @@ def test_update_carrier_trunk(app=None, client=None):
         "/carrier_trunks/1",
         json={
             'name': 'updated_carrier_trunk1',
+            "tenant_id": 1,
             "carrier_id": 1,
+            "normalization_profile_id": None,
             "sip_proxy": "proxy.somedomain.com",
             "sip_proxy_port": 5061,
             "ip_address": "10.0.0.1",
@@ -187,7 +199,9 @@ def test_update_carrier_trunk(app=None, client=None):
     assert response.json() == {
         'id': 1,
         'name': 'updated_carrier_trunk1',
+        "tenant_id": 1,
         'carrier_id': 1,
+        "normalization_profile_id": None,
         'sip_proxy': 'proxy.somedomain.com',
         "sip_proxy_port": 5061,
         "ip_address": "10.0.0.1",
@@ -207,7 +221,9 @@ def test_update_carrier_trunk_not_found(app=None, client=None):
         "/carrier_trunks/1",
         json={
             'name': 'updated_carrier_trunk1',
+            "tenant_id": 1,
             "carrier_id": 1,
+            "normalization_profile_id": None,
             "sip_proxy": "proxy.somedomain.com",
             "registered": True,
             'auth_username': 'username2',
@@ -231,6 +247,7 @@ def test_delete_carrier_trunk(app=None, client=None):
     session.add(
         CarrierTrunk(
             name='carrier_trunk1',
+            tenant_id=1,
             carrier_id=1,
             sip_proxy='proxy.somedomain.com',
             auth_username='username1',
@@ -244,7 +261,9 @@ def test_delete_carrier_trunk(app=None, client=None):
     assert response.json() == {
         'id': 1,
         'name': 'carrier_trunk1',
+        "tenant_id": 1,
         'carrier_id': 1,
+        "normalization_profile_id": None,
         'sip_proxy': 'proxy.somedomain.com',
         'sip_proxy_port': 5060,
         "ip_address": None,

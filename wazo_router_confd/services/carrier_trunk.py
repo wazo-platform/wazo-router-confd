@@ -28,6 +28,7 @@ def create_carrier_trunk(
     db: Session, carrier_trunk: schema.CarrierTrunkCreate
 ) -> CarrierTrunk:
     db_carrier_trunk = CarrierTrunk(
+        tenant_id=carrier_trunk.tenant_id,
         carrier_id=carrier_trunk.carrier_id,
         name=carrier_trunk.name,
         sip_proxy=carrier_trunk.sip_proxy,

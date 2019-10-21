@@ -9,6 +9,7 @@ from pydantic import BaseModel, constr
 class CarrierTrunk(BaseModel):
     id: int
     carrier_id: int
+    normalization_profile_id: Optional[int] = None
     name: constr(max_length=256)  # type: ignore
     sip_proxy: constr(max_length=128)  # type: ignore
     sip_proxy_port: int = 5060
@@ -28,7 +29,9 @@ class CarrierTrunk(BaseModel):
 
 class CarrierTrunkRead(BaseModel):
     id: int
+    tenant_id: int
     carrier_id: int
+    normalization_profile_id: Optional[int] = None
     name: constr(max_length=256)  # type: ignore
     sip_proxy: constr(max_length=128)  # type: ignore
     sip_proxy_port: int = 5060
@@ -46,7 +49,9 @@ class CarrierTrunkRead(BaseModel):
 
 
 class CarrierTrunkCreate(BaseModel):
+    tenant_id: int
     carrier_id: int
+    normalization_profile_id: Optional[int] = None
     name: str
     sip_proxy: str
     sip_proxy_port: int = 5060
@@ -62,6 +67,7 @@ class CarrierTrunkCreate(BaseModel):
 
 
 class CarrierTrunkUpdate(BaseModel):
+    normalization_profile_id: Optional[int] = None
     name: constr(max_length=256)  # type: ignore
     sip_proxy: constr(max_length=128)  # type: ignore
     sip_proxy_port: int = 5060

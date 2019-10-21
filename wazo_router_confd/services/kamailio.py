@@ -17,6 +17,7 @@ from wazo_router_confd.models.domain import Domain
 from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import kamailio as schema
 from wazo_router_confd.services import password as password_service
+from wazo_router_confd.services import normalization as normalization_service
 
 
 def local_part_and_domain_from_uri(uri: str) -> Tuple[str, str]:
@@ -43,7 +44,18 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     # routing
     routes = []
     # get the domain name from the to uri
+    from_local_part, from_domain_name = local_part_and_domain_from_uri(request.from_uri)
     local_part, domain_name = local_part_and_domain_from_uri(request.to_uri)
+    # normalize according ipbx/carrier trunk source
+    normalization_profile = None
+    if auth_response is not None and auth_response.ipbx_id:
+        ipbx = db.query(IPBX).filter(id=auth_response.ipbx_id).first()
+        normalization_profile = ipbx.normalization_profile
+    elif auth_response is not None and auth_response.carrier_trunk_id:
+        carrier_trunk = db.query(CarrierTrunk).filter(id=auth_response.carrier_trunk_id).first()
+        normalization_profile = ipbx.carrier_trunk
+    from_local_part = normalization_service.normalize_local_number_to_e164(db, from_local_part, profile=normalization_profile)
+    local_part = normalization_service.normalize_local_number_to_e164(db, local_part, profile=normalization_profile)
     # get all the ipbxs linked to that domain
     ipbxs = set()
     ipbxs_by_domain = db.query(IPBX).join(Domain).filter(Domain.domain == domain_name)
@@ -73,14 +85,21 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
                 ipbxs.add(ipbx)
     # build a route for each ipbx
     for ipbx in ipbxs:
+        # normalize from uri
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, from_local_part, profile=ipbx.normalization_profile)
+        normalized_from_uri = "%s@%s" % (normalized_local_part, from_domain_name)
+        # normalize to uri
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, local_part, profile=ipbx.normalization_profile)
+        normalized_to_uri = "%s@%s" % (normalized_local_part, domain_name)
+        #
         routes.append(
             {
                 "dst_uri": "sip:%s:%s" % (ipbx.ip_fqdn, ipbx.port),
                 "path": "",
                 "socket": "",
                 "headers": {
-                    "from": {"display": request.from_name, "uri": request.from_uri},
-                    "to": {"display": request.to_name, "uri": request.to_uri},
+                    "from": {"display": request.from_name, "uri": normalized_from_uri},
+                    "to": {"display": request.to_name, "uri": normalized_to_uri},
                     "extra": "",
                 },
                 "branch_flags": 8,
@@ -100,6 +119,13 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
         carrier_trunks.filter(Carrier.tenant_id == auth_response.tenant_id)
     # get the list of carrier trunks, ordered by id
     for carrier_trunk in carrier_trunks:
+        # normalize from uri
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, from_local_part, profile=carrier_trunk.normalization_profile)
+        normalized_from_uri = "%s@%s" % (normalized_local_part, from_domain_name)
+        # normalize to uri
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, local_part, profile=carrier_trunk.normalization_profile)
+        normalized_to_uri = "%s@%s" % (normalized_local_part, domain_name)
+        #
         routes.append(
             {
                 "dst_uri": "sip:%s:%s"
@@ -107,8 +133,8 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
                 "path": "",
                 "socket": "",
                 "headers": {
-                    "from": {"display": request.from_name, "uri": request.from_uri},
-                    "to": {"display": request.to_name, "uri": request.to_uri},
+                    "from": {"display": request.from_name, "uri": normalized_from_uri},
+                    "to": {"display": request.to_name, "uri": normalized_to_uri},
                     "extra": "",
                 },
                 "branch_flags": 8,

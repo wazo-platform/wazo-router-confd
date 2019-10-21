@@ -35,6 +35,7 @@ def test_create_ipbx(app=None, client=None):
         "id": 1,
         "tenant_id": 1,
         "domain_id": 1,
+        "normalization_profile_id": None,
         "customer": 1,
         "ip_fqdn": "mypbx.com",
         "port": 5060,
@@ -102,6 +103,7 @@ def test_get_ipbxs(app=None, client=None):
         {
             "id": 1,
             "customer": 1,
+            "normalization_profile_id": None,
             "ip_fqdn": "mypbx.com",
             "port": 5060,
             "ip_address": "10.0.0.1",
@@ -141,6 +143,7 @@ def test_get_ipbx(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "customer": 1,
+        "normalization_profile_id": None,
         "ip_fqdn": "mypbx.com",
         "port": 5060,
         "ip_address": "10.0.0.1",
@@ -194,6 +197,7 @@ def test_update_ipbx(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "customer": 1,
+        "normalization_profile_id": None,
         "ip_fqdn": "mypbx2.com",
         "port": 5060,
         "ip_address": "10.0.0.1",
@@ -247,6 +251,7 @@ def test_delete_ipbx(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "customer": 1,
+        "normalization_profile_id": None,
         "ip_fqdn": "mypbx.com",
         "port": 5060,
         "ip_address": "10.0.0.1",

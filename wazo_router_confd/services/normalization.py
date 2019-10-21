@@ -247,7 +247,14 @@ def normalize_local_number_to_e164(
     number = re_clean_number('', number)
     if profile is not None:
         prefixes = [number[:i] for i in range(0, min(10, len(number)))]
-        rules = db.query(NormalizationRule).filter(NormalizationRule.profile_id == profile.id).filter(NormalizationRule.match_prefix.in_(prefixes)).filter(NormalizationRule.rule_type == 1).order_by(NormalizationRule.priority).order_by(NormalizationRule.id)
+        rules = (
+            db.query(NormalizationRule)
+            .filter(NormalizationRule.profile_id == profile.id)
+            .filter(NormalizationRule.match_prefix.in_(prefixes))
+            .filter(NormalizationRule.rule_type == 1)
+            .order_by(NormalizationRule.priority)
+            .order_by(NormalizationRule.id)
+        )
         for rule in rules:
             number = re.sub(rule.match_regex, rule.replace_regex, number)
     return number
@@ -259,7 +266,14 @@ def normalize_e164_to_local_number(
     number = re_clean_number('', number)
     if profile is not None:
         prefixes = [number[:i] for i in range(0, min(10, len(number)))]
-        rules = db.query(NormalizationRule).filter(NormalizationRule.profile_id == profile.id).filter(NormalizationRule.match_prefix.in_(prefixes)).filter(NormalizationRule.rule_type == 2).order_by(NormalizationRule.priority).order_by(NormalizationRule.id)
+        rules = (
+            db.query(NormalizationRule)
+            .filter(NormalizationRule.profile_id == profile.id)
+            .filter(NormalizationRule.match_prefix.in_(prefixes))
+            .filter(NormalizationRule.rule_type == 2)
+            .order_by(NormalizationRule.priority)
+            .order_by(NormalizationRule.id)
+        )
         for rule in rules:
             number = re.sub(rule.match_regex, rule.replace_regex, number)
         if profile.always_intl_prefix_plus:
