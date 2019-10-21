@@ -49,13 +49,13 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     # normalize according ipbx/carrier trunk source
     normalization_profile = None
     if auth_response is not None and auth_response.ipbx_id:
-        ipbx = db.query(IPBX).filter(id=auth_response.ipbx_id).first()
+        ipbx = db.query(IPBX).filter(IPBX.id == auth_response.ipbx_id).first()
         normalization_profile = ipbx.normalization_profile
     elif auth_response is not None and auth_response.carrier_trunk_id:
         carrier_trunk = (
-            db.query(CarrierTrunk).filter(id=auth_response.carrier_trunk_id).first()
+            db.query(CarrierTrunk).filter(CarrierTrunk.id == auth_response.carrier_trunk_id).first()
         )
-        normalization_profile = ipbx.carrier_trunk
+        normalization_profile = carrier_trunk.normalization_profile
     from_local_part = normalization_service.normalize_local_number_to_e164(
         db, from_local_part, profile=normalization_profile
     )
