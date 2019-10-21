@@ -18,6 +18,7 @@ from .base import Base
 if TYPE_CHECKING:  # pragma: no cover
     from .carrier import Carrier  # noqa
     from .normalization import NormalizationProfile  # noqa
+    from .tenant import Tenant  # noqa
 
 
 class CarrierTrunk(Base):

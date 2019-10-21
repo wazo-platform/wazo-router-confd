@@ -14,7 +14,10 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class Carrier(Base):
     __tablename__ = "carriers"
-    __table_args__ = (UniqueConstraint('tenant_id', 'name'),)
+    __table_args__ = (
+        UniqueConstraint('tenant_id', 'name'),
+        UniqueConstraint('tenant_id', 'id'),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     tenant_id = Column(

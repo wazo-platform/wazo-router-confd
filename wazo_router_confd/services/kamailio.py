@@ -52,10 +52,16 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
         ipbx = db.query(IPBX).filter(id=auth_response.ipbx_id).first()
         normalization_profile = ipbx.normalization_profile
     elif auth_response is not None and auth_response.carrier_trunk_id:
-        carrier_trunk = db.query(CarrierTrunk).filter(id=auth_response.carrier_trunk_id).first()
+        carrier_trunk = (
+            db.query(CarrierTrunk).filter(id=auth_response.carrier_trunk_id).first()
+        )
         normalization_profile = ipbx.carrier_trunk
-    from_local_part = normalization_service.normalize_local_number_to_e164(db, from_local_part, profile=normalization_profile)
-    local_part = normalization_service.normalize_local_number_to_e164(db, local_part, profile=normalization_profile)
+    from_local_part = normalization_service.normalize_local_number_to_e164(
+        db, from_local_part, profile=normalization_profile
+    )
+    local_part = normalization_service.normalize_local_number_to_e164(
+        db, local_part, profile=normalization_profile
+    )
     # get all the ipbxs linked to that domain
     ipbxs = set()
     ipbxs_by_domain = db.query(IPBX).join(Domain).filter(Domain.domain == domain_name)
@@ -86,10 +92,14 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     # build a route for each ipbx
     for ipbx in ipbxs:
         # normalize from uri
-        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, from_local_part, profile=ipbx.normalization_profile)
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(
+            db, from_local_part, profile=ipbx.normalization_profile
+        )
         normalized_from_uri = "%s@%s" % (normalized_local_part, from_domain_name)
         # normalize to uri
-        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, local_part, profile=ipbx.normalization_profile)
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(
+            db, local_part, profile=ipbx.normalization_profile
+        )
         normalized_to_uri = "%s@%s" % (normalized_local_part, domain_name)
         #
         routes.append(
@@ -120,10 +130,14 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     # get the list of carrier trunks, ordered by id
     for carrier_trunk in carrier_trunks:
         # normalize from uri
-        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, from_local_part, profile=carrier_trunk.normalization_profile)
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(
+            db, from_local_part, profile=carrier_trunk.normalization_profile
+        )
         normalized_from_uri = "%s@%s" % (normalized_local_part, from_domain_name)
         # normalize to uri
-        normalized_local_part = normalization_service.normalize_e164_to_local_number(db, local_part, profile=carrier_trunk.normalization_profile)
+        normalized_local_part = normalization_service.normalize_e164_to_local_number(
+            db, local_part, profile=carrier_trunk.normalization_profile
+        )
         normalized_to_uri = "%s@%s" % (normalized_local_part, domain_name)
         #
         routes.append(

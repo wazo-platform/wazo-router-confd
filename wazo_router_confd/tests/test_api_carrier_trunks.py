@@ -52,7 +52,10 @@ def test_create_duplicated_carrier_trunk(app=None, client=None):
     session = SessionLocal(bind=app.engine)
     session.add(
         CarrierTrunk(
-            name='carrier_trunk1', tenant_id=1, carrier_id=1, sip_proxy='proxy.somedomain.com'
+            name='carrier_trunk1',
+            tenant_id=1,
+            carrier_id=1,
+            sip_proxy='proxy.somedomain.com',
         )
     )
     session.commit()
@@ -129,7 +132,10 @@ def test_get_carrier_trunks(app=None, client=None):
     session = SessionLocal(bind=app.engine)
     session.add(
         CarrierTrunk(
-            name='carrier_trunk1', tenant_id=1, carrier_id=1, sip_proxy='proxy.somedomain.com'
+            name='carrier_trunk1',
+            tenant_id=1,
+            carrier_id=1,
+            sip_proxy='proxy.somedomain.com',
         )
     )
     session.commit()
