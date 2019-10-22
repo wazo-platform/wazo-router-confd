@@ -14,8 +14,8 @@ from wazo_router_confd.models.normalization import (
 from wazo_router_confd.schemas import normalization as schema
 
 
-re_clean_number = re.compile('[^0-9,]').sub
-re_match_prefix_from_regex = re.compile('[^0-9]')
+re_clean_number = re.compile('[^0-9a-zA-Z]').sub
+re_match_prefix_from_regex = re.compile('[^0-9a-zA-Z]')
 
 
 def get_match_prefix_from_regex(match_regex: Optional[str] = None) -> str:
