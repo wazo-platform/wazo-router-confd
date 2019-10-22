@@ -3,7 +3,6 @@
 
 import re
 
-from email.utils import parseaddr
 from typing import Tuple
 
 from sqlalchemy import and_, or_
@@ -20,10 +19,15 @@ from wazo_router_confd.services import password as password_service
 from wazo_router_confd.services import normalization as normalization_service
 
 
-def local_part_and_domain_from_uri(uri: str) -> Tuple[str, str]:
-    _, address = parseaddr(uri)
-    local_part, domain_name = address.rsplit('@', 1)
-    return (local_part, domain_name)
+re_protocol_local_part_and_domain = re.compile(r'^([^:]+:)?([^@]+)@([^@]+)$').match
+
+
+def protocol_local_part_and_domain_from_uri(uri: str) -> Tuple[str, str, str]:
+    m = re_protocol_local_part_and_domain(uri)
+    if m is None:
+        return ('', '', '')
+    protocol, local_part, domain_name = m.groups()
+    return (protocol or '', local_part, domain_name)
 
 
 def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingResponse:
@@ -44,8 +48,12 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     # routing
     routes = []
     # get the domain name from the to uri
-    from_local_part, from_domain_name = local_part_and_domain_from_uri(request.from_uri)
-    local_part, domain_name = local_part_and_domain_from_uri(request.to_uri)
+    from_protocol, from_local_part, from_domain_name = protocol_local_part_and_domain_from_uri(
+        request.from_uri
+    )
+    protocol, local_part, domain_name = protocol_local_part_and_domain_from_uri(
+        request.to_uri
+    )
     # normalize according ipbx/carrier trunk source
     normalization_profile = None
     if auth_response is not None and auth_response.ipbx_id:
@@ -53,7 +61,9 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
         normalization_profile = ipbx.normalization_profile
     elif auth_response is not None and auth_response.carrier_trunk_id:
         carrier_trunk = (
-            db.query(CarrierTrunk).filter(CarrierTrunk.id == auth_response.carrier_trunk_id).first()
+            db.query(CarrierTrunk)
+            .filter(CarrierTrunk.id == auth_response.carrier_trunk_id)
+            .first()
         )
         normalization_profile = carrier_trunk.normalization_profile
     from_local_part = normalization_service.normalize_local_number_to_e164(
@@ -95,12 +105,16 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
         normalized_local_part = normalization_service.normalize_e164_to_local_number(
             db, from_local_part, profile=ipbx.normalization_profile
         )
-        normalized_from_uri = "%s@%s" % (normalized_local_part, from_domain_name)
+        normalized_from_uri = "%s%s@%s" % (
+            from_protocol,
+            normalized_local_part,
+            from_domain_name,
+        )
         # normalize to uri
         normalized_local_part = normalization_service.normalize_e164_to_local_number(
             db, local_part, profile=ipbx.normalization_profile
         )
-        normalized_to_uri = "%s@%s" % (normalized_local_part, domain_name)
+        normalized_to_uri = "%s%s@%s" % (protocol, normalized_local_part, domain_name)
         #
         routes.append(
             {
@@ -133,12 +147,16 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
         normalized_local_part = normalization_service.normalize_e164_to_local_number(
             db, from_local_part, profile=carrier_trunk.normalization_profile
         )
-        normalized_from_uri = "%s@%s" % (normalized_local_part, from_domain_name)
+        normalized_from_uri = "%s%s@%s" % (
+            from_protocol,
+            normalized_local_part,
+            from_domain_name,
+        )
         # normalize to uri
         normalized_local_part = normalization_service.normalize_e164_to_local_number(
             db, local_part, profile=carrier_trunk.normalization_profile
         )
-        normalized_to_uri = "%s@%s" % (normalized_local_part, domain_name)
+        normalized_to_uri = "%s%s@%s" % (protocol, normalized_local_part, domain_name)
         #
         routes.append(
             {
