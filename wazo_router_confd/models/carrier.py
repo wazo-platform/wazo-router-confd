@@ -8,13 +8,16 @@ from sqlalchemy.orm import relationship
 
 from .base import Base
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .tenant import Tenant  # noqa
 
 
 class Carrier(Base):
     __tablename__ = "carriers"
-    __table_args__ = (UniqueConstraint('tenant_id', 'name'),)
+    __table_args__ = (
+        UniqueConstraint('tenant_id', 'name'),
+        UniqueConstraint('tenant_id', 'id'),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     tenant_id = Column(

@@ -35,6 +35,7 @@ def test_create_ipbx(app=None, client=None):
         "id": 1,
         "tenant_id": 1,
         "domain_id": 1,
+        "normalization_profile_id": None,
         "customer": 1,
         "ip_fqdn": "mypbx.com",
         "port": 5060,
@@ -74,6 +75,47 @@ def test_create_ipbx_password_too_long(app=None, client=None):
 
 
 @get_app_and_client
+def test_get_ipbxs(app=None, client=None):
+    from wazo_router_confd.database import SessionLocal
+    from wazo_router_confd.models.domain import Domain
+    from wazo_router_confd.models.tenant import Tenant
+    from wazo_router_confd.models.ipbx import IPBX
+
+    tenant = Tenant(name='fabio')
+    domain = Domain(domain='testdomain.com', tenant=tenant)
+    ipbx = IPBX(
+        tenant=tenant,
+        domain=domain,
+        customer=1,
+        ip_fqdn='mypbx.com',
+        ip_address="10.0.0.1",
+        registered=True,
+        username='user',
+        password='password',
+    )
+    session = SessionLocal(bind=app.engine)
+    session.add_all([tenant, domain, ipbx])
+    session.commit()
+    #
+    response = client.get("/ipbx/")
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "id": 1,
+            "customer": 1,
+            "normalization_profile_id": None,
+            "ip_fqdn": "mypbx.com",
+            "port": 5060,
+            "ip_address": "10.0.0.1",
+            "domain_id": domain.id,
+            "tenant_id": tenant.id,
+            "registered": True,
+            "username": "user",
+        }
+    ]
+
+
+@get_app_and_client
 def test_get_ipbx(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.domain import Domain
@@ -101,6 +143,7 @@ def test_get_ipbx(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "customer": 1,
+        "normalization_profile_id": None,
         "ip_fqdn": "mypbx.com",
         "port": 5060,
         "ip_address": "10.0.0.1",
@@ -154,6 +197,7 @@ def test_update_ipbx(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "customer": 1,
+        "normalization_profile_id": None,
         "ip_fqdn": "mypbx2.com",
         "port": 5060,
         "ip_address": "10.0.0.1",
@@ -207,6 +251,7 @@ def test_delete_ipbx(app=None, client=None):
     assert response.json() == {
         "id": 1,
         "customer": 1,
+        "normalization_profile_id": None,
         "ip_fqdn": "mypbx.com",
         "port": 5060,
         "ip_address": "10.0.0.1",

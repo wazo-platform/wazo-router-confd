@@ -27,10 +27,10 @@ def test_kamailio_routing_domain_with_single_ipbx(app=None, client=None):
     session.commit()
     #
     request_from_name = "From name"
-    request_from_uri = "100@sourcedomain.com"
+    request_from_uri = "sip:100@sourcedomain.com"
     request_from_tag = "from_tag"
     request_to_name = "to name"
-    request_to_uri = "200@testdomain.com"
+    request_to_uri = "sip:200@testdomain.com"
     request_to_tag = "to_tag"
     #
     response = client.post(
@@ -97,10 +97,10 @@ def test_kamailio_routing_domain_with_no_matching_ipbx(app=None, client=None):
     session.commit()
     #
     request_from_name = "From name"
-    request_from_uri = "100@sourcedomain.com"
+    request_from_uri = "sip:100@sourcedomain.com"
     request_from_tag = "from_tag"
     request_to_name = "to name"
-    request_to_uri = "200@anotherdomain.com"
+    request_to_uri = "sip:200@anotherdomain.com"
     request_to_tag = "to_tag"
     #
     response = client.post(

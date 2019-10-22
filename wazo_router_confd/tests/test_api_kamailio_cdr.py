@@ -45,6 +45,7 @@ def test_kamailio_cdr(app=None, client=None):
     response = client.post(
         "/kamailio/cdr",
         json={
+            "tenant_id": tenant.id,
             "event": "sip-routing",
             "source_ip": "10.0.0.1",
             "source_port": 5060,
@@ -59,7 +60,7 @@ def test_kamailio_cdr(app=None, client=None):
     assert response.json() == {
         "success": True,
         "cdr": {
-            "tenant_id": 1,
+            "tenant_id": tenant.id,
             "source_ip": "10.0.0.1",
             "source_port": 5060,
             "call_id": "call-id",
@@ -115,6 +116,7 @@ def test_kamailio_cdr_failed_no_domain(app=None, client=None):
     response = client.post(
         "/kamailio/cdr",
         json={
+            "tenant_id": 0,
             "event": "sip-routing",
             "source_ip": "10.0.0.1",
             "source_port": 5060,

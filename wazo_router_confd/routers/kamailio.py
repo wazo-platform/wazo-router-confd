@@ -9,7 +9,7 @@ from wazo_router_confd.schemas import kamailio as schema
 from wazo_router_confd.schemas import cdr as cdr_schema
 from wazo_router_confd.services import kamailio as service
 from wazo_router_confd.services import cdr as cdr_service
-from wazo_router_confd.services import domain as domain_service
+from wazo_router_confd.services import tenant as tenant_service
 
 
 router = APIRouter()
@@ -22,11 +22,7 @@ def kamailio_routing(request: schema.RoutingRequest, db: Session = Depends(get_d
 
 @router.post("/kamailio/cdr")
 def kamailio_cdr(request: schema.CDRRequest, db: Session = Depends(get_db)):
-    domains = [
-        service.local_part_and_domain_from_uri(request.from_uri)[1],
-        service.local_part_and_domain_from_uri(request.to_uri)[1],
-    ]
-    tenant = domain_service.get_tenant_by_domains(db=db, domains=domains)
+    tenant = tenant_service.get_tenant(db=db, tenant_id=request.tenant_id)
     if tenant is None:
         return {"success": False, "cdr": None}
     cdr = cdr_schema.CDRCreate(

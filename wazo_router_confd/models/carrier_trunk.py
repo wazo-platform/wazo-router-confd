@@ -3,27 +3,48 @@
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Boolean,
+)
 from sqlalchemy.orm import relationship
 
 from .base import Base
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .carrier import Carrier  # noqa
+    from .normalization import NormalizationProfile  # noqa
+    from .tenant import Tenant  # noqa
 
 
 class CarrierTrunk(Base):
     __tablename__ = "carrier_trunks"
-    __table_args__ = ()
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['tenant_id', 'carrier_id'],
+            ['carriers.tenant_id', 'carriers.id'],
+            ondelete='CASCADE',
+        ),
+        ForeignKeyConstraint(
+            ['tenant_id', 'normalization_profile_id'],
+            ['normalization_profiles.tenant_id', 'normalization_profiles.id'],
+            ondelete='SET NULL',
+        ),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
-    carrier_id = Column(
-        Integer,
-        ForeignKey('carriers.id', ondelete='CASCADE'),
-        nullable=False,
-        index=True,
+    tenant_id = Column(
+        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
     )
+    tenant = relationship("Tenant")
+    carrier_id = Column(Integer, nullable=False)
     carrier = relationship('Carrier')
+    normalization_profile_id = Column(Integer, nullable=True)
+    normalization_profile = relationship("NormalizationProfile")
     name = Column(String(256), unique=True, index=True)
     sip_proxy = Column(String(128), nullable=False)
     sip_proxy_port = Column(Integer, nullable=False, default=5060)

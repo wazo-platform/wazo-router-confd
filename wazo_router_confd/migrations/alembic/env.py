@@ -18,6 +18,7 @@ fileConfig(config.config_file_name)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from wazo_router_confd.database import Base
+from wazo_router_confd.app import get_app
 
 target_metadata = Base.metadata
 

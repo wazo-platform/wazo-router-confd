@@ -12,6 +12,7 @@ from .routers import dids
 from .routers import domains
 from .routers import kamailio
 from .routers import ipbx
+from .routers import normalization
 from .routers import routing_rules
 from .routers import routing_group
 from .routers import tenants
@@ -31,6 +32,7 @@ def get_app(config: dict):
     app.include_router(domains.router)
     app.include_router(ipbx.router)
     app.include_router(kamailio.router)
+    app.include_router(normalization.router)
     app.include_router(routing_rules.router)
     app.include_router(routing_group.router)
     app.include_router(tenants.router)

@@ -10,6 +10,7 @@ class IPBX(BaseModel):
     id: int
     tenant_id: int
     domain_id: int
+    normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
     ip_fqdn: constr(max_length=256)  # type: ignore
     port: int = 5060
@@ -27,6 +28,7 @@ class IPBXRead(BaseModel):
     id: int
     tenant_id: int
     domain_id: int
+    normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
     ip_fqdn: constr(max_length=256)  # type: ignore
     port: int = 5060
@@ -41,6 +43,7 @@ class IPBXRead(BaseModel):
 class IPBXCreate(BaseModel):
     tenant_id: int
     domain_id: int
+    normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
     ip_fqdn: constr(max_length=256)  # type: ignore
     port: int = 5060
@@ -54,6 +57,7 @@ class IPBXCreate(BaseModel):
 class IPBXUpdate(BaseModel):
     tenant_id: int
     domain_id: int
+    normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060

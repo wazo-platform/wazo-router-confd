@@ -16,9 +16,10 @@ from sqlalchemy.orm import relationship
 
 from .base import Base
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .tenant import Tenant  # noqa
     from .domain import Domain  # noqa
+    from .normalization import NormalizationProfile  # noqa
 
 
 class IPBX(Base):
@@ -31,6 +32,11 @@ class IPBX(Base):
             ['domains.tenant_id', 'domains.id'],
             ondelete='CASCADE',
         ),
+        ForeignKeyConstraint(
+            ['tenant_id', 'normalization_profile_id'],
+            ['normalization_profiles.tenant_id', 'normalization_profiles.id'],
+            ondelete='SET NULL',
+        ),
     )
 
     id = Column(Integer, primary_key=True, index=True)
@@ -40,6 +46,8 @@ class IPBX(Base):
     tenant = relationship("Tenant")
     domain_id = Column(Integer, nullable=False)
     domain = relationship("Domain")
+    normalization_profile_id = Column(Integer, nullable=True)
+    normalization_profile = relationship("NormalizationProfile")
     customer = Column(Integer, nullable=True)
     ip_fqdn = Column(String(256), nullable=False)
     ip_address = Column(String(256), nullable=True)
