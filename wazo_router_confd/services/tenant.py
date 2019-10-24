@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from typing import List
+from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
@@ -22,7 +23,7 @@ def get_tenants(db: Session, offset: int = 0, limit: int = 100) -> List[Tenant]:
 
 
 def create_tenant(db: Session, tenant: schema.TenantCreate) -> Tenant:
-    db_tenant = Tenant(name=tenant.name)
+    db_tenant = Tenant(name=tenant.name, uuid=tenant.uuid or uuid4().hex)
     db.add(db_tenant)
     db.commit()
     db.refresh(db_tenant)
