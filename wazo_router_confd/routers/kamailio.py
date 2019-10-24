@@ -42,3 +42,8 @@ def kamailio_cdr(request: schema.CDRRequest, db: Session = Depends(get_db)):
 @router.post("/kamailio/auth")
 def kamailio_auth(request: schema.AuthRequest, db: Session = Depends(get_db)):
     return service.auth(db, request=request)
+
+
+@router.get("/kamailio/dbtext/uacreg")
+def kamailio_dbtext_uacreg(db: Session = Depends(get_db)):
+    return service.dbtext_uacreg(db)
