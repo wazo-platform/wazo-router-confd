@@ -35,5 +35,5 @@ def test_kamailio_dbtext_uacreg(app=None, client=None):
     response = client.get("/kamailio/dbtext/uacreg")
     assert response.status_code == 200
     assert response.json() == {
-        "content": "l_uuid(string) l_username(string) l_domain(string) r_username(string) r_domain(string) realm(string) auth_username(string) auth_password(string) auth_proxy(string) expires(int) flags(int) reg_delay(int)\n1:username:domain.com:username:domain.com:realm:username:password:registrar:300:4:10\n"
+        "content": "l_uuid(string) l_username(string) l_domain(string) r_username(string) r_domain(string) realm(string) auth_username(string) auth_password(string) auth_proxy(string) expires(int) flags(int) reg_delay(int)\n1:username:domain.com:username:domain.com:realm:username:password:sip\\:registrar:300:16:0\n"
     }
