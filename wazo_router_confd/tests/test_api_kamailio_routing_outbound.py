@@ -131,7 +131,9 @@ def test_kamailio_routing_outbound_with_no_matching_ipbx(app=None, client=None):
 
 
 @get_app_and_client
-def test_kamailio_routing_outbound_with_single_ipbx_and_authenticated_carrier_trunk(app=None, client=None):
+def test_kamailio_routing_outbound_with_single_ipbx_and_authenticated_carrier_trunk(
+    app=None, client=None
+):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -144,8 +146,13 @@ def test_kamailio_routing_outbound_with_single_ipbx_and_authenticated_carrier_tr
     domain = Domain(domain='testdomain.com', tenant=tenant)
     carrier = Carrier(name='carrier1', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='trunk1', carrier=carrier, sip_proxy='192.168.1.1',
-        registered=True, auth_username='username', auth_password='password', realm='realm',
+        name='trunk1',
+        carrier=carrier,
+        sip_proxy='192.168.1.1',
+        registered=True,
+        auth_username='username',
+        auth_password='password',
+        realm='realm',
     )
 
     ipbx = IPBX(
