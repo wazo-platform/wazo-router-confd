@@ -270,7 +270,7 @@ def dbtext_uacreg(db: Session) -> schema.DBText:
     for carrier_trunk in carrier_trunks:
         content.append(
             ":".join(
-                [
+                map(lambda x: x.replace(":", "\\:"), [
                     "%s" % carrier_trunk.id,
                     carrier_trunk.auth_username,
                     carrier_trunk.from_domain,
@@ -279,11 +279,11 @@ def dbtext_uacreg(db: Session) -> schema.DBText:
                     carrier_trunk.realm,
                     carrier_trunk.auth_username,
                     carrier_trunk.auth_password,
-                    carrier_trunk.registrar_proxy,
+                    "sip:%s" % carrier_trunk.registrar_proxy,
                     str(carrier_trunk.expire_seconds),
-                    "4",
-                    str(carrier_trunk.retry_seconds),
-                ]
+                    "16",
+                    "0",
+                ])
             )
             + "\n"
         )
