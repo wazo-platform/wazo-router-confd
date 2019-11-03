@@ -56,3 +56,7 @@ class RoutingRequest(BaseModel):
 class RoutingResponse(BaseModel):
     rtjson: Optional[dict]
     auth: Optional[AuthResponse] = None
+
+
+class DBText(BaseModel):
+    content: str

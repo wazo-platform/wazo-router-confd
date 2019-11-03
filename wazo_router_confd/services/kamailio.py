@@ -142,6 +142,7 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     if auth_response is not None and auth_response.tenant_id:
         carrier_trunks.filter(Carrier.tenant_id == auth_response.tenant_id)
     # get the list of carrier trunks, ordered by id
+    carrier_trunk_auth = None
     for carrier_trunk in carrier_trunks:
         # normalize from uri
         normalized_local_part = normalization_service.normalize_e164_to_local_number(
@@ -180,12 +181,24 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
                 "fr_inv_timer": 30000,
             }
         )
+        # if carrier trunk is registered, set the auth parameters
+        if carrier_trunk.registered:
+            carrier_trunk_auth = dict(
+                auth_username=carrier_trunk.auth_username,
+                auth_password=carrier_trunk.auth_password,
+                realm=carrier_trunk.realm,
+            )
+        # we stop at the first carrier trunk found
+        break
     # build the JSON document, compatible with the rtjson Kamailio module form
     rtjson = (
         {"success": True, "version": "1.0", "routing": "serial", "routes": routes}
         if routes
         else {"success": False}
     )
+    # update with carrier trunk auth parameters, if set
+    if carrier_trunk_auth is not None:
+        rtjson.update(carrier_trunk_auth)
     # return the routing and auth responses
     return schema.RoutingResponse(auth=auth_response, rtjson=rtjson)
 
@@ -239,3 +252,55 @@ def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
                 carrier_trunk_id=carrier_trunk.id,
             )
     return schema.AuthResponse(success=False)
+
+
+def dbtext_uacreg(db: Session) -> schema.DBText:
+    content = []
+    content.append(
+        " ".join(
+            [
+                "l_uuid(string)",
+                "l_username(string)",
+                "l_domain(string)",
+                "r_username(string)",
+                "r_domain(string)",
+                "realm(string)",
+                "auth_username(string)",
+                "auth_password(string)",
+                "auth_proxy(string)",
+                "expires(int)",
+                "flags(int)",
+                "reg_delay(int)",
+            ]
+        )
+        + "\n"
+    )
+    carrier_trunks = (
+        db.query(CarrierTrunk)
+        .filter(CarrierTrunk.registered.is_(True))
+        .order_by(CarrierTrunk.id)
+    )
+    for carrier_trunk in carrier_trunks:
+        content.append(
+            ":".join(
+                map(
+                    lambda x: x.replace(":", "\\:"),
+                    [
+                        "%s" % carrier_trunk.id,
+                        carrier_trunk.auth_username,
+                        carrier_trunk.from_domain,
+                        carrier_trunk.auth_username,
+                        carrier_trunk.from_domain,
+                        carrier_trunk.realm,
+                        carrier_trunk.auth_username,
+                        carrier_trunk.auth_password,
+                        "sip:%s" % carrier_trunk.registrar_proxy,
+                        str(carrier_trunk.expire_seconds),
+                        "16",
+                        "0",
+                    ],
+                )
+            )
+            + "\n"
+        )
+    return schema.DBText(content="".join(content))
