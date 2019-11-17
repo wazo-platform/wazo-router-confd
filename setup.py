@@ -32,6 +32,7 @@ setup(
         'SQLAlchemy',
         'tenacity',
         'uvicorn',
+        'email-validator',
     ],
     packages=find_packages(),
     include_package_data=True,
