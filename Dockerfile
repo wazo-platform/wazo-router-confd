@@ -15,7 +15,7 @@ RUN true && \
     pip install --no-cache-dir /tmp/wazo_router_confd-1.0-py3-none-any.whl && \
     apk del --no-cache .build-deps && \
     rm /tmp/wazo_router_confd-1.0-py3-none-any.whl && \
-    apk add netcat-openbsd
+    apk add libpq netcat-openbsd
 
 COPY ./scripts/wait-for /usr/bin/wait-for
 RUN chmod +x /usr/bin/wait-for
