@@ -69,18 +69,18 @@ def setup_consul(app: FastAPI, config: dict):
         consul.register(
             service_id,
             'wazo-router-confd',
-            address=config['host'] if config['host'] != '0.0.0.0' else None,
-            port=config['port'],
+            address=config.get('advertise_host'),
+            port=config.get('advertise_port'),
             tags=('wazo-router-confd', 'wazo-router', 'wazo-api', 'wazo'),
             check={
                 "id": "api",
                 "name": "HTTP API on port 5000",
-                "http": "http://%(host)s:%(port)d/status" % config,
+                "http": "http://%(advertise_host)s:%(advertise_port)d/status" % config,
                 "method": "GET",
                 "interval": "10s",
                 "timeout": "1s",
             }
-            if (config['host'] and config['port'])
+            if (config.get('advertise_host') and config.get('advertise_port'))
             else None,
         )
 

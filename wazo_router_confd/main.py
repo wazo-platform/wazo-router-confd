@@ -18,14 +18,24 @@ from .app import get_app
     "--host",
     type=str,
     default="127.0.0.1",
-    help="Bind socket to this host.",
+    help="Bind socket to this host",
     show_default=True,
 )
 @click.option(
-    "--port",
+    "--port", type=int, default=8000, help="Bind socket to this port", show_default=True
+)
+@click.option(
+    "--advertise-host",
+    type=str,
+    default="127.0.0.1",
+    help="IP address or hostname to be advertised in Consul",
+    show_default=True,
+)
+@click.option(
+    "--advertise-port",
     type=int,
     default=8000,
-    help="Bind socket to this port.",
+    help="Port to be advertised in Consul",
     show_default=True,
 )
 @click.option(
@@ -56,6 +66,8 @@ def main(
     config_file: Optional[str] = None,
     host: Optional[str] = None,
     port: Optional[int] = None,
+    advertise_host: Optional[str] = None,
+    advertise_port: Optional[int] = None,
     consul_uri: Optional[str] = None,
     database_uri: Optional[str] = None,
     database_upgrade: bool = True,
@@ -64,6 +76,8 @@ def main(
     config = dict(
         host=host,
         port=port,
+        advertise_host=advertise_host,
+        advertise_port=advertise_port,
         consul_uri=consul_uri,
         database_uri=database_uri,
         database_upgrade=database_upgrade,
