@@ -1,10 +1,8 @@
 FROM python:3.7-alpine
-WORKDIR /
+RUN apk add gcc python3-dev musl-dev postgresql-dev make
 COPY . /
-RUN true && \
-    apk add --no-cache --virtual .build-deps gcc python3-dev musl-dev postgresql-dev make && \
-    make setup dist && \
-    apk del --no-cache .build-deps
+WORKDIR /
+RUN make setup dist
 
 FROM python:3.7-alpine
 LABEL maintainer="Wazo Authors <dev@wazo.community>"
