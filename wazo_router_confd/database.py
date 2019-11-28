@@ -69,6 +69,7 @@ def upgrade_database(app: FastAPI, config: dict):
             alembic.command.stamp(cfg, "head")
         else:
             alembic.command.upgrade(cfg, "head")
+    engine.dispose()
     logger.info("Database upgraded")
 
 

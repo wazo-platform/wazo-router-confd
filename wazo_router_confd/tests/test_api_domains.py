@@ -6,6 +6,14 @@ from .common import get_app_and_client
 
 @get_app_and_client
 def test_create_domain(app=None, client=None):
+    from wazo_router_confd.database import SessionLocal
+    from wazo_router_confd.models.tenant import Tenant
+
+    session = SessionLocal(bind=app.engine)
+    tenant = Tenant(name='fabio')
+    session.add(tenant)
+    session.commit()
+
     response = client.post(
         "/domains/", json={"domain": "testdomain.com", "tenant_id": 1}
     )
@@ -79,8 +87,9 @@ def test_update_domain(app=None, client=None):
 
     session = SessionLocal(bind=app.engine)
     tenant = Tenant(name='test')
+    tenant_2 = Tenant(name='test_2')
     domain = Domain(domain='testdomain.com', tenant=tenant)
-    session.add_all([domain, tenant])
+    session.add_all([domain, tenant, tenant_2])
     session.commit()
     #
     response = client.put(

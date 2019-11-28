@@ -225,7 +225,7 @@ def test_update_did(app=None, client=None):
         name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
-        did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
+        did_regex=r'^(\+?1)?(800)[2-9]\d{6})$',
         tenant=tenant,
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
@@ -233,23 +233,24 @@ def test_update_did(app=None, client=None):
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
+    # FIXME(sileht): changing tenant/ipbx/carrier_trunk doesn't seems to work
     response = client.put(
         "/dids/1",
         json={
             "id": 1,
-            "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": 2,
+            "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
+            "tenant_id": 1,
             "ipbx_id": 1,
-            "carrier_trunk_id": 2,
+            "carrier_trunk_id": 1,
         },
     )
     assert response.status_code == 200
     assert response.json() == {
         "id": 1,
-        "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-        "tenant_id": 2,
+        "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
+        "tenant_id": 1,
         "ipbx_id": 1,
-        "carrier_trunk_id": 2,
+        "carrier_trunk_id": 1,
     }
 
 

@@ -6,6 +6,16 @@ from .common import get_app_and_client
 
 @get_app_and_client
 def test_create_carrier_trunk(app=None, client=None):
+    from wazo_router_confd.database import SessionLocal
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.tenant import Tenant
+
+    tenant = Tenant(name="tenant")
+    carrier = Carrier(name="carrier", tenant=tenant)
+    session = SessionLocal(bind=app.engine)
+    session.add_all([tenant, carrier])
+    session.commit()
+
     response = client.post(
         "/carrier_trunks/",
         json={
@@ -48,16 +58,19 @@ def test_create_carrier_trunk(app=None, client=None):
 def test_create_duplicated_carrier_trunk(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.tenant import Tenant
 
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        CarrierTrunk(
-            name='carrier_trunk1',
-            tenant_id=1,
-            carrier_id=1,
-            sip_proxy='proxy.somedomain.com',
-        )
+    tenant = Tenant(name="tenant")
+    carrier = Carrier(name="carrier", tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk1',
+        tenant=tenant,
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
     )
+    session = SessionLocal(bind=app.engine)
+    session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
     response = client.post(
@@ -76,25 +89,28 @@ def test_create_duplicated_carrier_trunk(app=None, client=None):
 def test_get_carrier_trunk(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.tenant import Tenant
 
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        CarrierTrunk(
-            name='carrier_trunk1',
-            tenant_id=1,
-            carrier_id=1,
-            sip_proxy='proxy.somedomain.com',
-            registered=True,
-            ip_address="10.0.0.1",
-            auth_username='user',
-            auth_password='pass',
-            realm='somerealm.com',
-            registrar_proxy='registrar-proxy.com',
-            from_domain='gw.somedomain.com',
-            expire_seconds=1800,
-            retry_seconds=10,
-        )
+    tenant = Tenant(name="tenant")
+    carrier = Carrier(name="carrier", tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk1',
+        tenant=tenant,
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
+        registered=True,
+        ip_address="10.0.0.1",
+        auth_username='user',
+        auth_password='pass',
+        realm='somerealm.com',
+        registrar_proxy='registrar-proxy.com',
+        from_domain='gw.somedomain.com',
+        expire_seconds=1800,
+        retry_seconds=10,
     )
+    session = SessionLocal(bind=app.engine)
+    session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
     response = client.get("/carrier_trunks/1")
@@ -128,16 +144,19 @@ def test_get_carrier_trunk_not_found(app=None, client=None):
 def test_get_carrier_trunks(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.tenant import Tenant
 
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        CarrierTrunk(
-            name='carrier_trunk1',
-            tenant_id=1,
-            carrier_id=1,
-            sip_proxy='proxy.somedomain.com',
-        )
+    tenant = Tenant(name="tenant")
+    carrier = Carrier(name="carrier", tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk1',
+        tenant=tenant,
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
     )
+    session = SessionLocal(bind=app.engine)
+    session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
     response = client.get("/carrier_trunks/")
@@ -167,18 +186,21 @@ def test_get_carrier_trunks(app=None, client=None):
 def test_update_carrier_trunk(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.tenant import Tenant
 
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        CarrierTrunk(
-            name='carrier_trunk1',
-            tenant_id=1,
-            carrier_id=1,
-            sip_proxy='proxy.somedomain.com',
-            auth_username='username1',
-            auth_password='password1',
-        )
+    tenant = Tenant(name="tenant")
+    carrier = Carrier(name="carrier", tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk1',
+        tenant=tenant,
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
+        auth_username='username1',
+        auth_password='password1',
     )
+    session = SessionLocal(bind=app.engine)
+    session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
     response = client.put(
@@ -248,18 +270,21 @@ def test_update_carrier_trunk_not_found(app=None, client=None):
 def test_delete_carrier_trunk(app=None, client=None):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.tenant import Tenant
 
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        CarrierTrunk(
-            name='carrier_trunk1',
-            tenant_id=1,
-            carrier_id=1,
-            sip_proxy='proxy.somedomain.com',
-            auth_username='username1',
-            auth_password='password1',
-        )
+    tenant = Tenant(name="tenant")
+    carrier = Carrier(name="carrier", tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk1',
+        tenant=tenant,
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
+        auth_username='username1',
+        auth_password='password1',
     )
+    session = SessionLocal(bind=app.engine)
+    session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
     response = client.delete("/carrier_trunks/1")

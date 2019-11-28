@@ -50,9 +50,12 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     # routing
     routes = []
     # get the domain name from the to uri
-    from_protocol, from_local_part, from_domain_name, from_port_number = split_uri_to_parts(
-        request.from_uri
-    )
+    (
+        from_protocol,
+        from_local_part,
+        from_domain_name,
+        from_port_number,
+    ) = split_uri_to_parts(request.from_uri)
     protocol, local_part, domain_name, port_number = split_uri_to_parts(request.to_uri)
     # normalize according ipbx/carrier trunk source
     normalization_profile = None

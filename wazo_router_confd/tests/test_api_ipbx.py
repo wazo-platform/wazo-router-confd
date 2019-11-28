@@ -168,7 +168,9 @@ def test_update_ipbx(app=None, client=None):
     from wazo_router_confd.models.tenant import Tenant
 
     tenant = Tenant(name='fabio')
+    tenant_2 = Tenant(name='sileht')
     domain = Domain(domain='testdomain.com', tenant=tenant)
+    domain_2 = Domain(domain='otherdomain.com', tenant=tenant_2)
     ipbx = IPBX(
         tenant=tenant,
         domain=domain,
@@ -180,7 +182,7 @@ def test_update_ipbx(app=None, client=None):
         password='password',
     )
     session = SessionLocal(bind=app.engine)
-    session.add_all([tenant, domain, ipbx])
+    session.add_all([tenant, tenant_2, domain, domain_2, ipbx])
     session.commit()
     #
     response = client.put(
@@ -188,7 +190,7 @@ def test_update_ipbx(app=None, client=None):
         json={
             'ip_fqdn': 'mypbx2.com',
             'tenant_id': 2,
-            'domain_id': 3,
+            'domain_id': 2,
             'username': 'otheruser',
             'registered': False,
         },
@@ -201,7 +203,7 @@ def test_update_ipbx(app=None, client=None):
         "ip_fqdn": "mypbx2.com",
         "port": 5060,
         "ip_address": "10.0.0.1",
-        "domain_id": 3,
+        "domain_id": 2,
         "tenant_id": 2,
         "registered": False,
         "username": "otheruser",

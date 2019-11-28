@@ -8,6 +8,14 @@ from dateutil.parser import parse
 
 @get_app_and_client
 def test_create_cdr(app=None, client=None):
+    from wazo_router_confd.database import SessionLocal
+    from wazo_router_confd.models.tenant import Tenant
+
+    tenant = Tenant(name="tenant")
+    session = SessionLocal(bind=app.engine)
+    session.add(tenant)
+    session.commit()
+    #
     response = client.post(
         "/cdrs/",
         json={

@@ -4,8 +4,56 @@
 from .common import get_app_and_client
 
 
+def create_routing_rule(app, suffix=1):
+    from wazo_router_confd.database import SessionLocal
+    from wazo_router_confd.models.carrier import Carrier
+    from wazo_router_confd.models.carrier_trunk import CarrierTrunk
+    from wazo_router_confd.models.domain import Domain
+    from wazo_router_confd.models.tenant import Tenant
+    from wazo_router_confd.models.ipbx import IPBX
+    from wazo_router_confd.models.routing_rule import RoutingRule
+
+    session = SessionLocal(bind=app.engine)
+    tenant = Tenant(name="tenant_{}".format(suffix))
+    domain = Domain(domain='testdomain_{}.com'.format(suffix), tenant=tenant)
+    ipbx = IPBX(
+        tenant=tenant,
+        domain=domain,
+        customer=1,
+        ip_fqdn='mypbx.com',
+        registered=True,
+        username='user',
+        password='password',
+    )
+    carrier = Carrier(name='carrier_{}'.format(suffix), tenant=tenant)
+    carrier_trunk = CarrierTrunk(
+        name='carrier_trunk_{}'.format(suffix),
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
+    )
+    carrier_trunk_2 = CarrierTrunk(
+        name='carrier_trunk_{}_bis'.format(suffix),
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
+    )
+    routing_rule = RoutingRule(
+        prefix="39",
+        carrier_trunk=carrier_trunk,
+        ipbx=ipbx,
+        did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
+        route_type="pstn",
+    )
+
+    session.add_all(
+        [tenant, domain, carrier, carrier_trunk, carrier_trunk_2, ipbx, routing_rule]
+    )
+    session.commit()
+
+
 @get_app_and_client
 def test_create_routing_rule(app=None, client=None):
+    create_routing_rule(app)
+    #
     response = client.post(
         "/routing_rules/",
         json={
@@ -18,7 +66,7 @@ def test_create_routing_rule(app=None, client=None):
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": 2,
         "prefix": "39",
         "carrier_trunk_id": 1,
         "ipbx_id": 1,
@@ -29,20 +77,7 @@ def test_create_routing_rule(app=None, client=None):
 
 @get_app_and_client
 def test_get_routing_rule(app=None, client=None):
-    from wazo_router_confd.database import SessionLocal
-    from wazo_router_confd.models.routing_rule import RoutingRule
-
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        RoutingRule(
-            prefix="39",
-            carrier_trunk_id=1,
-            ipbx_id=1,
-            did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
-            route_type="pstn",
-        )
-    )
-    session.commit()
+    create_routing_rule(app)
     #
     response = client.get("/routing_rules/1")
     assert response.status_code == 200
@@ -64,20 +99,7 @@ def test_get_routing_rule_not_found(app=None, client=None):
 
 @get_app_and_client
 def test_get_routing_rules(app=None, client=None):
-    from wazo_router_confd.database import SessionLocal
-    from wazo_router_confd.models.routing_rule import RoutingRule
-
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        RoutingRule(
-            prefix="39",
-            carrier_trunk_id=1,
-            ipbx_id=1,
-            did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
-            route_type="pstn",
-        )
-    )
-    session.commit()
+    create_routing_rule(app)
     #
     response = client.get("/routing_rules/")
     assert response.status_code == 200
@@ -95,20 +117,7 @@ def test_get_routing_rules(app=None, client=None):
 
 @get_app_and_client
 def test_update_routing_rule(app=None, client=None):
-    from wazo_router_confd.database import SessionLocal
-    from wazo_router_confd.models.routing_rule import RoutingRule
-
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        RoutingRule(
-            prefix="39",
-            carrier_trunk_id=1,
-            ipbx_id=1,
-            did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
-            route_type="pstn",
-        )
-    )
-    session.commit()
+    create_routing_rule(app)
     #
     response = client.put(
         "/routing_rules/1",
@@ -148,20 +157,7 @@ def test_update_routing_rule_not_found(app=None, client=None):
 
 @get_app_and_client
 def test_delete_routing_rule(app=None, client=None):
-    from wazo_router_confd.database import SessionLocal
-    from wazo_router_confd.models.routing_rule import RoutingRule
-
-    session = SessionLocal(bind=app.engine)
-    session.add(
-        RoutingRule(
-            prefix="39",
-            carrier_trunk_id=1,
-            ipbx_id=1,
-            did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
-            route_type="pstn",
-        )
-    )
-    session.commit()
+    create_routing_rule(app)
     #
     response = client.delete("/routing_rules/1")
     assert response.status_code == 200
