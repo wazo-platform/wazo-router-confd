@@ -31,6 +31,7 @@ setup(
         'psycopg2',
         'requests',
         'SQLAlchemy',
+        'SQLAlchemy_Utils',
         'tenacity',
         'uvicorn',
         'email-validator',
