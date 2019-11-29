@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .common import get_app_and_client
+from unittest import mock
 
 
 def create_routing_rule(app, suffix=1):
@@ -48,100 +48,96 @@ def create_routing_rule(app, suffix=1):
         [tenant, domain, carrier, carrier_trunk, carrier_trunk_2, ipbx, routing_rule]
     )
     session.commit()
+    return routing_rule, ipbx, carrier_trunk, tenant
 
 
-@get_app_and_client
-def test_create_routing_rule(app=None, client=None):
-    create_routing_rule(app)
+def test_create_routing_rule(app, client):
+    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
     #
     response = client.post(
         "/routing_rules/",
         json={
             "prefix": "39",
-            "carrier_trunk_id": 1,
-            "ipbx_id": 1,
+            "carrier_trunk_id": carrier_trunk.id,
+            "ipbx_id": ipbx.id,
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
             "route_type": "pstn",
         },
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": 2,
+        "id": mock.ANY,
         "prefix": "39",
-        "carrier_trunk_id": 1,
-        "ipbx_id": 1,
+        "carrier_trunk_id": carrier_trunk.id,
+        "ipbx_id": ipbx.id,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
         "route_type": "pstn",
     }
 
 
-@get_app_and_client
-def test_get_routing_rule(app=None, client=None):
-    create_routing_rule(app)
+def test_get_routing_rule(app, client):
+    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
     #
-    response = client.get("/routing_rules/1")
+    response = client.get("/routing_rules/%s" % routing_rule.id)
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": routing_rule.id,
         "prefix": "39",
-        "carrier_trunk_id": 1,
-        "ipbx_id": 1,
+        "carrier_trunk_id": carrier_trunk.id,
+        "ipbx_id": ipbx.id,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
         "route_type": "pstn",
     }
 
 
-@get_app_and_client
-def test_get_routing_rule_not_found(app=None, client=None):
+def test_get_routing_rule_not_found(app, client):
     response = client.get("/routing_rules/1")
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_get_routing_rules(app=None, client=None):
-    create_routing_rule(app)
+def test_get_routing_rules(app, client):
+    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
     #
     response = client.get("/routing_rules/")
     assert response.status_code == 200
     assert response.json() == [
         {
-            "id": 1,
+            "id": routing_rule.id,
             "prefix": "39",
-            "carrier_trunk_id": 1,
-            "ipbx_id": 1,
+            "carrier_trunk_id": carrier_trunk.id,
+            "ipbx_id": ipbx.id,
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
             "route_type": "pstn",
         }
     ]
 
 
-@get_app_and_client
-def test_update_routing_rule(app=None, client=None):
-    create_routing_rule(app)
+def test_update_routing_rule(app, client):
+    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
+    routing_rule_2, ipbx_2, carrier_trunk_2, tenant_2 = create_routing_rule(app, 2)
     #
     response = client.put(
-        "/routing_rules/1",
+        "/routing_rules/%s" % routing_rule.id,
         json={
             'prefix': '40',
-            'carrier_trunk_id': 2,
-            'ipbx_id': 1,
+            'carrier_trunk_id': carrier_trunk_2.id,
+            'ipbx_id': ipbx_2.id,
             'did_regex': r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
             'route_type': "pstn",
         },
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": routing_rule.id,
         "prefix": "40",
-        "carrier_trunk_id": 2,
-        "ipbx_id": 1,
+        "carrier_trunk_id": carrier_trunk_2.id,
+        "ipbx_id": ipbx_2.id,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
         "route_type": "pstn",
     }
 
 
-@get_app_and_client
-def test_update_routing_rule_not_found(app=None, client=None):
+def test_update_routing_rule_not_found(app, client):
     response = client.put(
         "/routing_rules/1",
         json={
@@ -155,23 +151,21 @@ def test_update_routing_rule_not_found(app=None, client=None):
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_delete_routing_rule(app=None, client=None):
-    create_routing_rule(app)
+def test_delete_routing_rule(app, client):
+    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
     #
-    response = client.delete("/routing_rules/1")
+    response = client.delete("/routing_rules/%s" % routing_rule.id)
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": routing_rule.id,
         "prefix": "39",
-        "carrier_trunk_id": 1,
-        "ipbx_id": 1,
+        "carrier_trunk_id": carrier_trunk.id,
+        "ipbx_id": ipbx.id,
         "did_regex": r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
         "route_type": "pstn",
     }
 
 
-@get_app_and_client
-def test_delete_routing_rule_not_found(app=None, client=None):
+def test_delete_routing_rule_not_found(app, client):
     response = client.delete("/routing_rules/1")
     assert response.status_code == 404

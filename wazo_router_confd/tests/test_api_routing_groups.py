@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .common import get_app_and_client
-
 
 def create_routing_group(app, suffix=1):
     from wazo_router_confd.database import SessionLocal
@@ -48,67 +46,88 @@ def create_routing_group(app, suffix=1):
     session.add(routing_group)
     session.commit()
 
+    return routing_group, routing_rule, tenant
 
-@get_app_and_client
-def test_create_routing_group(app=None, client=None):
-    create_routing_group(app)
+
+def test_create_routing_group(app, client):
+    routing_group, routing_rule, tenant = create_routing_group(app)
     #
-    response = client.post("/routing_groups/", json={"routing_rule": 1, "tenant_id": 1})
+    response = client.post(
+        "/routing_groups/",
+        json={"routing_rule": routing_rule.id, "tenant_id": tenant.id},
+    )
     assert response.status_code == 200
-    assert response.json() == {"id": 2, "routing_rule": 1, "tenant_id": 1}
+    assert response.json() == {
+        "id": 2,
+        "routing_rule": routing_rule.id,
+        "tenant_id": tenant.id,
+    }
 
 
-@get_app_and_client
-def test_get_routing_group(app=None, client=None):
-    create_routing_group(app)
+def test_get_routing_group(app, client):
+    routing_group, routing_rule, tenant = create_routing_group(app)
     #
-    response = client.get("/routing_groups/1")
+    response = client.get("/routing_groups/%s" % routing_group.id)
     assert response.status_code == 200
-    assert response.json() == {"id": 1, "routing_rule": 1, "tenant_id": 1}
+    assert response.json() == {
+        "id": routing_group.id,
+        "routing_rule": routing_rule.id,
+        "tenant_id": tenant.id,
+    }
 
 
-@get_app_and_client
-def test_get_routing_group_not_found(app=None, client=None):
+def test_get_routing_group_not_found(app, client):
     response = client.get("/routing_groups/1")
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_get_routing_groups(app=None, client=None):
-    create_routing_group(app)
+def test_get_routing_groups(app, client):
+    routing_group, routing_rule, tenant = create_routing_group(app)
     #
     response = client.get("/routing_groups/")
     assert response.status_code == 200
-    assert response.json() == [{"id": 1, "routing_rule": 1, "tenant_id": 1}]
+    assert response.json() == [
+        {
+            "id": routing_group.id,
+            "routing_rule": routing_rule.id,
+            "tenant_id": tenant.id,
+        }
+    ]
 
 
-@get_app_and_client
-def test_update_routing_group(app=None, client=None):
-    create_routing_group(app)
-    create_routing_group(app, 2)
+def test_update_routing_group(app, client):
+    routing_group, routing_rule, tenant = create_routing_group(app)
+    routing_group_2, routing_rule_2, tenant_2 = create_routing_group(app, 2)
     #
-    response = client.put("/routing_groups/1", json={'routing_rule': 2, 'tenant_id': 2})
+    response = client.put(
+        "/routing_groups/%s" % routing_group.id,
+        json={'routing_rule': routing_rule_2.id, 'tenant_id': tenant_2.id},
+    )
     assert response.status_code == 200
-    assert response.json() == {"id": 1, "routing_rule": 2, "tenant_id": 2}
+    assert response.json() == {
+        "id": routing_group.id,
+        "routing_rule": routing_rule_2.id,
+        "tenant_id": tenant_2.id,
+    }
 
 
-@get_app_and_client
-def test_update_routing_group_not_found(app=None, client=None):
+def test_update_routing_group_not_found(app, client):
     response = client.put("/routing_groups/1", json={'routing_rule': 2, 'tenant_id': 2})
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_delete_routing_group(app=None, client=None):
-    create_routing_group(app)
+def test_delete_routing_group(app, client):
+    routing_group, routing_rule, tenant = create_routing_group(app)
     #
-
-    response = client.delete("/routing_groups/1")
+    response = client.delete("/routing_groups/%s" % routing_group.id)
     assert response.status_code == 200
-    assert response.json() == {"id": 1, "routing_rule": 1, "tenant_id": 1}
+    assert response.json() == {
+        "id": routing_group.id,
+        "routing_rule": routing_rule.id,
+        "tenant_id": tenant.id,
+    }
 
 
-@get_app_and_client
-def test_delete_routing_group_not_found(app=None, client=None):
+def test_delete_routing_group_not_found(app, client):
     response = client.delete("/routing_groups/1")
     assert response.status_code == 404

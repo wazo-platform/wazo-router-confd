@@ -1,11 +1,8 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .common import get_app_and_client
 
-
-@get_app_and_client
-def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
+def test_kamailio_routing_did_with_single_ipbx(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -88,8 +85,7 @@ def test_kamailio_routing_did_with_single_ipbx(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_routing_did_with_no_matching_ipbx(app=None, client=None):
+def test_kamailio_routing_did_with_no_matching_ipbx(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
