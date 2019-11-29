@@ -37,23 +37,9 @@ def app(request, database_uri):
     app = get_app(config)
 
     from wazo_router_confd.database import SessionLocal
-    from wazo_router_confd.models.carrier import Carrier
-    from wazo_router_confd.models.carrier_trunk import CarrierTrunk
-    from wazo_router_confd.models.cdr import CDR
-    from wazo_router_confd.models.domain import Domain
-    from wazo_router_confd.models.ipbx import IPBX
-    from wazo_router_confd.models.routing_group import RoutingGroup
-    from wazo_router_confd.models.routing_rule import RoutingRule
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    session.query(Carrier).delete()
-    session.query(CarrierTrunk).delete()
-    session.query(RoutingGroup).delete()
-    session.query(RoutingRule).delete()
-    session.query(CDR).delete()
-    session.query(Domain).delete()
-    session.query(IPBX).delete()
     session.query(Tenant).delete()
     session.commit()
 
