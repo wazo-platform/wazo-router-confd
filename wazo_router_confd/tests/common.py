@@ -20,7 +20,7 @@ LOG = logging.getLogger(__name__)
 
 @contextlib.contextmanager
 def temporary_database():
-    url = os.getenv("DATABASE_URL")
+    url = os.getenv("DATABASE_URL", "postgresql://wazo:wazo@localhost/wazo")
     db_name = "test_{}".format(uuid.uuid4().hex)
     engine = sqlalchemy.create_engine(url)
     conn = engine.connect()
