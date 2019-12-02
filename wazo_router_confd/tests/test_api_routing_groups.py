@@ -46,6 +46,8 @@ def create_routing_group(app, suffix=1):
     session.add(routing_group)
     session.commit()
 
+    session.flush()
+
     return routing_group, routing_rule, tenant
 
 

@@ -48,6 +48,9 @@ def create_routing_rule(app, suffix=1):
         [tenant, domain, carrier, carrier_trunk, carrier_trunk_2, ipbx, routing_rule]
     )
     session.commit()
+
+    session.flush()
+
     return routing_rule, ipbx, carrier_trunk, tenant
 
 
