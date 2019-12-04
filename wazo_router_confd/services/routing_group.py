@@ -23,7 +23,7 @@ def create_routing_group(
     db: Session, routing_group: schema.RoutingGroupCreate
 ) -> RoutingGroup:
     db_routing_group = RoutingGroup(
-        routing_rule=routing_group.routing_rule, tenant_id=routing_group.tenant_id
+        routing_rule=routing_group.routing_rule, tenant_uuid=routing_group.tenant_uuid
     )
     db.add(db_routing_group)
     db.commit()
@@ -43,10 +43,10 @@ def update_routing_group(
             if routing_group.routing_rule is not None
             else db_routing_group.routing_rule
         )
-        db_routing_group.tenant_id = (
-            routing_group.tenant_id
-            if routing_group.tenant_id is not None
-            else db_routing_group.tenant_id
+        db_routing_group.tenant_uuid = (
+            routing_group.tenant_uuid
+            if routing_group.tenant_uuid is not None
+            else db_routing_group.tenant_uuid
         )
         db.commit()
         db.refresh(db_routing_group)

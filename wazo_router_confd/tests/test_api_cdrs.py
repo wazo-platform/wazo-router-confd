@@ -10,7 +10,7 @@ def test_create_cdr(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="5a6c0c40-b481-41bb-a41a-75d1cc25ff34")
     session = SessionLocal(bind=app.engine)
     session.add(tenant)
     session.commit()
@@ -25,7 +25,7 @@ def test_create_cdr(app, client):
             "source_port": 5060,
             "duration": 60,
             "call_start": "2019-09-01T00:00:00",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
         },
     )
     assert response.status_code == 200
@@ -38,7 +38,7 @@ def test_create_cdr(app, client):
         "source_port": 5060,
         "duration": 60,
         "call_start": "2019-09-01T00:00:00",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
     }
 
 
@@ -48,7 +48,7 @@ def test_get_cdr(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="5a6c0c40-b481-41bb-a41a-75d1cc25ff34")
     cdr = CDR(
         from_uri="100@localhost",
         to_uri="200@localhost",
@@ -73,7 +73,7 @@ def test_get_cdr(app, client):
         "source_port": 5060,
         "duration": 60,
         "call_start": "2019-09-01T00:00:00",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
     }
 
 
@@ -88,7 +88,7 @@ def test_get_cdrs(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="5a6c0c40-b481-41bb-a41a-75d1cc25ff34")
     cdr = CDR(
         from_uri="100@localhost",
         to_uri="200@localhost",
@@ -114,7 +114,7 @@ def test_get_cdrs(app, client):
             "source_port": 5060,
             "duration": 60,
             "call_start": "2019-09-01T00:00:00",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
         }
     ]
 
@@ -125,7 +125,7 @@ def test_update_cdr(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="5a6c0c40-b481-41bb-a41a-75d1cc25ff34")
     cdr = CDR(
         from_uri="100@localhost",
         to_uri="200@localhost",
@@ -150,7 +150,7 @@ def test_update_cdr(app, client):
             "source_port": 5060,
             "duration": 61,
             "call_start": "2019-09-01T00:00:00",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
         },
     )
     assert response.status_code == 200
@@ -163,7 +163,7 @@ def test_update_cdr(app, client):
         "source_port": 5060,
         "duration": 61,
         "call_start": "2019-09-01T00:00:00",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
     }
 
 
@@ -179,7 +179,7 @@ def test_update_cdr_not_found(app, client):
             "source_port": 5060,
             "duration": 60,
             "call_start": "2019-09-01T00:00:00",
-            "tenant_id": 1,
+            "tenant_uuid": "281f5d35-3089-4af3-9773-f8769dfcd878",
         },
     )
     assert response.status_code == 404
@@ -191,7 +191,7 @@ def test_delete_cdr(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="5a6c0c40-b481-41bb-a41a-75d1cc25ff34")
     cdr = CDR(
         from_uri="100@localhost",
         to_uri="200@localhost",
@@ -216,7 +216,7 @@ def test_delete_cdr(app, client):
         "source_port": 5060,
         "duration": 60,
         "call_start": "2019-09-01T00:00:00",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
     }
 
 

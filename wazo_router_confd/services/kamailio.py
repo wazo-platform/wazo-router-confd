@@ -117,9 +117,9 @@ async def routing(
         where = ["domains.domain = %s"]
         where_args: List[Any] = [domain_name]
         # filter by tenant, if the request is authenticated
-        if auth_response is not None and auth_response.tenant_id:
-            where.append("ipbx.tenant_id = %s")
-            where_args.append(auth_response.tenant_id)
+        if auth_response is not None and auth_response.tenant_uuid:
+            where.append("ipbx.tenant_uuid = %s")
+            where_args.append(auth_response.tenant_uuid)
         # get the list of ipbx, ordered by id
         ipbxs = []
         sql = (
@@ -138,9 +138,9 @@ async def routing(
         where = ["dids.did_prefix = ANY(%s)"]
         where_args = [prefixes]
         # filter by tenant, if the request is authenticated
-        if auth_response is not None and auth_response.tenant_id:
-            where.append("ipbx.tenant_id = %s")
-            where_args.append(auth_response.tenant_id)
+        if auth_response is not None and auth_response.tenant_uuid:
+            where.append("ipbx.tenant_uuid = %s")
+            where_args.append(auth_response.tenant_uuid)
         # get the list of ipbx, ordered by id
         sql = (
             "SELECT ipbx.*, normalization_profiles.*, dids.did_regex "
@@ -224,15 +224,15 @@ async def routing(
         where = ["ipbx.ip_fqdn = %s"]
         where_args = [request.source_ip]
         # filter by tenant, if the request is authenticated
-        if auth_response is not None and auth_response.tenant_id:
-            where.append("carriers.tenant_id = %s")
-            where_args.append(auth_response.tenant_id)
+        if auth_response is not None and auth_response.tenant_uuid:
+            where.append("carriers.tenant_uuid = %s")
+            where_args.append(auth_response.tenant_uuid)
         # get the list of carrier trunks, ordered by id
         carrier_trunk_auth = None
         sql = (
             "SELECT carrier_trunks.*, normalization_profiles.* "
             "FROM carrier_trunks JOIN carriers ON (carrier_trunks.carrier_id = carriers.id) "
-            "JOIN ipbx ON (ipbx.tenant_id = carriers.tenant_id) "
+            "JOIN ipbx ON (ipbx.tenant_uuid = carriers.tenant_uuid) "
             "LEFT JOIN normalization_profiles ON (carrier_trunks.normalization_profile_id = normalization_profiles.id) "
             "WHERE %s ORDER BY carrier_trunks.id LIMIT 1;" % " AND ".join(where)
         )
@@ -342,7 +342,7 @@ async def auth(pool: aiopg.Pool, request: schema.AuthRequest) -> schema.AuthResp
                 where.append("(domains.domain = %s)")
                 where_args.append(request.domain)
             sql = (
-                "SELECT ipbx.id, ipbx.tenant_id, ipbx.username, ipbx.password, ipbx.password_ha1, domains.domain "
+                "SELECT ipbx.id, ipbx.tenant_uuid, ipbx.username, ipbx.password, ipbx.password_ha1, domains.domain "
                 "FROM ipbx JOIN domains ON (ipbx.domain_id = domains.id) "
                 "WHERE %s ORDER BY ipbx.id;" % " AND ".join(where)
             )
@@ -357,7 +357,7 @@ async def auth(pool: aiopg.Pool, request: schema.AuthRequest) -> schema.AuthResp
                         await conn.close()
                         return schema.AuthResponse(
                             success=True,
-                            tenant_id=ipbx['tenant_id'],
+                            tenant_uuid=ipbx['tenant_uuid'],
                             ipbx_id=ipbx['id'],
                             domain=ipbx['domain'],
                             username=ipbx['username'],
@@ -366,7 +366,7 @@ async def auth(pool: aiopg.Pool, request: schema.AuthRequest) -> schema.AuthResp
             #
             if request.source_ip:
                 sql = (
-                    "SELECT carriers.tenant_id, carrier_trunks.id "
+                    "SELECT carriers.tenant_uuid, carrier_trunks.id "
                     "FROM carrier_trunks JOIN carriers ON carrier_trunks.carrier_id = carriers.id "
                     "WHERE (carrier_trunks.ip_address IS NULL OR carrier_trunks.ip_address = %s) "
                     "ORDER BY carrier_trunks.id LIMIT 1;"
@@ -378,7 +378,7 @@ async def auth(pool: aiopg.Pool, request: schema.AuthRequest) -> schema.AuthResp
                     if carrier_trunk is not None:
                         return schema.AuthResponse(
                             success=True,
-                            tenant_id=carrier_trunk['tenant_id'],
+                            tenant_uuid=carrier_trunk['tenant_uuid'],
                             carrier_trunk_id=carrier_trunk['id'],
                         )
     return schema.AuthResponse(success=False)
@@ -388,13 +388,13 @@ async def cdr(pool: aiopg.Pool, request: schema.CDRRequest) -> dict:
     async with pool.acquire() as conn:
         async with conn.cursor(cursor_factory=DictCursor) as cur:
             await cur.execute(
-                "SELECT * FROM tenants WHERE id = %s;", [request.tenant_id]
+                "SELECT * FROM tenants WHERE uuid = %s;", [request.tenant_uuid]
             )
             tenant = await cur.fetchone()
             if tenant is None:
                 return {"success": False, "cdr": None}
             cdr = cdr_schema.CDRCreate(
-                tenant_id=tenant['id'],
+                tenant_uuid=tenant['uuid'],
                 source_ip=request.source_ip,
                 source_port=request.source_port,
                 from_uri=request.from_uri,
@@ -404,10 +404,10 @@ async def cdr(pool: aiopg.Pool, request: schema.CDRRequest) -> dict:
                 duration=request.duration,
             )
             await cur.execute(
-                "INSERT INTO cdrs (tenant_id, source_ip, source_port, from_uri, to_uri, call_id, call_start, duration) "
+                "INSERT INTO cdrs (tenant_uuid, source_ip, source_port, from_uri, to_uri, call_id, call_start, duration) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
                 [
-                    cdr.tenant_id,
+                    cdr.tenant_uuid,
                     cdr.source_ip,
                     cdr.source_port,
                     cdr.from_uri,

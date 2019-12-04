@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType
 
 from .base import Base
 
@@ -19,8 +20,8 @@ class CDR(Base):
     __table_args__ = ()
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(
-        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    tenant_uuid = Column(
+        UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
     ipbx_id = Column(Integer, ForeignKey('ipbx.id', ondelete='CASCADE'), nullable=True)

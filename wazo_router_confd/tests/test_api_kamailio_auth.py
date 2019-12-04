@@ -10,7 +10,7 @@ def test_kamailio_auth_username(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -31,7 +31,7 @@ def test_kamailio_auth_username(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "tenant_id": ipbx.tenant_id,
+        "tenant_uuid": str(ipbx.tenant_uuid),
         "carrier_trunk_id": None,
         "ipbx_id": ipbx.id,
         "domain": domain.domain,
@@ -48,7 +48,7 @@ def test_kamailio_auth_username_password(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -70,7 +70,7 @@ def test_kamailio_auth_username_password(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "tenant_id": ipbx.tenant_id,
+        "tenant_uuid": str(ipbx.tenant_uuid),
         "carrier_trunk_id": None,
         "ipbx_id": ipbx.id,
         "domain": domain.domain,
@@ -87,7 +87,7 @@ def test_kamailio_auth_username_domain(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -109,7 +109,7 @@ def test_kamailio_auth_username_domain(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "tenant_id": ipbx.tenant_id,
+        "tenant_uuid": str(ipbx.tenant_uuid),
         "carrier_trunk_id": None,
         "ipbx_id": ipbx.id,
         "domain": domain.domain,
@@ -126,7 +126,7 @@ def test_kamailio_auth_username_fails(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -146,7 +146,7 @@ def test_kamailio_auth_username_fails(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": False,
-        "tenant_id": None,
+        "tenant_uuid": None,
         "carrier_trunk_id": None,
         "ipbx_id": None,
         "domain": None,
@@ -163,7 +163,7 @@ def test_kamailio_auth_username_domain_fails(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -189,7 +189,7 @@ def test_kamailio_auth_username_domain_fails(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": False,
-        "tenant_id": None,
+        "tenant_uuid": None,
         "carrier_trunk_id": None,
         "ipbx_id": None,
         "domain": None,
@@ -206,7 +206,7 @@ def test_kamailio_auth_ip_address_username(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -228,7 +228,7 @@ def test_kamailio_auth_ip_address_username(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "tenant_id": ipbx.tenant_id,
+        "tenant_uuid": str(ipbx.tenant_uuid),
         "carrier_trunk_id": None,
         "ipbx_id": ipbx.id,
         "domain": domain.domain,
@@ -245,7 +245,7 @@ def test_kamailio_auth_ip_address_username_fails(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -271,7 +271,7 @@ def test_kamailio_auth_ip_address_username_fails(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": False,
-        "tenant_id": None,
+        "tenant_uuid": None,
         "carrier_trunk_id": None,
         "ipbx_id": None,
         "domain": None,
@@ -287,7 +287,7 @@ def test_kamailio_auth_ip_address(app, client):
     from wazo_router_confd.models.ipbx import IPBX
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -309,7 +309,7 @@ def test_kamailio_auth_ip_address(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "tenant_id": ipbx.tenant_id,
+        "tenant_uuid": str(ipbx.tenant_uuid),
         "carrier_trunk_id": None,
         "ipbx_id": ipbx.id,
         "domain": domain.domain,
@@ -326,7 +326,7 @@ def test_kamailio_auth_ip_address_fails(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -347,7 +347,7 @@ def test_kamailio_auth_ip_address_fails(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": False,
-        "tenant_id": None,
+        "tenant_uuid": None,
         "carrier_trunk_id": None,
         "ipbx_id": None,
         "domain": None,
@@ -364,7 +364,7 @@ def test_kamailio_auth_ip_address_disabled(app, client):
     from wazo_router_confd.services import password
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -385,7 +385,7 @@ def test_kamailio_auth_ip_address_disabled(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "tenant_id": ipbx.tenant_id,
+        "tenant_uuid": str(ipbx.tenant_uuid),
         "carrier_trunk_id": None,
         "ipbx_id": ipbx.id,
         "domain": domain.domain,

@@ -19,7 +19,7 @@ def get_cdrs(db: Session, offset: int = 0, limit: int = 100) -> List[CDR]:
 
 def create_cdr(db: Session, cdr: schema.CDRCreate) -> CDR:
     db_cdr = CDR(
-        tenant_id=cdr.tenant_id,
+        tenant_uuid=cdr.tenant_uuid,
         source_ip=cdr.source_ip,
         source_port=cdr.source_port,
         from_uri=cdr.from_uri,
@@ -37,7 +37,7 @@ def create_cdr(db: Session, cdr: schema.CDRCreate) -> CDR:
 def update_cdr(db: Session, cdr_id: int, cdr: schema.CDRUpdate) -> CDR:
     db_cdr = db.query(CDR).filter(CDR.id == cdr_id).first()
     if db_cdr is not None:
-        db_cdr.tenant_id = cdr.tenant_id if cdr.tenant_id else db_cdr.tenant_id
+        db_cdr.tenant_uuid = cdr.tenant_uuid if cdr.tenant_uuid else db_cdr.tenant_uuid
         db_cdr.source_ip = cdr.source_ip if cdr.source_ip else db_cdr.source_ip
         db_cdr.source_port = cdr.source_port if cdr.source_port else db_cdr.source_port
         db_cdr.from_uri = cdr.from_uri if cdr.from_uri else db_cdr.from_uri

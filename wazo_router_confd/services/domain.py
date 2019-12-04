@@ -27,7 +27,7 @@ def get_tenant_by_domains(db: Session, domains: List[str]) -> Tenant:
 
 
 def create_domain(db: Session, domain: schema.DomainCreate) -> Domain:
-    db_domain = Domain(domain=domain.domain, tenant_id=domain.tenant_id)
+    db_domain = Domain(domain=domain.domain, tenant_uuid=domain.tenant_uuid)
     db.add(db_domain)
     db.commit()
     db.refresh(db_domain)
@@ -40,8 +40,8 @@ def update_domain(db: Session, domain_id: int, domain: schema.DomainUpdate) -> D
         db_domain.domain = (
             domain.domain if domain.domain is not None else db_domain.domain
         )
-        db_domain.tenant_id = (
-            domain.tenant_id if domain.tenant_id is not None else db_domain.tenant_id
+        db_domain.tenant_uuid = (
+            domain.tenant_uuid if domain.tenant_uuid is not None else db_domain.tenant_uuid
         )
         db.commit()
         db.refresh(db_domain)

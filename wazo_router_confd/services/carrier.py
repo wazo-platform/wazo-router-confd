@@ -22,7 +22,7 @@ def get_carriers(db: Session, offset: int = 0, limit: int = 100) -> List[Carrier
 
 
 def create_carrier(db: Session, carrier: schema.CarrierCreate) -> Carrier:
-    db_carrier = Carrier(name=carrier.name, tenant_id=carrier.tenant_id)
+    db_carrier = Carrier(name=carrier.name, tenant_uuid=carrier.tenant_uuid)
     db.add(db_carrier)
     db.commit()
     db.refresh(db_carrier)
@@ -35,8 +35,8 @@ def update_carrier(
     db_carrier = db.query(Carrier).filter(Carrier.id == carrier_id).first()
     if db_carrier is not None:
         db_carrier.name = carrier.name if carrier.name is not None else db_carrier.name
-        db_carrier.tenant_id = (
-            carrier.tenant_id if carrier.tenant_id is not None else db_carrier.tenant_id
+        db_carrier.tenant_uuid = (
+            carrier.tenant_uuid if carrier.tenant_uuid is not None else db_carrier.tenant_uuid
         )
         db.commit()
         db.refresh(db_carrier)

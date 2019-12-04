@@ -3,12 +3,12 @@
 
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, UUID4
 
 
 class RoutingGroup(BaseModel):
     id: int
-    tenant_id: int
+    tenant_uuid: UUID4
     routing_rule: Optional[int] = None
 
     class Config:
@@ -16,10 +16,10 @@ class RoutingGroup(BaseModel):
 
 
 class RoutingGroupCreate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     routing_rule: Optional[int] = None
 
 
 class RoutingGroupUpdate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     routing_rule: Optional[int] = None
