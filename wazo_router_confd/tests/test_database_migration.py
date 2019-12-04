@@ -4,8 +4,8 @@
 from unittest import mock
 import pprint
 
-from alembic.migration import MigrationContext
-from alembic.autogenerate import compare_metadata
+from alembic.migration import MigrationContext  # type: ignore
+from alembic.autogenerate import compare_metadata  # type: ignore
 
 from wazo_router_confd import database
 from wazo_router_confd.models.base import Base

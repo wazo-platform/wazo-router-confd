@@ -1,9 +1,9 @@
-import pytest
+import pytest  # type: ignore
 import uuid
 
 import sqlalchemy
 
-from sqlalchemy.orm.session import close_all_sessions
+from sqlalchemy.orm.session import close_all_sessions  # type: ignore
 from starlette.testclient import TestClient
 from urllib.parse import urlsplit, urlunsplit
 
