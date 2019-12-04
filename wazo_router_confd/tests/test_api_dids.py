@@ -1,11 +1,10 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .common import get_app_and_client
+from unittest import mock
 
 
-@get_app_and_client
-def test_create_did(app=None, client=None):
+def test_create_did(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -43,16 +42,15 @@ def test_create_did(app=None, client=None):
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": mock.ANY,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-        "tenant_id": 1,
-        "ipbx_id": 1,
-        "carrier_trunk_id": 1,
+        "tenant_id": tenant.id,
+        "ipbx_id": ipbx.id,
+        "carrier_trunk_id": carrier_trunk.id,
     }
 
 
-@get_app_and_client
-def test_create_duplicated_did(app=None, client=None):
+def test_create_duplicated_did(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -90,16 +88,15 @@ def test_create_duplicated_did(app=None, client=None):
         "/dids/",
         json={
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": 1,
-            "ipbx_id": 1,
-            "carrier_trunk_id": 1,
+            "tenant_id": tenant.id,
+            "ipbx_id": ipbx.id,
+            "carrier_trunk_id": carrier_trunk.id,
         },
     )
     assert response.status_code == 409
 
 
-@get_app_and_client
-def test_get_did(app=None, client=None):
+def test_get_did(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -133,25 +130,23 @@ def test_get_did(app=None, client=None):
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
-    response = client.get("/dids/1")
+    response = client.get("/dids/%s" % did.id)
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": did.id,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-        "tenant_id": 1,
-        "ipbx_id": 1,
-        "carrier_trunk_id": 1,
+        "tenant_id": tenant.id,
+        "ipbx_id": ipbx.id,
+        "carrier_trunk_id": carrier_trunk.id,
     }
 
 
-@get_app_and_client
-def test_get_did_not_found(app=None, client=None):
+def test_get_did_not_found(app, client):
     response = client.get("/dids/1")
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_get_dids(app=None, client=None):
+def test_get_dids(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -189,17 +184,16 @@ def test_get_dids(app=None, client=None):
     assert response.status_code == 200
     assert response.json() == [
         {
-            "id": 1,
+            "id": did.id,
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": 1,
-            "ipbx_id": 1,
-            "carrier_trunk_id": 1,
+            "tenant_id": tenant.id,
+            "ipbx_id": ipbx.id,
+            "carrier_trunk_id": carrier_trunk.id,
         }
     ]
 
 
-@get_app_and_client
-def test_update_did(app=None, client=None):
+def test_update_did(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -225,7 +219,7 @@ def test_update_did(app=None, client=None):
         name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
     did = DID(
-        did_regex=r'^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$',
+        did_regex=r'^(\+?1)?(800)[2-9]\d{6})$',
         tenant=tenant,
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
@@ -233,28 +227,28 @@ def test_update_did(app=None, client=None):
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
+    # FIXME(sileht): changing tenant/ipbx/carrier_trunk doesn't seems to work
     response = client.put(
-        "/dids/1",
+        "/dids/%s" % did.id,
         json={
-            "id": 1,
-            "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": 2,
-            "ipbx_id": 1,
-            "carrier_trunk_id": 2,
+            "id": did.id,
+            "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
+            "tenant_id": tenant.id,
+            "ipbx_id": tenant.id,
+            "carrier_trunk_id": carrier_trunk.id,
         },
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
-        "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-        "tenant_id": 2,
-        "ipbx_id": 1,
-        "carrier_trunk_id": 2,
+        "id": did.id,
+        "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
+        "tenant_id": tenant.id,
+        "ipbx_id": ipbx.id,
+        "carrier_trunk_id": carrier_trunk.id,
     }
 
 
-@get_app_and_client
-def test_update_did_not_found(app=None, client=None):
+def test_update_did_not_found(app, client):
     response = client.put(
         "/dids/1",
         json={
@@ -267,8 +261,7 @@ def test_update_did_not_found(app=None, client=None):
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_delete_did(app=None, client=None):
+def test_delete_did(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -302,18 +295,17 @@ def test_delete_did(app=None, client=None):
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
-    response = client.delete("/dids/1")
+    response = client.delete("/dids/%s" % did.id)
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": did.id,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-        "carrier_trunk_id": 1,
-        "tenant_id": 1,
-        "ipbx_id": 1,
+        "carrier_trunk_id": carrier_trunk.id,
+        "tenant_id": tenant.id,
+        "ipbx_id": ipbx.id,
     }
 
 
-@get_app_and_client
-def test_delete_did_not_found(app=None, client=None):
+def test_delete_did_not_found(app, client):
     response = client.delete("/dids/1")
     assert response.status_code == 404

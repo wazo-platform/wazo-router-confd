@@ -53,7 +53,7 @@ def setup_database(app: FastAPI, config: dict):
     return app
 
 
-def upgrade_database(app: FastAPI, config: dict):
+def upgrade_database(app: FastAPI, config: dict, force_migration: bool = False):
     cur_dir = os.path.dirname(__file__)
     cfg = alembic.config.Config("{}/migrations/alembic.ini".format(cur_dir))
     cfg.set_main_option("script_location", "{}/migrations/alembic".format(cur_dir))
@@ -64,11 +64,12 @@ def upgrade_database(app: FastAPI, config: dict):
     with engine.begin() as connection:
         ctxt = alembic.migration.MigrationContext.configure(connection)
         current_version = ctxt.get_current_revision()
-        if current_version is None:
+        if current_version is None and not force_migration:
             Base.metadata.create_all(bind=engine)
             alembic.command.stamp(cfg, "head")
         else:
             alembic.command.upgrade(cfg, "head")
+    engine.dispose()
     logger.info("Database upgraded")
 
 

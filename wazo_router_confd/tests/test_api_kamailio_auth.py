@@ -1,11 +1,8 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .common import get_app_and_client
 
-
-@get_app_and_client
-def test_kamailio_auth_username(app=None, client=None):
+def test_kamailio_auth_username(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -43,8 +40,7 @@ def test_kamailio_auth_username(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_username_password(app=None, client=None):
+def test_kamailio_auth_username_password(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -83,8 +79,7 @@ def test_kamailio_auth_username_password(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_username_domain(app=None, client=None):
+def test_kamailio_auth_username_domain(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -123,8 +118,7 @@ def test_kamailio_auth_username_domain(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_username_fails(app=None, client=None):
+def test_kamailio_auth_username_fails(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -161,8 +155,7 @@ def test_kamailio_auth_username_fails(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_username_domain_fails(app=None, client=None):
+def test_kamailio_auth_username_domain_fails(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -205,8 +198,7 @@ def test_kamailio_auth_username_domain_fails(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_ip_address_username(app=None, client=None):
+def test_kamailio_auth_ip_address_username(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -245,8 +237,7 @@ def test_kamailio_auth_ip_address_username(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_ip_address_username_fails(app=None, client=None):
+def test_kamailio_auth_ip_address_username_fails(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -289,8 +280,7 @@ def test_kamailio_auth_ip_address_username_fails(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_ip_address(app=None, client=None):
+def test_kamailio_auth_ip_address(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -328,8 +318,7 @@ def test_kamailio_auth_ip_address(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_auth_ip_address_fails(app=None, client=None):
+def test_kamailio_auth_ip_address_fails(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain

@@ -1,11 +1,8 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .common import get_app_and_client
 
-
-@get_app_and_client
-def test_kamailio_dbtext_uacreg(app=None, client=None):
+def test_kamailio_dbtext_uacreg(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -35,5 +32,12 @@ def test_kamailio_dbtext_uacreg(app=None, client=None):
     response = client.get("/kamailio/dbtext/uacreg")
     assert response.status_code == 200
     assert response.json() == {
-        "content": "l_uuid(string) l_username(string) l_domain(string) r_username(string) r_domain(string) realm(string) auth_username(string) auth_password(string) auth_proxy(string) expires(int) flags(int) reg_delay(int)\n1:username:domain.com:username:domain.com:realm:username:password:sip\\:registrar:300:16:0\n"
+        "content": (
+            "l_uuid(string) l_username(string) l_domain(string) "
+            "r_username(string) r_domain(string) realm(string) "
+            "auth_username(string) auth_password(string) auth_proxy(string) "
+            "expires(int) flags(int) reg_delay(int)\n"
+            "%s:username:domain.com:username:domain.com:realm:username:password:sip\\:registrar:300:16:0\n"
+        )
+        % carrier_trunk.id
     }

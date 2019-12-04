@@ -1,8 +1,8 @@
-from .common import get_app_and_client
+# Copyright 2019 The Wazo Authors  (see the AUTHORS file)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 
-@get_app_and_client
-def test_kamailio_cdr(app=None, client=None):
+def test_kamailio_cdr(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -72,8 +72,7 @@ def test_kamailio_cdr(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_kamailio_cdr_failed_no_domain(app=None, client=None):
+def test_kamailio_cdr_failed_no_domain(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk

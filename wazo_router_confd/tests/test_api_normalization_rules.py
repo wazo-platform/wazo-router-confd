@@ -1,11 +1,10 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .common import get_app_and_client
+from unittest import mock
 
 
-@get_app_and_client
-def test_create_normalization_rule(app=None, client=None):
+def test_create_normalization_rule(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.tenant import Tenant
@@ -28,7 +27,7 @@ def test_create_normalization_rule(app=None, client=None):
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": mock.ANY,
         "profile_id": normalization_profile.id,
         "rule_type": 1,
         "priority": 1,
@@ -37,8 +36,7 @@ def test_create_normalization_rule(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_create_duplicated_normalization_rule(app=None, client=None):
+def test_create_duplicated_normalization_rule(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.normalization import NormalizationRule
@@ -67,8 +65,7 @@ def test_create_duplicated_normalization_rule(app=None, client=None):
     assert response.status_code == 409
 
 
-@get_app_and_client
-def test_get_normalization_rule(app=None, client=None):
+def test_get_normalization_rule(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.normalization import NormalizationRule
@@ -86,10 +83,10 @@ def test_get_normalization_rule(app=None, client=None):
     session.add_all([tenant, normalization_profile, normalization_rule])
     session.commit()
     #
-    response = client.get("/normalization-rules/1")
+    response = client.get("/normalization-rules/%s" % normalization_rule.id)
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": normalization_rule.id,
         "rule_type": 1,
         "priority": 0,
         "profile_id": normalization_profile.id,
@@ -98,14 +95,12 @@ def test_get_normalization_rule(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_get_normalization_rule_not_found(app=None, client=None):
+def test_get_normalization_rule_not_found(app, client):
     response = client.get("/normalization-rules/1")
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_get_normalization_rules(app=None, client=None):
+def test_get_normalization_rules(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.normalization import NormalizationRule
@@ -127,7 +122,7 @@ def test_get_normalization_rules(app=None, client=None):
     assert response.status_code == 200
     assert response.json() == [
         {
-            "id": 1,
+            "id": normalization_rule.id,
             "profile_id": normalization_profile.id,
             "rule_type": 1,
             "priority": 0,
@@ -137,8 +132,7 @@ def test_get_normalization_rules(app=None, client=None):
     ]
 
 
-@get_app_and_client
-def test_update_normalization_rule(app=None, client=None):
+def test_update_normalization_rule(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.normalization import NormalizationRule
@@ -157,7 +151,7 @@ def test_update_normalization_rule(app=None, client=None):
     session.commit()
     #
     response = client.put(
-        "/normalization-rules/1",
+        "/normalization-rules/%s" % normalization_rule.id,
         json={
             "match_regex": "^22",
             "replace_regex": "",
@@ -166,7 +160,7 @@ def test_update_normalization_rule(app=None, client=None):
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": normalization_rule.id,
         "rule_type": 1,
         "priority": 0,
         "profile_id": normalization_profile.id,
@@ -175,8 +169,7 @@ def test_update_normalization_rule(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_update_normalization_rule_not_found(app=None, client=None):
+def test_update_normalization_rule_not_found(app, client):
     response = client.put(
         "/normalization-rules/1",
         json={"match_regex": "^22", "replace_regex": "", "profile_id": 1},
@@ -184,8 +177,7 @@ def test_update_normalization_rule_not_found(app=None, client=None):
     assert response.status_code == 404
 
 
-@get_app_and_client
-def test_delete_normalization_rule(app=None, client=None):
+def test_delete_normalization_rule(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.normalization import NormalizationRule
@@ -203,10 +195,10 @@ def test_delete_normalization_rule(app=None, client=None):
     session.add_all([tenant, normalization_profile, normalization_rule])
     session.commit()
     #
-    response = client.delete("/normalization-rules/1")
+    response = client.delete("/normalization-rules/%s" % normalization_rule.id)
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": normalization_rule.id,
         "rule_type": 1,
         "priority": 0,
         "profile_id": normalization_profile.id,
@@ -215,7 +207,6 @@ def test_delete_normalization_rule(app=None, client=None):
     }
 
 
-@get_app_and_client
-def test_delete_normalization_rule_not_found(app=None, client=None):
+def test_delete_normalization_rule_not_found(app, client):
     response = client.delete("/normalization-rules/1")
     assert response.status_code == 404
