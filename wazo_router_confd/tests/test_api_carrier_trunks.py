@@ -9,7 +9,7 @@ def test_create_carrier_trunk(app, client):
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="3ab844af-8039-45d9-a3aa-bae6f298228f")
     carrier = Carrier(name="carrier", tenant=tenant)
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, carrier])
@@ -19,8 +19,8 @@ def test_create_carrier_trunk(app, client):
         "/carrier_trunks/",
         json={
             "name": "carrier_trunk1",
-            "tenant_id": 1,
-            "carrier_id": 1,
+            "tenant_uuid": str(tenant.uuid),
+            "carrier_id": carrier.id,
             "sip_proxy": "proxy.somedomain.com",
             "ip_address": "10.0.0.1",
             "registered": True,
@@ -37,8 +37,8 @@ def test_create_carrier_trunk(app, client):
     assert response.json() == {
         "id": mock.ANY,
         "name": "carrier_trunk1",
-        "tenant_id": 1,
-        "carrier_id": 1,
+        "tenant_uuid": str(tenant.uuid),
+        "carrier_id": carrier.id,
         "normalization_profile_id": None,
         "sip_proxy": "proxy.somedomain.com",
         "sip_proxy_port": 5060,
@@ -59,7 +59,7 @@ def test_create_duplicated_carrier_trunk(app, client):
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="3ab844af-8039-45d9-a3aa-bae6f298228f")
     carrier = Carrier(name="carrier", tenant=tenant)
     carrier_trunk = CarrierTrunk(
         name='carrier_trunk1',
@@ -75,8 +75,8 @@ def test_create_duplicated_carrier_trunk(app, client):
         "/carrier_trunks/",
         json={
             "name": "carrier_trunk1",
-            "tenant_id": 1,
-            "carrier_id": 1,
+            "tenant_uuid": str(tenant.uuid),
+            "carrier_id": carrier.id,
             "sip_proxy": "proxy.somedomain.com",
         },
     )
@@ -89,7 +89,7 @@ def test_get_carrier_trunk(app, client):
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="3ab844af-8039-45d9-a3aa-bae6f298228f")
     carrier = Carrier(name="carrier", tenant=tenant)
     carrier_trunk = CarrierTrunk(
         name='carrier_trunk1',
@@ -115,7 +115,7 @@ def test_get_carrier_trunk(app, client):
     assert response.json() == {
         "id": carrier_trunk.id,
         "name": "carrier_trunk1",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "carrier_id": carrier.id,
         "normalization_profile_id": None,
         "sip_proxy": "proxy.somedomain.com",
@@ -142,7 +142,7 @@ def test_get_carrier_trunks(app, client):
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="3ab844af-8039-45d9-a3aa-bae6f298228f")
     carrier = Carrier(name="carrier", tenant=tenant)
     carrier_trunk = CarrierTrunk(
         name='carrier_trunk1',
@@ -160,8 +160,8 @@ def test_get_carrier_trunks(app, client):
         {
             'id': carrier_trunk.id,
             'name': 'carrier_trunk1',
-            "tenant_id": tenant.id,
-            'carrier_id': carrier.id,
+            "tenant_uuid": str(tenant.uuid),
+            "carrier_id": carrier.id,
             "normalization_profile_id": None,
             'sip_proxy': 'proxy.somedomain.com',
             "sip_proxy_port": 5060,
@@ -183,7 +183,7 @@ def test_update_carrier_trunk(app, client):
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="3ab844af-8039-45d9-a3aa-bae6f298228f")
     carrier = Carrier(name="carrier", tenant=tenant)
     carrier_trunk = CarrierTrunk(
         name='carrier_trunk1',
@@ -201,8 +201,8 @@ def test_update_carrier_trunk(app, client):
         "/carrier_trunks/%s" % carrier_trunk.id,
         json={
             'name': 'updated_carrier_trunk1',
-            "tenant_id": tenant.id,
-            'carrier_id': carrier.id,
+            "tenant_uuid": str(tenant.uuid),
+            "carrier_id": carrier.id,
             "normalization_profile_id": None,
             "sip_proxy": "proxy.somedomain.com",
             "sip_proxy_port": 5061,
@@ -221,7 +221,7 @@ def test_update_carrier_trunk(app, client):
     assert response.json() == {
         'id': carrier_trunk.id,
         'name': 'updated_carrier_trunk1',
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "carrier_id": carrier.id,
         "normalization_profile_id": None,
         'sip_proxy': 'proxy.somedomain.com',
@@ -242,7 +242,7 @@ def test_update_carrier_trunk_not_found(app, client):
         "/carrier_trunks/1",
         json={
             'name': 'updated_carrier_trunk1',
-            "tenant_id": 1,
+            "tenant_uuid": "acfbc1a7-7ae2-4970-a6a4-0a8eae6a777b",
             "carrier_id": 1,
             "normalization_profile_id": None,
             "sip_proxy": "proxy.somedomain.com",
@@ -265,7 +265,7 @@ def test_delete_carrier_trunk(app, client):
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name="tenant")
+    tenant = Tenant(name="tenant", uuid="3ab844af-8039-45d9-a3aa-bae6f298228f")
     carrier = Carrier(name="carrier", tenant=tenant)
     carrier_trunk = CarrierTrunk(
         name='carrier_trunk1',
@@ -284,8 +284,8 @@ def test_delete_carrier_trunk(app, client):
     assert response.json() == {
         'id': carrier_trunk.id,
         'name': 'carrier_trunk1',
-        "tenant_id": tenant.id,
-        'carrier_id': carrier.id,
+        "tenant_uuid": str(tenant.uuid),
+        "carrier_id": carrier.id,
         "normalization_profile_id": None,
         'sip_proxy': 'proxy.somedomain.com',
         'sip_proxy_port': 5060,

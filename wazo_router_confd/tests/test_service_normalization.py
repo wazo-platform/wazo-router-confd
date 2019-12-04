@@ -9,7 +9,7 @@ def test_normalize_local_number_to_e164(app):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(
         name='profile 1',
         tenant=tenant,
@@ -45,7 +45,7 @@ def test_normalize_e164_to_local_number(app):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(
         name='profile 1',
         tenant=tenant,

@@ -22,11 +22,11 @@ def kamailio_routing(request: schema.RoutingRequest, db: Session = Depends(get_d
 
 @router.post("/kamailio/cdr")
 def kamailio_cdr(request: schema.CDRRequest, db: Session = Depends(get_db)):
-    tenant = tenant_service.get_tenant(db=db, tenant_id=request.tenant_id)
+    tenant = tenant_service.get_tenant(db=db, tenant_uuid=request.tenant_uuid)
     if tenant is None:
         return {"success": False, "cdr": None}
     cdr = cdr_schema.CDRCreate(
-        tenant_id=tenant.id,
+        tenant_uuid=tenant.uuid,
         source_ip=request.source_ip,
         source_port=request.source_port,
         from_uri=request.from_uri,

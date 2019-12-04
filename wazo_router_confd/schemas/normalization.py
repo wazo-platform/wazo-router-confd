@@ -3,12 +3,12 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, UUID4
 
 
 class NormalizationProfile(BaseModel):
     id: int
-    tenant_id: int
+    tenant_uuid: UUID4
     name: constr(max_length=256)  # type: ignore
     country_code: Optional[constr(max_length=64)]  # type: ignore
     area_code: Optional[constr(max_length=64)]  # type: ignore
@@ -22,7 +22,7 @@ class NormalizationProfile(BaseModel):
 
 
 class NormalizationProfileCreate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     name: constr(max_length=256)  # type: ignore
     country_code: Optional[constr(max_length=64)]  # type: ignore
     area_code: Optional[constr(max_length=64)]  # type: ignore
@@ -33,7 +33,7 @@ class NormalizationProfileCreate(BaseModel):
 
 
 class NormalizationProfileUpdate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     name: constr(max_length=256)  # type: ignore
     country_code: Optional[constr(max_length=64)]  # type: ignore
     area_code: Optional[constr(max_length=64)]  # type: ignore

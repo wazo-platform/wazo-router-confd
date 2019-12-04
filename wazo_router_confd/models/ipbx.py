@@ -13,6 +13,7 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType
 
 from .base import Base
 
@@ -25,23 +26,23 @@ if TYPE_CHECKING:  # pragma: no cover
 class IPBX(Base):
     __tablename__ = "ipbx"
     __table_args__ = (
-        UniqueConstraint('tenant_id', 'id'),
-        UniqueConstraint('tenant_id', 'domain_id', 'username'),
+        UniqueConstraint('tenant_uuid', 'id'),
+        UniqueConstraint('tenant_uuid', 'domain_id', 'username'),
         ForeignKeyConstraint(
-            ['tenant_id', 'domain_id'],
-            ['domains.tenant_id', 'domains.id'],
+            ['tenant_uuid', 'domain_id'],
+            ['domains.tenant_uuid', 'domains.id'],
             ondelete='CASCADE',
         ),
         ForeignKeyConstraint(
-            ['tenant_id', 'normalization_profile_id'],
-            ['normalization_profiles.tenant_id', 'normalization_profiles.id'],
+            ['tenant_uuid', 'normalization_profile_id'],
+            ['normalization_profiles.tenant_uuid', 'normalization_profiles.id'],
             ondelete='SET NULL',
         ),
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(
-        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    tenant_uuid = Column(
+        UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship("Tenant")
     domain_id = Column(Integer, nullable=False)

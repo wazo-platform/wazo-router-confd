@@ -12,7 +12,7 @@ def test_kamailio_routing_did_with_single_ipbx(app, client):
     from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -95,7 +95,7 @@ def test_kamailio_routing_did_with_no_matching_ipbx(app, client):
     from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,

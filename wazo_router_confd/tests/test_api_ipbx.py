@@ -9,7 +9,7 @@ def test_create_ipbx(app, client):
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain])
@@ -18,7 +18,7 @@ def test_create_ipbx(app, client):
     response = client.post(
         "/ipbx/",
         json={
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "domain_id": domain.id,
             "customer": 1,
             "ip_fqdn": "mypbx.com",
@@ -33,7 +33,7 @@ def test_create_ipbx(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "id": mock.ANY,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "domain_id": domain.id,
         "normalization_profile_id": None,
         "customer": 1,
@@ -51,7 +51,7 @@ def test_create_ipbx_password_too_long(app, client):
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain])
@@ -60,7 +60,7 @@ def test_create_ipbx_password_too_long(app, client):
     response = client.post(
         "/ipbx/",
         json={
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "domain_id": domain.id,
             "customer": 1,
             "ip_fqdn": "mypbx.com",
@@ -80,7 +80,7 @@ def test_get_ipbxs(app, client):
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.ipbx import IPBX
 
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -108,7 +108,7 @@ def test_get_ipbxs(app, client):
             "port": 5060,
             "ip_address": "10.0.0.1",
             "domain_id": domain.id,
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "registered": True,
             "username": "user",
             "realm": "realm",
@@ -122,7 +122,7 @@ def test_get_ipbx(app, client):
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.ipbx import IPBX
 
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -149,7 +149,7 @@ def test_get_ipbx(app, client):
         "port": 5060,
         "ip_address": "10.0.0.1",
         "domain_id": domain.id,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "registered": True,
         "username": "user",
         "realm": "realm",
@@ -167,8 +167,8 @@ def test_update_ipbx(app, client):
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name='fabio')
-    tenant_2 = Tenant(name='sileht')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    tenant_2 = Tenant(name='sileht', uuid='ff69a896-8025-4b0c-993e-1ee6449091c5')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     domain_2 = Domain(domain='otherdomain.com', tenant=tenant_2)
     ipbx = IPBX(
@@ -190,7 +190,7 @@ def test_update_ipbx(app, client):
         "/ipbx/%s" % ipbx.id,
         json={
             'ip_fqdn': 'mypbx2.com',
-            'tenant_id': tenant_2.id,
+            'tenant_uuid': str(tenant_2.uuid),
             'domain_id': domain_2.id,
             'username': 'otheruser',
             'registered': False,
@@ -205,7 +205,7 @@ def test_update_ipbx(app, client):
         "port": 5060,
         "ip_address": "10.0.0.1",
         "domain_id": domain_2.id,
-        "tenant_id": tenant_2.id,
+        "tenant_uuid": str(tenant_2.uuid),
         "registered": False,
         "username": "otheruser",
         "realm": "realm",
@@ -217,7 +217,7 @@ def test_update_ipbx_not_found(app, client):
         "/ipbx/1",
         json={
             'ip_fqdn': 'mypbx2.com',
-            'tenant_id': 2,
+            'tenant_uuid': "2639b15e-4e36-4815-ad52-be57a06d7095",
             'domain_id': 3,
             'username': 'otheruser',
             'registered': False,
@@ -232,7 +232,7 @@ def test_delete_ipbx(app, client):
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.tenant import Tenant
 
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -259,7 +259,7 @@ def test_delete_ipbx(app, client):
         "port": 5060,
         "ip_address": "10.0.0.1",
         "domain_id": domain.id,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "registered": True,
         "username": "user",
         "realm": "realm",

@@ -5,7 +5,6 @@ from pydantic import BaseModel, constr, UUID4
 
 
 class Tenant(BaseModel):
-    id: int
     name: constr(max_length=256)  # type: ignore
     uuid: UUID4
 

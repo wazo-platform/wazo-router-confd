@@ -1,6 +1,8 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import uuid
+
 from unittest import mock
 
 
@@ -14,7 +16,9 @@ def create_routing_rule(app, suffix=1):
     from wazo_router_confd.models.routing_rule import RoutingRule
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name="tenant_{}".format(suffix))
+    tenant = Tenant(
+        name="tenant_{}".format(suffix), uuid=uuid.uuid4(),
+    )
     domain = Domain(domain='testdomain_{}.com'.format(suffix), tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,

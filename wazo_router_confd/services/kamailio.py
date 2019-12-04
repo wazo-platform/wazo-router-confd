@@ -79,8 +79,8 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     ipbxs = set()
     ipbxs_by_domain = db.query(IPBX).join(Domain).filter(Domain.domain == domain_name)
     # filter by tenant, if the request is authenticated
-    if auth_response is not None and auth_response.tenant_id:
-        ipbxs_by_domain.filter(IPBX.tenant_id == auth_response.tenant_id)
+    if auth_response is not None and auth_response.tenant_uuid:
+        ipbxs_by_domain.filter(IPBX.tenant_uuid == auth_response.tenant_uuid)
     # get the list of ipbx, ordered by id
     ipbxs_by_domain = ipbxs_by_domain.order_by(IPBX.id)
     for ipbx in ipbxs_by_domain:
@@ -95,8 +95,8 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
             .filter(DID.did_prefix.in_(prefixes))
         )
         # filter by tenant, if the request is authenticated
-        if auth_response is not None and auth_response.tenant_id:
-            dids.filter(DID.tenant_id == auth_response.tenant_id)
+        if auth_response is not None and auth_response.tenant_uuid:
+            dids.filter(DID.tenant_uuid == auth_response.tenant_uuid)
         # get the list of dids, ordered by id
         dids = dids.order_by(func.length(DID.did_prefix).desc(), DID.id)
         for did in dids:
@@ -152,12 +152,12 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     carrier_trunks = (
         db.query(CarrierTrunk)
         .join(Carrier)
-        .join(IPBX, Carrier.tenant_id == IPBX.tenant_id)
+        .join(IPBX, Carrier.tenant_uuid == IPBX.tenant_uuid)
         .filter(IPBX.ip_fqdn == request.source_ip)
     )
     # filter by tenant, if the request is authenticated
-    if auth_response is not None and auth_response.tenant_id:
-        carrier_trunks.filter(Carrier.tenant_id == auth_response.tenant_id)
+    if auth_response is not None and auth_response.tenant_uuid:
+        carrier_trunks.filter(Carrier.tenant_uuid == auth_response.tenant_uuid)
     # get the list of carrier trunks, ordered by id
     carrier_trunk_auth = None
     for carrier_trunk in carrier_trunks:
@@ -255,7 +255,7 @@ def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
         if found_ipbx is not None:
             return schema.AuthResponse(
                 success=True,
-                tenant_id=found_ipbx.tenant_id,
+                tenant_uuid=found_ipbx.tenant_uuid,
                 ipbx_id=found_ipbx.id,
                 domain=found_ipbx.domain.domain,
                 username=found_ipbx.username,
@@ -277,7 +277,7 @@ def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
         if carrier_trunk is not None:
             return schema.AuthResponse(
                 success=True,
-                tenant_id=carrier_trunk.carrier.tenant_id,
+                tenant_uuid=carrier_trunk.carrier.tenant_uuid,
                 carrier_trunk_id=carrier_trunk.id,
             )
     return schema.AuthResponse(success=False)

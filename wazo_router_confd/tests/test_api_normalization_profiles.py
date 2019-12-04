@@ -9,7 +9,7 @@ def test_create_normalization_profile(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     session.add_all([tenant])
     session.commit()
     #
@@ -17,7 +17,7 @@ def test_create_normalization_profile(app, client):
         "/normalization-profiles/",
         json={
             "name": "profile 1",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "country_code": "39",
             "area_code": "11",
             "intl_prefix": "00",
@@ -29,7 +29,7 @@ def test_create_normalization_profile(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "id": mock.ANY,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "name": "profile 1",
         "country_code": "39",
         "area_code": "11",
@@ -46,13 +46,14 @@ def test_create_duplicated_normalization_profile(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     session.add_all([normalization_profile, tenant])
     session.commit()
     #
     response = client.post(
-        "/normalization-profiles/", json={"name": "profile 1", "tenant_id": tenant.id}
+        "/normalization-profiles/",
+        json={"name": "profile 1", "tenant_uuid": str(tenant.uuid)},
     )
     assert response.status_code == 409
 
@@ -63,7 +64,7 @@ def test_get_normalization_profile(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     session.add_all([normalization_profile, tenant])
     session.commit()
@@ -73,7 +74,7 @@ def test_get_normalization_profile(app, client):
     assert response.json() == {
         "id": normalization_profile.id,
         "name": "profile 1",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "country_code": None,
         "area_code": None,
         "intl_prefix": None,
@@ -94,7 +95,7 @@ def test_get_normalization_profiles(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     session.add_all([normalization_profile, tenant])
     session.commit()
@@ -105,7 +106,7 @@ def test_get_normalization_profiles(app, client):
         {
             "id": normalization_profile.id,
             "name": "profile 1",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "country_code": None,
             "area_code": None,
             "intl_prefix": None,
@@ -122,20 +123,20 @@ def test_update_normalization_profile(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='test')
+    tenant = Tenant(name='test', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     session.add_all([normalization_profile, tenant])
     session.commit()
     #
     response = client.put(
         "/normalization-profiles/%s" % normalization_profile.id,
-        json={'name': 'profile 2', 'tenant_id': tenant.id},
+        json={'name': 'profile 2', 'tenant_uuid': str(tenant.uuid)},
     )
     assert response.status_code == 200
     assert response.json() == {
         "id": normalization_profile.id,
         "name": "profile 2",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "country_code": None,
         "area_code": None,
         "intl_prefix": None,
@@ -147,7 +148,11 @@ def test_update_normalization_profile(app, client):
 
 def test_update_normalization_profile_not_found(app, client):
     response = client.put(
-        "/normalization-profiles/1", json={'name': 'profile 2', 'tenant_id': 1}
+        "/normalization-profiles/1",
+        json={
+            'name': 'profile 2',
+            'tenant_uuid': "7e614b21-a9c0-4118-a3e8-6748bc24c5ee",
+        },
     )
     assert response.status_code == 404
 
@@ -158,7 +163,7 @@ def test_delete_normalization_profile(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='test')
+    tenant = Tenant(name='test', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     session.add_all([normalization_profile, tenant])
     session.commit()
@@ -167,7 +172,7 @@ def test_delete_normalization_profile(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "id": normalization_profile.id,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "name": "profile 1",
         "country_code": None,
         "area_code": None,

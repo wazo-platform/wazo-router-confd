@@ -13,6 +13,7 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType
 
 from .base import Base
 
@@ -25,16 +26,16 @@ if TYPE_CHECKING:  # pragma: no cover
 class DID(Base):
     __tablename__ = "dids"
     __table_args__ = (
-        Index('tenant_id', 'did_prefix'),
-        UniqueConstraint('tenant_id', 'did_regex'),
+        Index('tenant_uuid', 'did_prefix'),
+        UniqueConstraint('tenant_uuid', 'did_regex'),
         ForeignKeyConstraint(
-            ['tenant_id', 'ipbx_id'], ['ipbx.tenant_id', 'ipbx.id'], ondelete='CASCADE'
+            ['tenant_uuid', 'ipbx_id'], ['ipbx.tenant_uuid', 'ipbx.id'], ondelete='CASCADE'
         ),
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(
-        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    tenant_uuid = Column(
+        UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
     ipbx_id = Column(Integer, nullable=False)

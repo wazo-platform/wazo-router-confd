@@ -10,7 +10,7 @@ def test_create_normalization_rule(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     session.add_all([normalization_profile, tenant])
     session.commit()
@@ -43,7 +43,7 @@ def test_create_duplicated_normalization_rule(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     normalization_rule = NormalizationRule(
         match_regex='^11',
@@ -72,7 +72,7 @@ def test_get_normalization_rule(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     normalization_rule = NormalizationRule(
         match_regex='^11',
@@ -107,7 +107,7 @@ def test_get_normalization_rules(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     normalization_rule = NormalizationRule(
         match_regex='^11',
@@ -139,7 +139,7 @@ def test_update_normalization_rule(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     normalization_rule = NormalizationRule(
         match_regex='^11',
@@ -184,7 +184,7 @@ def test_delete_normalization_rule(app, client):
     from wazo_router_confd.models.tenant import Tenant
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     normalization_profile = NormalizationProfile(name='profile 1', tenant=tenant)
     normalization_rule = NormalizationRule(
         match_regex='^11',
