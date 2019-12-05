@@ -354,3 +354,41 @@ def test_kamailio_auth_ip_address_fails(app, client):
         "username": None,
         "password_ha1": None,
     }
+
+
+def test_kamailio_auth_ip_address_disabled(app, client):
+    from wazo_router_confd.database import SessionLocal
+    from wazo_router_confd.models.tenant import Tenant
+    from wazo_router_confd.models.domain import Domain
+    from wazo_router_confd.models.ipbx import IPBX
+    from wazo_router_confd.services import password
+
+    session = SessionLocal(bind=app.engine)
+    tenant = Tenant(name='fabio')
+    domain = Domain(domain='testdomain.com', tenant=tenant)
+    ipbx = IPBX(
+        customer=1,
+        ip_fqdn='mypbx.com',
+        domain=domain,
+        registered=True,
+        ip_address=None,
+        username='user',
+        password_ha1=password.hash_ha1('user', domain.domain, 'password'),
+        tenant=tenant,
+    )
+    session.add_all([tenant, domain, ipbx])
+    session.commit()
+    #
+    response = client.post(
+        "/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "success": True,
+        "tenant_id": ipbx.tenant_id,
+        "carrier_trunk_id": None,
+        "ipbx_id": ipbx.id,
+        "domain": domain.domain,
+        "username": ipbx.username,
+        "password_ha1": ipbx.password_ha1,
+    }

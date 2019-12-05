@@ -244,7 +244,12 @@ def auth(db: Session, request: schema.AuthRequest) -> schema.AuthResponse:
     if request.source_ip:
         carrier_trunk = (
             db.query(CarrierTrunk)
-            .filter(CarrierTrunk.ip_address == request.source_ip)
+            .filter(
+                or_(
+                    CarrierTrunk.ip_address.is_(None),
+                    CarrierTrunk.ip_address == request.source_ip,
+                )
+            )
             .order_by(CarrierTrunk.id)
             .first()
         )
