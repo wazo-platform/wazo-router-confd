@@ -11,8 +11,7 @@ from wazo_router_confd.app import get_app
 from wazo_router_confd.database import wait_for_database
 
 
-@pytest.fixture(scope="session")
-def database_uri(request):
+def create_temporary_database():
     url = "postgresql://wazo:wazo@localhost:5432/wazo"
     db_name = "test_{}".format(uuid.uuid4().hex)
 
@@ -26,9 +25,13 @@ def database_uri(request):
     url_parts = list(urlsplit(url))
     url_parts[2] = db_name  # path
     db_uri = urlunsplit(url_parts)
-
-    request.addfinalizer(close_all_sessions)
     return db_uri
+
+
+@pytest.fixture(scope="session")
+def database_uri(request):
+    request.addfinalizer(close_all_sessions)
+    return create_temporary_database()
 
 
 @pytest.fixture(scope="function")
