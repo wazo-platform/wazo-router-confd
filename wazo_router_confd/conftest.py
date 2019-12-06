@@ -1,3 +1,4 @@
+import os
 import pytest  # type: ignore
 import uuid
 
@@ -12,7 +13,9 @@ from wazo_router_confd.database import wait_for_database
 
 
 def create_temporary_database():
-    url = "postgresql://wazo:wazo@localhost:5432/wazo"
+    url = "postgresql://wazo:wazo@localhost:{}/wazo".format(
+        os.getenv("POSTGRES_PORT", "5432")
+    )
     db_name = "test_{}".format(uuid.uuid4().hex)
 
     engine = sqlalchemy.create_engine(url)
