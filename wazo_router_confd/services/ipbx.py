@@ -34,6 +34,7 @@ def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
         password_ha1=password_service.hash_ha1(
             ipbx.username, domain.domain, ipbx.password
         ),
+        realm=ipbx.realm,
     )
     db.add(db_ipbx)
     db.commit()
@@ -70,6 +71,7 @@ def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
             db_ipbx.password_ha1 = (
                 password_service.hash_ha1(ipbx.username, domain.domain, ipbx.password),
             )
+        db_ipbx.realm = ipbx.realm if ipbx.realm is not None else db_ipbx.realm
         db.commit()
         db.refresh(db_ipbx)
     return db_ipbx

@@ -27,6 +27,7 @@ def test_create_ipbx(app, client):
             "registered": True,
             "username": "user",
             "password": "password",
+            "realm": "realm",
         },
     )
     assert response.status_code == 200
@@ -41,6 +42,7 @@ def test_create_ipbx(app, client):
         "ip_address": "10.0.0.1",
         "registered": True,
         "username": "user",
+        "realm": "realm",
     }
 
 
@@ -89,6 +91,7 @@ def test_get_ipbxs(app, client):
         registered=True,
         username='user',
         password='password',
+        realm='realm',
     )
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain, ipbx])
@@ -108,6 +111,7 @@ def test_get_ipbxs(app, client):
             "tenant_id": tenant.id,
             "registered": True,
             "username": "user",
+            "realm": "realm",
         }
     ]
 
@@ -129,6 +133,7 @@ def test_get_ipbx(app, client):
         registered=True,
         username='user',
         password='password',
+        realm='realm',
     )
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain, ipbx])
@@ -147,6 +152,7 @@ def test_get_ipbx(app, client):
         "tenant_id": tenant.id,
         "registered": True,
         "username": "user",
+        "realm": "realm",
     }
 
 
@@ -174,6 +180,7 @@ def test_update_ipbx(app, client):
         registered=True,
         username='user',
         password='password',
+        realm='realm',
     )
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, tenant_2, domain, domain_2, ipbx])
@@ -201,6 +208,7 @@ def test_update_ipbx(app, client):
         "tenant_id": tenant_2.id,
         "registered": False,
         "username": "otheruser",
+        "realm": "realm",
     }
 
 
@@ -235,6 +243,7 @@ def test_delete_ipbx(app, client):
         ip_address="10.0.0.1",
         username='user',
         password='password',
+        realm='realm',
     )
     session = SessionLocal(bind=app.engine)
     session.add_all([tenant, domain, ipbx])
@@ -253,6 +262,7 @@ def test_delete_ipbx(app, client):
         "tenant_id": tenant.id,
         "registered": True,
         "username": "user",
+        "realm": "realm",
     }
 
 

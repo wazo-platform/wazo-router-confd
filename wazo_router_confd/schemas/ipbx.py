@@ -19,6 +19,7 @@ class IPBX(BaseModel):
     username: Optional[constr(max_length=50)] = None  # type: ignore
     password: Optional[constr(max_length=192)] = None  # type: ignore
     password_ha1: Optional[constr(max_length=64)] = None  # type: ignore
+    realm: Optional[constr(max_length=50)] = None  # type: ignore
 
     class Config:
         orm_mode = True
@@ -35,6 +36,7 @@ class IPBXRead(BaseModel):
     ip_address: Optional[constr(max_length=256)] = None  # type: ignore
     registered: bool = False
     username: Optional[constr(max_length=50)] = None  # type: ignore
+    realm: Optional[constr(max_length=50)] = None  # type: ignore
 
     class Config:
         orm_mode = True
@@ -52,6 +54,7 @@ class IPBXCreate(BaseModel):
     username: Optional[constr(max_length=50)] = None  # type: ignore
     password: Optional[constr(max_length=192)] = None  # type: ignore
     password_ha1: Optional[constr(max_length=64)] = None  # type: ignore
+    realm: Optional[constr(max_length=50)] = None  # type: ignore
 
 
 class IPBXUpdate(BaseModel):
@@ -66,3 +69,4 @@ class IPBXUpdate(BaseModel):
     username: Optional[str] = None  # type: ignore
     password: Optional[str] = None  # type: ignore
     password_ha1: Optional[str] = None  # type: ignore
+    realm: Optional[constr(max_length=50)] = None  # type: ignore
