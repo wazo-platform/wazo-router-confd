@@ -40,10 +40,7 @@ def test_get_tenant(app, client):
     #
     response = client.get("/tenants/%s" % str(tenant.uuid))
     assert response.status_code == 200
-    assert response.json() == {
-        "uuid": str(tenant.uuid),
-        "name": "fabio",
-    }
+    assert response.json() == {"uuid": str(tenant.uuid), "name": "fabio"}
 
 
 def test_get_tenant_not_found(app, client):
@@ -62,12 +59,7 @@ def test_get_tenants(app, client):
     #
     response = client.get("/tenants/")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            'uuid': str(tenant.uuid),
-            'name': 'fabio',
-        }
-    ]
+    assert response.json() == [{'uuid': str(tenant.uuid), 'name': 'fabio'}]
 
 
 def test_update_tenant(app, client):
@@ -81,14 +73,13 @@ def test_update_tenant(app, client):
     #
     response = client.put("/tenants/%s" % tenant.uuid, json={'name': 'alex'})
     assert response.status_code == 200
-    assert response.json() == {
-        'uuid': str(tenant.uuid),
-        'name': 'alex',
-    }
+    assert response.json() == {'uuid': str(tenant.uuid), 'name': 'alex'}
 
 
 def test_update_tenant_not_found(app, client):
-    response = client.put("/tenants/42f72d9e-cfe2-42dd-8ae7-3bb9559c8ddb", json={'name': 'alex'})
+    response = client.put(
+        "/tenants/42f72d9e-cfe2-42dd-8ae7-3bb9559c8ddb", json={'name': 'alex'}
+    )
     assert response.status_code == 404
 
 
@@ -103,10 +94,7 @@ def test_delete_tenant(app, client):
     #
     response = client.delete("/tenants/%s" % tenant.uuid)
     assert response.status_code == 200
-    assert response.json() == {
-        'uuid': str(tenant.uuid),
-        'name': 'fabio',
-    }
+    assert response.json() == {'uuid': str(tenant.uuid), 'name': 'fabio'}
 
 
 def test_delete_tenant_not_found(app, client):

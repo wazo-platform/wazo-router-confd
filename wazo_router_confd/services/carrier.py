@@ -36,7 +36,9 @@ def update_carrier(
     if db_carrier is not None:
         db_carrier.name = carrier.name if carrier.name is not None else db_carrier.name
         db_carrier.tenant_uuid = (
-            carrier.tenant_uuid if carrier.tenant_uuid is not None else db_carrier.tenant_uuid
+            carrier.tenant_uuid
+            if carrier.tenant_uuid is not None
+            else db_carrier.tenant_uuid
         )
         db.commit()
         db.refresh(db_carrier)
