@@ -103,6 +103,7 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
             if re.match(did.did_regex, local_part):
                 ipbxs.add(ipbx)
     # build a route for each ipbx
+    ipbx_auth = None
     for ipbx in ipbxs:
         # normalize from uri
         normalized_local_part = normalization_service.normalize_e164_to_local_number(
@@ -134,6 +135,19 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
                 "fr_inv_timer": 30000,
             }
         )
+        # if ipbx requires it, set the auth parameters
+        if (
+            ipbx.username is not None
+            and ipbx.password is not None
+            and ipbx.realm is not None
+        ):
+            ipbx_auth = dict(
+                auth_username=ipbx.username,
+                auth_password=ipbx.password,
+                realm=ipbx.realm,
+            )
+        # we stop at the first ipbx found
+        break
     # route by carrier trunk if the package is coming from a known IPBX
     carrier_trunks = (
         db.query(CarrierTrunk)
@@ -185,7 +199,11 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
             }
         )
         # if carrier trunk is registered, set the auth parameters
-        if carrier_trunk.registered:
+        if (
+            carrier_trunk.auth_username is not None
+            and carrier_trunk.auth_password is not None
+            and carrier_trunk.realm is not None
+        ):
             carrier_trunk_auth = dict(
                 auth_username=carrier_trunk.auth_username,
                 auth_password=carrier_trunk.auth_password,
@@ -202,6 +220,9 @@ def routing(db: Session, request: schema.RoutingRequest) -> schema.RoutingRespon
     # update with carrier trunk auth parameters, if set
     if carrier_trunk_auth is not None:
         rtjson.update(carrier_trunk_auth)
+    # update with ipbx auth parameters, if set
+    elif ipbx_auth is not None:
+        rtjson.update(ipbx_auth)
     # return the routing and auth responses
     return schema.RoutingResponse(auth=auth_response, rtjson=rtjson)
 
