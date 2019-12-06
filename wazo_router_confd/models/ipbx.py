@@ -41,7 +41,7 @@ class IPBX(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_uuid = Column(
+    tenant_uuid = Column(  # type: ignore
         UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship("Tenant")

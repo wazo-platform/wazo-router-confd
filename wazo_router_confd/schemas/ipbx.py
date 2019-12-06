@@ -64,9 +64,9 @@ class IPBXUpdate(BaseModel):
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060
-    ip_address: Optional[str] = None  # type: ignore
+    ip_address: Optional[str] = None
     registered: bool = False
-    username: Optional[str] = None  # type: ignore
-    password: Optional[str] = None  # type: ignore
-    password_ha1: Optional[str] = None  # type: ignore
+    username: Optional[str] = None
+    password: Optional[str] = None
+    password_ha1: Optional[str] = None
     realm: Optional[constr(max_length=50)] = None  # type: ignore
