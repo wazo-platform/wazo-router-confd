@@ -41,7 +41,9 @@ def update_domain(db: Session, domain_id: int, domain: schema.DomainUpdate) -> D
             domain.domain if domain.domain is not None else db_domain.domain
         )
         db_domain.tenant_uuid = (
-            domain.tenant_uuid if domain.tenant_uuid is not None else db_domain.tenant_uuid
+            domain.tenant_uuid
+            if domain.tenant_uuid is not None
+            else db_domain.tenant_uuid
         )
         db.commit()
         db.refresh(db_domain)

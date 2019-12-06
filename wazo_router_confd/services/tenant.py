@@ -31,7 +31,9 @@ def create_tenant(db: Session, tenant: schema.TenantCreate) -> Tenant:
     return db_tenant
 
 
-def update_tenant(db: Session, tenant_uuid: UUID4, tenant: schema.TenantUpdate) -> Tenant:
+def update_tenant(
+    db: Session, tenant_uuid: UUID4, tenant: schema.TenantUpdate
+) -> Tenant:
     db_tenant = db.query(Tenant).filter(Tenant.uuid == tenant_uuid).first()
     if db_tenant is not None:
         db_tenant.name = tenant.name

@@ -22,9 +22,7 @@ def upgrade():
     op.create_table(
         'tenants',
         sa.Column('name', sa.String(length=256), nullable=True),
-        sa.Column(
-            'uuid', sqlalchemy_utils.UUIDType(), nullable=False
-        ),
+        sa.Column('uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.PrimaryKeyConstraint('uuid'),
     )
     op.create_index(op.f('ix_tenants_name'), 'tenants', ['name'], unique=True)
@@ -32,11 +30,7 @@ def upgrade():
     op.create_table(
         'carriers',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('name', sa.String(length=256), nullable=True),
         sa.ForeignKeyConstraint(['tenant_uuid'], ['tenants.uuid'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
@@ -48,11 +42,7 @@ def upgrade():
     op.create_table(
         'domains',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('domain', sa.String(length=64), nullable=True),
         sa.ForeignKeyConstraint(['tenant_uuid'], ['tenants.uuid'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
@@ -63,11 +53,7 @@ def upgrade():
     op.create_table(
         'normalization_profiles',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('name', sa.String(length=256), nullable=False),
         sa.Column('country_code', sa.String(length=64), nullable=True),
         sa.Column('area_code', sa.String(length=64), nullable=True),
@@ -89,11 +75,7 @@ def upgrade():
     op.create_table(
         'carrier_trunks',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('carrier_id', sa.Integer(), nullable=False),
         sa.Column('normalization_profile_id', sa.Integer(), nullable=True),
         sa.Column('name', sa.String(length=256), nullable=True),
@@ -130,11 +112,7 @@ def upgrade():
     op.create_table(
         'ipbx',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('domain_id', sa.Integer(), nullable=False),
         sa.Column('normalization_profile_id', sa.Integer(), nullable=True),
         sa.Column('customer', sa.Integer(), nullable=True),
@@ -182,11 +160,7 @@ def upgrade():
     op.create_table(
         'cdrs',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('ipbx_id', sa.Integer(), nullable=True),
         sa.Column('carrier_trunk_id', sa.Integer(), nullable=True),
         sa.Column('source_ip', sa.String(length=64), nullable=False),
@@ -207,11 +181,7 @@ def upgrade():
     op.create_table(
         'dids',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('ipbx_id', sa.Integer(), nullable=False),
         sa.Column('carrier_trunk_id', sa.Integer(), nullable=False),
         sa.Column('did_regex', sa.String(length=256), nullable=True),
@@ -248,11 +218,7 @@ def upgrade():
     op.create_table(
         'routing_groups',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column(
-            'tenant_uuid',
-            sqlalchemy_utils.UUIDType(),
-            nullable=False,
-        ),
+        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
         sa.Column('routing_rule', sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ['routing_rule'], ['routing_rules.id'], ondelete='CASCADE'

@@ -29,7 +29,9 @@ class DID(Base):
         Index('tenant_uuid', 'did_prefix'),
         UniqueConstraint('tenant_uuid', 'did_regex'),
         ForeignKeyConstraint(
-            ['tenant_uuid', 'ipbx_id'], ['ipbx.tenant_uuid', 'ipbx.id'], ondelete='CASCADE'
+            ['tenant_uuid', 'ipbx_id'],
+            ['ipbx.tenant_uuid', 'ipbx.id'],
+            ondelete='CASCADE',
         ),
     )
 
