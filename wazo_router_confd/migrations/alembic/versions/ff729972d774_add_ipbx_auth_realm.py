@@ -1,7 +1,7 @@
 """add_ipbx_auth_realm
 
 Revision ID: ff729972d774
-Revises: f21060542727
+Revises: 0d208181667d
 Create Date: 2019-12-06 08:47:51.645414
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'ff729972d774'
-down_revision = 'f21060542727'
+down_revision = '0d208181667d'
 branch_labels = None
 depends_on = None
 
