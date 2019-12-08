@@ -4,9 +4,13 @@
 import logging
 import os
 
+import aiopg  # type: ignore
+
 import alembic.config  # type: ignore
 import alembic.command  # type: ignore
 import alembic.migration  # type: ignore
+
+from urllib.parse import urlparse
 
 from fastapi import FastAPI
 from starlette.requests import Request
@@ -32,6 +36,10 @@ def get_db(request: Request):
     return request.state.db
 
 
+def get_aiopg_pool(request: Request) -> aiopg.Pool:
+    return request.state.aiopg_pool
+
+
 def setup_database(app: FastAPI, config: dict):
     database_uri = config['database_uri']
     connect_args = (
@@ -48,6 +56,45 @@ def setup_database(app: FastAPI, config: dict):
             response = await call_next(request)
         finally:
             request.state.db.close()
+        return response
+
+    return app
+
+
+class AiopgConnectionPool(object):
+    dsn: str
+    pool: aiopg.Pool
+
+    def __init__(self, dsn):
+        self.dsn = dsn
+
+    async def connect(self):
+        self.pool = await aiopg.create_pool(self.dsn)
+
+
+def from_database_uri_to_dsn(database_uri: str) -> str:
+    parsed_uri = urlparse(database_uri)
+    dsn = 'dbname=%s user=%s password=%s host=%s' % (
+        parsed_uri.path.lstrip('/'),
+        parsed_uri.username,
+        parsed_uri.password,
+        parsed_uri.hostname,
+    )
+    return dsn
+
+
+def setup_aiopg_database(app: FastAPI, config: dict):
+    database_uri = config['database_uri']
+    dsn = from_database_uri_to_dsn(database_uri)
+    connection_pool = AiopgConnectionPool(dsn)
+
+    app.add_event_handler("startup", connection_pool.connect)
+
+    @app.middleware("http")
+    async def db_aiopg_database_middleware(request: Request, call_next):
+        response = Response("Internal server error", status_code=500)
+        request.state.aiopg_pool = connection_pool.pool
+        response = await call_next(request)
         return response
 
     return app
