@@ -1,8 +1,12 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import aiopg  # type: ignore
 
-def test_normalize_local_number_to_e164(app):
+from wazo_router_confd.database import from_database_uri_to_dsn
+
+
+def test_normalize_local_number_to_e164(app, database_uri, event_loop):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.normalization import NormalizationRule
@@ -33,12 +37,22 @@ def test_normalize_local_number_to_e164(app):
     #
     from wazo_router_confd.services.normalization import normalize_local_number_to_e164
 
-    assert '36011625234' == normalize_local_number_to_e164(
-        session, '+39 011 625234', profile=normalization_profile
-    )
+    async def test():
+        dsn = from_database_uri_to_dsn(database_uri)
+        pool = await aiopg.create_pool(dsn=dsn)
+        async with pool.acquire() as conn:
+            try:
+                return await normalize_local_number_to_e164(
+                    conn, '+39 011 625234', profile=normalization_profile
+                )
+            finally:
+                conn.close()
+
+    ret = event_loop.run_until_complete(test())
+    assert '36011625234' == ret
 
 
-def test_normalize_e164_to_local_number(app):
+def test_normalize_e164_to_local_number(app, database_uri, event_loop):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.normalization import NormalizationProfile
     from wazo_router_confd.models.normalization import NormalizationRule
@@ -69,6 +83,16 @@ def test_normalize_e164_to_local_number(app):
     #
     from wazo_router_confd.services.normalization import normalize_e164_to_local_number
 
-    assert '+36011625234' == normalize_e164_to_local_number(
-        session, '39011625234', profile=normalization_profile
-    )
+    async def test():
+        dsn = from_database_uri_to_dsn(database_uri)
+        pool = await aiopg.create_pool(dsn=dsn)
+        async with pool.acquire() as conn:
+            try:
+                return await normalize_e164_to_local_number(
+                    conn, '39011625234', profile=normalization_profile
+                )
+            finally:
+                conn.close()
+
+    ret = event_loop.run_until_complete(test())
+    assert '+36011625234' == ret

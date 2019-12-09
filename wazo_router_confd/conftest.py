@@ -51,4 +51,6 @@ def app(request, database_uri):
 
 @pytest.fixture(scope="function")
 def client(request, app):
-    return TestClient(app)
+    client = TestClient(app)
+    with client:
+        return client

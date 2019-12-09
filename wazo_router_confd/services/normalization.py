@@ -3,9 +3,12 @@
 
 import re
 
-from typing import List, Optional
+from typing import Any, List, Optional
+
+from psycopg2.extras import DictCursor  # type: ignore
 
 from sqlalchemy.orm import Session
+
 
 from wazo_router_confd.models.normalization import (
     NormalizationProfile,
@@ -241,41 +244,51 @@ def delete_normalization_rule(
     return db_normalization_rule
 
 
-def normalize_local_number_to_e164(
-    db: Session, number: str, profile: Optional[NormalizationProfile] = None
+async def normalize_local_number_to_e164(
+    conn: Any, number: str, profile: Optional[NormalizationProfile] = None
 ) -> str:
     number = re_clean_number('', number)
     if profile is not None:
         prefixes = [number[:i] for i in range(0, min(10, len(number)))]
-        rules = (
-            db.query(NormalizationRule)
-            .filter(NormalizationRule.profile_id == profile.id)
-            .filter(NormalizationRule.match_prefix.in_(prefixes))
-            .filter(NormalizationRule.rule_type == 1)
-            .order_by(NormalizationRule.priority)
-            .order_by(NormalizationRule.id)
+        sql = (
+            "SELECT match_regex, replace_regex "
+            "FROM normalization_rules "
+            "WHERE profile_id = %s AND rule_type = 1 AND match_prefix = ANY(%s) "
+            "ORDER BY priority, id;"
         )
-        for rule in rules:
-            number = re.sub(rule.match_regex, rule.replace_regex, number)
+        rules = []
+        async with conn.cursor(cursor_factory=DictCursor) as cur:
+            await cur.execute(sql, [profile.id, prefixes])
+            async for rule in cur:
+                rules.append(rule)
+        number = normalize_apply_rules(number, rules)
     return number
 
 
-def normalize_e164_to_local_number(
-    db: Session, number: str, profile: Optional[NormalizationProfile] = None
+async def normalize_e164_to_local_number(
+    conn: Any, number: str, profile: Optional[NormalizationProfile] = None
 ) -> str:
     number = re_clean_number('', number)
     if profile is not None:
         prefixes = [number[:i] for i in range(0, min(10, len(number)))]
-        rules = (
-            db.query(NormalizationRule)
-            .filter(NormalizationRule.profile_id == profile.id)
-            .filter(NormalizationRule.match_prefix.in_(prefixes))
-            .filter(NormalizationRule.rule_type == 2)
-            .order_by(NormalizationRule.priority)
-            .order_by(NormalizationRule.id)
+        sql = (
+            "SELECT match_regex, replace_regex "
+            "FROM normalization_rules "
+            "WHERE profile_id = %s AND rule_type = 2 AND match_prefix = ANY(%s) "
+            "ORDER BY priority, id;"
         )
-        for rule in rules:
-            number = re.sub(rule.match_regex, rule.replace_regex, number)
+        rules = []
+        async with conn.cursor(cursor_factory=DictCursor) as cur:
+            await cur.execute(sql, [profile.id, prefixes])
+            async for rule in cur:
+                rules.append(rule)
+        number = normalize_apply_rules(number, rules)
         if profile.always_intl_prefix_plus:
             number = "+%s" % number
+    return number
+
+
+def normalize_apply_rules(number: str, rules: List[dict]) -> str:
+    for rule in rules:
+        number = re.sub(rule['match_regex'], rule['replace_regex'], number)
     return number
