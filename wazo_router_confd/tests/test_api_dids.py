@@ -204,10 +204,21 @@ def test_update_did(app, client):
 
     session = SessionLocal(bind=app.engine)
     tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    tenant_b = Tenant(name='fabiob', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff35')
     domain = Domain(domain='testdomain.com', tenant=tenant)
+    domain_b = Domain(domain='testdomainb.com', tenant=tenant_b)
     ipbx = IPBX(
         tenant=tenant,
         domain=domain,
+        customer=1,
+        ip_fqdn='mypbx.com',
+        registered=True,
+        username='user',
+        password='password',
+    )
+    ipbx_b = IPBX(
+        tenant=tenant_b,
+        domain=domain_b,
         customer=1,
         ip_fqdn='mypbx.com',
         registered=True,
@@ -218,33 +229,35 @@ def test_update_did(app, client):
     carrier_trunk = CarrierTrunk(
         name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
     )
+    carrier_b = Carrier(name='carrier', tenant=tenant_b)
+    carrier_trunk_b = CarrierTrunk(
+        name='carrier_trunk2', carrier=carrier_b, sip_proxy='proxy.somedomain.com'
+    )
     did = DID(
         did_regex=r'^(\+?1)?(800)[2-9]\d{6})$',
         tenant=tenant,
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
+    session.add_all([tenant, tenant_b, domain, domain_b, ipbx, ipbx_b, carrier, carrier_b, carrier_trunk, carrier_trunk_b, did])
     session.commit()
-    #
-    # FIXME(sileht): changing tenant/ipbx/carrier_trunk doesn't seems to work
     response = client.put(
         "/dids/%s" % did.id,
         json={
             "id": did.id,
-            "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
-            "tenant_uuid": str(tenant.uuid),
-            "ipbx_id": ipbx.id,
-            "carrier_trunk_id": carrier_trunk.id,
+            "did_regex": r"^(\+?1)?(800)[1-9]\d{6})$",
+            "tenant_uuid": str(tenant_b.uuid),
+            "ipbx_id": ipbx_b.id,
+            "carrier_trunk_id": carrier_trunk_b.id,
         },
     )
     assert response.status_code == 200
     assert response.json() == {
         "id": did.id,
-        "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
-        "tenant_uuid": str(tenant.uuid),
-        "ipbx_id": ipbx.id,
-        "carrier_trunk_id": carrier_trunk.id,
+        "did_regex": r"^(\+?1)?(800)[1-9]\d{6})$",
+        "tenant_uuid": str(tenant_b.uuid),
+        "ipbx_id": ipbx_b.id,
+        "carrier_trunk_id": carrier_trunk_b.id,
     }
 
 
