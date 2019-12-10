@@ -11,7 +11,7 @@ def test_kamailio_routing_domain_with_single_ipbx_and_auth(app, client):
     from wazo_router_confd.models.ipbx import IPBX
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='0839cb47-5d31-4b5e-8c5b-a2481f9e212a')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -61,7 +61,7 @@ def test_kamailio_routing_domain_with_single_ipbx_and_auth(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "auth": {
-            'tenant_id': tenant.id,
+            'tenant_uuid': str(tenant.uuid),
             'carrier_trunk_id': carrier_trunk.id,
             'ipbx_id': None,
             'domain': None,

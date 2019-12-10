@@ -4,7 +4,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, UUID4
 
 
 class AuthRequest(BaseModel):
@@ -17,7 +17,7 @@ class AuthRequest(BaseModel):
 
 class AuthResponse(BaseModel):
     success: bool
-    tenant_id: Optional[int] = None
+    tenant_uuid: Optional[UUID4] = None
     carrier_trunk_id: Optional[int] = None
     ipbx_id: Optional[int] = None
     domain: Optional[str] = None
@@ -26,7 +26,7 @@ class AuthResponse(BaseModel):
 
 
 class CDRRequest(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     event: Optional[str] = None
     source_ip: Optional[str] = None
     source_port: Optional[int] = None

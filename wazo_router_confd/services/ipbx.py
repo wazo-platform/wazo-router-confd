@@ -22,7 +22,7 @@ def get_ipbxs(db: Session, offset: int = 0, limit: int = 100) -> List[IPBX]:
 def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
     domain = db.query(Domain).filter(Domain.id == ipbx.domain_id).first()
     db_ipbx = IPBX(
-        tenant_id=ipbx.tenant_id,
+        tenant_uuid=ipbx.tenant_uuid,
         domain_id=ipbx.domain_id,
         customer=ipbx.customer,
         ip_fqdn=ipbx.ip_fqdn,
@@ -45,8 +45,8 @@ def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
 def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
     db_ipbx = db.query(IPBX).filter(IPBX.id == ipbx_id).first()
     if db_ipbx is not None:
-        db_ipbx.tenant_id = (
-            ipbx.tenant_id if ipbx.tenant_id is not None else db_ipbx.tenant_id
+        db_ipbx.tenant_uuid = (
+            ipbx.tenant_uuid if ipbx.tenant_uuid is not None else db_ipbx.tenant_uuid
         )
         db_ipbx.domain_id = (
             ipbx.domain_id if ipbx.domain_id is not None else db_ipbx.domain_id

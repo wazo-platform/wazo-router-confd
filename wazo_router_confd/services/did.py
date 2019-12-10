@@ -40,7 +40,7 @@ def create_did(db: Session, did: schema.DIDCreate) -> DID:
         did_regex=did.did_regex,
         did_prefix=get_did_prefix_from_regex(did.did_regex),
         carrier_trunk_id=did.carrier_trunk_id,
-        tenant_id=did.tenant_id,
+        tenant_uuid=did.tenant_uuid,
         ipbx_id=did.ipbx_id,
     )
     db.add(db_did)
@@ -61,8 +61,8 @@ def update_did(db: Session, did_id: int, did: schema.DIDUpdate) -> DID:
             if did.carrier_trunk_id is not None
             else db_did.carrier_trunk_id
         )
-        db_did.tenant_id = (
-            did.tenant_id if did.tenant_id is not None else db_did.tenant_id
+        db_did.tenant_uuid = (
+            did.tenant_uuid if did.tenant_uuid is not None else db_did.tenant_uuid
         )
         db.commit()
         db.refresh(db_did)

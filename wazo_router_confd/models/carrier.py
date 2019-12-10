@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType
 
 from .base import Base
 
@@ -15,13 +16,13 @@ if TYPE_CHECKING:  # pragma: no cover
 class Carrier(Base):
     __tablename__ = "carriers"
     __table_args__ = (
-        UniqueConstraint('tenant_id', 'name'),
-        UniqueConstraint('tenant_id', 'id'),
+        UniqueConstraint('tenant_uuid', 'name'),
+        UniqueConstraint('tenant_uuid', 'id'),
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(
-        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    tenant_uuid = Column(  # type: ignore
+        UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
     name = Column(String(256), unique=True, index=True)

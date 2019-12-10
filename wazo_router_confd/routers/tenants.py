@@ -5,6 +5,7 @@ from time import time
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import UUID4
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.database import get_db
@@ -46,27 +47,27 @@ def read_tenants(offset: int = 0, limit: int = 100, db: Session = Depends(get_db
     return tenants
 
 
-@router.get("/tenants/{tenant_id}", response_model=schema.Tenant)
-def read_tenant(tenant_id: int, db: Session = Depends(get_db)):
-    db_tenant = service.get_tenant(db, tenant_id=tenant_id)
+@router.get("/tenants/{tenant_uuid}", response_model=schema.Tenant)
+def read_tenant(tenant_uuid: UUID4, db: Session = Depends(get_db)):
+    db_tenant = service.get_tenant(db, tenant_uuid=tenant_uuid)
     if db_tenant is None:
         raise HTTPException(status_code=404, detail="Tenant not found")
     return db_tenant
 
 
-@router.put("/tenants/{tenant_id}", response_model=schema.Tenant)
+@router.put("/tenants/{tenant_uuid}", response_model=schema.Tenant)
 def update_tenant(
-    tenant_id: int, tenant: schema.TenantUpdate, db: Session = Depends(get_db)
+    tenant_uuid: UUID4, tenant: schema.TenantUpdate, db: Session = Depends(get_db)
 ):
-    db_tenant = service.update_tenant(db, tenant_id=tenant_id, tenant=tenant)
+    db_tenant = service.update_tenant(db, tenant_uuid=tenant_uuid, tenant=tenant)
     if db_tenant is None:
         raise HTTPException(status_code=404, detail="Tenant not found")
     return db_tenant
 
 
-@router.delete("/tenants/{tenant_id}", response_model=schema.Tenant)
-def delete_tenant(tenant_id: int, db: Session = Depends(get_db)):
-    db_tenant = service.delete_tenant(db, tenant_id=tenant_id)
+@router.delete("/tenants/{tenant_uuid}", response_model=schema.Tenant)
+def delete_tenant(tenant_uuid: UUID4, db: Session = Depends(get_db)):
+    db_tenant = service.delete_tenant(db, tenant_uuid=tenant_uuid)
     if db_tenant is None:
         raise HTTPException(status_code=404, detail="Tenant not found")
     return db_tenant

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType
 
 from .base import Base
 
@@ -14,11 +15,11 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class NormalizationProfile(Base):
     __tablename__ = "normalization_profiles"
-    __table_args__ = (UniqueConstraint('tenant_id', 'id'),)
+    __table_args__ = (UniqueConstraint('tenant_uuid', 'id'),)
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(
-        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    tenant_uuid = Column(  # type: ignore
+        UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
     name = Column(String(256), nullable=False, unique=True)

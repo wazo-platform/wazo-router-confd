@@ -3,14 +3,14 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, UUID4
 
 from datetime import datetime
 
 
 class CDR(BaseModel):
     id: int
-    tenant_id: int
+    tenant_uuid: UUID4
     source_ip: constr(max_length=64)  # type: ignore
     source_port: int
     from_uri: constr(max_length=256)  # type: ignore
@@ -24,7 +24,7 @@ class CDR(BaseModel):
 
 
 class CDRCreate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     source_ip: constr(max_length=64)  # type: ignore
     source_port: int
     from_uri: constr(max_length=256)  # type: ignore
@@ -35,7 +35,7 @@ class CDRCreate(BaseModel):
 
 
 class CDRUpdate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     source_ip: constr(max_length=64)  # type: ignore
     source_port: int
     from_uri: constr(max_length=256)  # type: ignore

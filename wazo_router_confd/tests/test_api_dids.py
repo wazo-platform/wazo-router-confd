@@ -13,7 +13,7 @@ def test_create_did(app, client):
     from wazo_router_confd.models.ipbx import IPBX
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -35,7 +35,7 @@ def test_create_did(app, client):
         "/dids/",
         json={
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "ipbx_id": ipbx.id,
             "carrier_trunk_id": carrier_trunk.id,
         },
@@ -44,7 +44,7 @@ def test_create_did(app, client):
     assert response.json() == {
         "id": mock.ANY,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "ipbx_id": ipbx.id,
         "carrier_trunk_id": carrier_trunk.id,
     }
@@ -60,7 +60,7 @@ def test_create_duplicated_did(app, client):
     from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -88,7 +88,7 @@ def test_create_duplicated_did(app, client):
         "/dids/",
         json={
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "ipbx_id": ipbx.id,
             "carrier_trunk_id": carrier_trunk.id,
         },
@@ -106,7 +106,7 @@ def test_get_did(app, client):
     from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -135,7 +135,7 @@ def test_get_did(app, client):
     assert response.json() == {
         "id": did.id,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "ipbx_id": ipbx.id,
         "carrier_trunk_id": carrier_trunk.id,
     }
@@ -156,7 +156,7 @@ def test_get_dids(app, client):
     from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -186,7 +186,7 @@ def test_get_dids(app, client):
         {
             "id": did.id,
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
             "ipbx_id": ipbx.id,
             "carrier_trunk_id": carrier_trunk.id,
         }
@@ -203,7 +203,7 @@ def test_update_did(app, client):
     from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -233,8 +233,8 @@ def test_update_did(app, client):
         json={
             "id": did.id,
             "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
-            "tenant_id": tenant.id,
-            "ipbx_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
+            "ipbx_id": ipbx.id,
             "carrier_trunk_id": carrier_trunk.id,
         },
     )
@@ -242,7 +242,7 @@ def test_update_did(app, client):
     assert response.json() == {
         "id": did.id,
         "did_regex": r"^(\+?1)?(800)[2-9]\d{6})$",
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "ipbx_id": ipbx.id,
         "carrier_trunk_id": carrier_trunk.id,
     }
@@ -253,7 +253,7 @@ def test_update_did_not_found(app, client):
         "/dids/1",
         json={
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_id": 1,
+            "tenant_uuid": "281f5d35-3089-4af3-9773-f8769dfcd878",
             "ipbx_id": 1,
             "carrier_trunk_id": 3,
         },
@@ -271,7 +271,7 @@ def test_delete_did(app, client):
     from wazo_router_confd.models.did import DID
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -301,7 +301,7 @@ def test_delete_did(app, client):
         "id": did.id,
         "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
         "carrier_trunk_id": carrier_trunk.id,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
         "ipbx_id": ipbx.id,
     }
 

@@ -1,6 +1,8 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import uuid
+
 
 def create_routing_group(app, suffix=1):
     from wazo_router_confd.database import SessionLocal
@@ -13,7 +15,7 @@ def create_routing_group(app, suffix=1):
     from wazo_router_confd.models.routing_rule import RoutingRule
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name="tenant_{}".format(suffix))
+    tenant = Tenant(name="tenant_{}".format(suffix), uuid=uuid.uuid4())
     domain = Domain(domain='testdomain_{}.com'.format(suffix), tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -56,13 +58,13 @@ def test_create_routing_group(app, client):
     #
     response = client.post(
         "/routing_groups/",
-        json={"routing_rule": routing_rule.id, "tenant_id": tenant.id},
+        json={"routing_rule": routing_rule.id, "tenant_uuid": str(tenant.uuid)},
     )
     assert response.status_code == 200
     assert response.json() == {
         "id": 2,
         "routing_rule": routing_rule.id,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
     }
 
 
@@ -74,7 +76,7 @@ def test_get_routing_group(app, client):
     assert response.json() == {
         "id": routing_group.id,
         "routing_rule": routing_rule.id,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
     }
 
 
@@ -92,7 +94,7 @@ def test_get_routing_groups(app, client):
         {
             "id": routing_group.id,
             "routing_rule": routing_rule.id,
-            "tenant_id": tenant.id,
+            "tenant_uuid": str(tenant.uuid),
         }
     ]
 
@@ -103,18 +105,21 @@ def test_update_routing_group(app, client):
     #
     response = client.put(
         "/routing_groups/%s" % routing_group.id,
-        json={'routing_rule': routing_rule_2.id, 'tenant_id': tenant_2.id},
+        json={'routing_rule': routing_rule_2.id, 'tenant_uuid': str(tenant_2.uuid)},
     )
     assert response.status_code == 200
     assert response.json() == {
         "id": routing_group.id,
         "routing_rule": routing_rule_2.id,
-        "tenant_id": tenant_2.id,
+        "tenant_uuid": str(tenant_2.uuid),
     }
 
 
 def test_update_routing_group_not_found(app, client):
-    response = client.put("/routing_groups/1", json={'routing_rule': 2, 'tenant_id': 2})
+    response = client.put(
+        "/routing_groups/1",
+        json={'routing_rule': 2, 'tenant_uuid': '7e614b21-a9c0-4118-a3e8-6748bc24c5ee'},
+    )
     assert response.status_code == 404
 
 
@@ -126,7 +131,7 @@ def test_delete_routing_group(app, client):
     assert response.json() == {
         "id": routing_group.id,
         "routing_rule": routing_rule.id,
-        "tenant_id": tenant.id,
+        "tenant_uuid": str(tenant.uuid),
     }
 
 

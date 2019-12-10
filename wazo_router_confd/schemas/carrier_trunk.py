@@ -3,7 +3,7 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, UUID4
 
 
 class CarrierTrunk(BaseModel):
@@ -29,7 +29,7 @@ class CarrierTrunk(BaseModel):
 
 class CarrierTrunkRead(BaseModel):
     id: int
-    tenant_id: int
+    tenant_uuid: UUID4
     carrier_id: int
     normalization_profile_id: Optional[int] = None
     name: constr(max_length=256)  # type: ignore
@@ -49,7 +49,7 @@ class CarrierTrunkRead(BaseModel):
 
 
 class CarrierTrunkCreate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     carrier_id: int
     normalization_profile_id: Optional[int] = None
     name: str

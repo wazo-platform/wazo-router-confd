@@ -3,12 +3,12 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, UUID4
 
 
 class IPBX(BaseModel):
     id: int
-    tenant_id: int
+    tenant_uuid: UUID4
     domain_id: int
     normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
@@ -27,7 +27,7 @@ class IPBX(BaseModel):
 
 class IPBXRead(BaseModel):
     id: int
-    tenant_id: int
+    tenant_uuid: UUID4
     domain_id: int
     normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
@@ -43,7 +43,7 @@ class IPBXRead(BaseModel):
 
 
 class IPBXCreate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     domain_id: int
     normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
@@ -58,15 +58,15 @@ class IPBXCreate(BaseModel):
 
 
 class IPBXUpdate(BaseModel):
-    tenant_id: int
+    tenant_uuid: UUID4
     domain_id: int
     normalization_profile_id: Optional[int] = None
     customer: Optional[int] = None
     ip_fqdn: str
     port: int = 5060
-    ip_address: Optional[str] = None  # type: ignore
+    ip_address: Optional[str] = None
     registered: bool = False
-    username: Optional[str] = None  # type: ignore
-    password: Optional[str] = None  # type: ignore
-    password_ha1: Optional[str] = None  # type: ignore
+    username: Optional[str] = None
+    password: Optional[str] = None
+    password_ha1: Optional[str] = None
     realm: Optional[constr(max_length=50)] = None  # type: ignore

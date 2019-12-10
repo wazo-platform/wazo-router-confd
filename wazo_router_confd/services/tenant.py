@@ -1,6 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from pydantic import UUID4
 from typing import List
 from uuid import uuid4
 
@@ -10,8 +11,8 @@ from wazo_router_confd.models.tenant import Tenant
 from wazo_router_confd.schemas import tenant as schema
 
 
-def get_tenant(db: Session, tenant_id: int) -> Tenant:
-    return db.query(Tenant).filter(Tenant.id == tenant_id).first()
+def get_tenant(db: Session, tenant_uuid: UUID4) -> Tenant:
+    return db.query(Tenant).filter(Tenant.uuid == tenant_uuid).first()
 
 
 def get_tenant_by_name(db: Session, name: str) -> Tenant:
@@ -30,8 +31,10 @@ def create_tenant(db: Session, tenant: schema.TenantCreate) -> Tenant:
     return db_tenant
 
 
-def update_tenant(db: Session, tenant_id: int, tenant: schema.TenantUpdate) -> Tenant:
-    db_tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+def update_tenant(
+    db: Session, tenant_uuid: UUID4, tenant: schema.TenantUpdate
+) -> Tenant:
+    db_tenant = db.query(Tenant).filter(Tenant.uuid == tenant_uuid).first()
     if db_tenant is not None:
         db_tenant.name = tenant.name
         db.commit()
@@ -39,8 +42,8 @@ def update_tenant(db: Session, tenant_id: int, tenant: schema.TenantUpdate) -> T
     return db_tenant
 
 
-def delete_tenant(db: Session, tenant_id: int) -> Tenant:
-    db_tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+def delete_tenant(db: Session, tenant_uuid: UUID4) -> Tenant:
+    db_tenant = db.query(Tenant).filter(Tenant.uuid == tenant_uuid).first()
     if db_tenant is not None:
         db.delete(db_tenant)
         db.commit()

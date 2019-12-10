@@ -10,7 +10,7 @@ def test_kamailio_dbtext_uacreg(app, client):
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
 
     session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio')
+    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     carrier = Carrier(name='carrier1', tenant=tenant)
     carrier_trunk = CarrierTrunk(

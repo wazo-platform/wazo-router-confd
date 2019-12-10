@@ -59,7 +59,7 @@ def create_normalization_profile(
 ) -> NormalizationProfile:
     db_normalization_profile = NormalizationProfile(
         name=normalization_profile.name,
-        tenant_id=normalization_profile.tenant_id,
+        tenant_uuid=normalization_profile.tenant_uuid,
         country_code=normalization_profile.country_code,
         area_code=normalization_profile.area_code,
         intl_prefix=normalization_profile.intl_prefix,
@@ -84,10 +84,10 @@ def update_normalization_profile(
         .first()
     )
     if db_normalization_profile is not None:
-        db_normalization_profile.tenant_id = (
-            normalization_profile.tenant_id
-            if normalization_profile.tenant_id is not None
-            else db_normalization_profile.tenant_id
+        db_normalization_profile.tenant_uuid = (
+            normalization_profile.tenant_uuid
+            if normalization_profile.tenant_uuid is not None
+            else db_normalization_profile.tenant_uuid
         )
         db_normalization_profile.country_code = (
             normalization_profile.country_code

@@ -12,6 +12,7 @@ from sqlalchemy import (
     Boolean,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType
 
 from .base import Base
 
@@ -25,20 +26,20 @@ class CarrierTrunk(Base):
     __tablename__ = "carrier_trunks"
     __table_args__ = (
         ForeignKeyConstraint(
-            ['tenant_id', 'carrier_id'],
-            ['carriers.tenant_id', 'carriers.id'],
+            ['tenant_uuid', 'carrier_id'],
+            ['carriers.tenant_uuid', 'carriers.id'],
             ondelete='CASCADE',
         ),
         ForeignKeyConstraint(
-            ['tenant_id', 'normalization_profile_id'],
-            ['normalization_profiles.tenant_id', 'normalization_profiles.id'],
+            ['tenant_uuid', 'normalization_profile_id'],
+            ['normalization_profiles.tenant_uuid', 'normalization_profiles.id'],
             ondelete='SET NULL',
         ),
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(
-        Integer, ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False
+    tenant_uuid = Column(  # type: ignore
+        UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship("Tenant")
     carrier_id = Column(Integer, nullable=False)
