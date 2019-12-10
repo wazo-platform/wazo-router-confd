@@ -75,11 +75,11 @@ class AiopgConnectionPool(object):
 def from_database_uri_to_dsn(database_uri: str) -> str:
     parsed_uri = urlparse(database_uri)
     dsn = 'dbname=%s user=%s password=%s host=%s port=%d' % (
-        parsed_uri.path.lstrip('/'),
-        parsed_uri.username,
-        parsed_uri.password,
-        parsed_uri.hostname,
-        parsed_uri.port,
+        parsed_uri.path.lstrip('/') or 'wazo',
+        parsed_uri.username or 'postgres',
+        parsed_uri.password or '',
+        parsed_uri.hostname or 'localhost',
+        parsed_uri.port or 5432,
     )
     return dsn
 
