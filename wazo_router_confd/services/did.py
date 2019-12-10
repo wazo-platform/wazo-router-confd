@@ -56,6 +56,11 @@ def update_did(db: Session, did_id: int, did: schema.DIDUpdate) -> DID:
             did.did_regex if did.did_regex is not None else db_did.did_regex
         )
         db_did.did_prefix = get_did_prefix_from_regex(db_did.did_regex)
+        db_did.ipbx_id = (
+            did.ipbx_id
+            if did.ipbx_id is not None
+            else db_did.ipbx_id
+        )
         db_did.carrier_trunk_id = (
             did.carrier_trunk_id
             if did.carrier_trunk_id is not None

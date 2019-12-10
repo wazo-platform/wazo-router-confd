@@ -25,4 +25,4 @@ class Carrier(Base):
         UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
-    name = Column(String(256), unique=True, index=True)
+    name = Column(String(256), index=True)

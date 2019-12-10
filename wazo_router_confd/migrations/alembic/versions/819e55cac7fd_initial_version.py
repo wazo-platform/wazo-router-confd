@@ -1,17 +1,17 @@
-"""Initial version
+"""empty message
 
-Revision ID: 0d208181667d
+Revision ID: 819e55cac7fd
 Revises:
-Create Date: 2019-12-05 15:21:07.654178
+Create Date: 2019-12-10 15:10:46.134027
 
 """
 from alembic import op
 import sqlalchemy as sa
-import sqlalchemy_utils
+from sqlalchemy_utils.types.uuid import UUIDType
 
 
 # revision identifiers, used by Alembic.
-revision = '0d208181667d'
+revision = '819e55cac7fd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,7 +22,7 @@ def upgrade():
     op.create_table(
         'tenants',
         sa.Column('name', sa.String(length=256), nullable=True),
-        sa.Column('uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('uuid', UUIDType(), nullable=False),
         sa.PrimaryKeyConstraint('uuid'),
     )
     op.create_index(op.f('ix_tenants_name'), 'tenants', ['name'], unique=True)
@@ -30,7 +30,7 @@ def upgrade():
     op.create_table(
         'carriers',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('name', sa.String(length=256), nullable=True),
         sa.ForeignKeyConstraint(['tenant_uuid'], ['tenants.uuid'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
@@ -38,11 +38,11 @@ def upgrade():
         sa.UniqueConstraint('tenant_uuid', 'name'),
     )
     op.create_index(op.f('ix_carriers_id'), 'carriers', ['id'], unique=False)
-    op.create_index(op.f('ix_carriers_name'), 'carriers', ['name'], unique=True)
+    op.create_index(op.f('ix_carriers_name'), 'carriers', ['name'], unique=False)
     op.create_table(
         'domains',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('domain', sa.String(length=64), nullable=True),
         sa.ForeignKeyConstraint(['tenant_uuid'], ['tenants.uuid'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
@@ -53,7 +53,7 @@ def upgrade():
     op.create_table(
         'normalization_profiles',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('name', sa.String(length=256), nullable=False),
         sa.Column('country_code', sa.String(length=64), nullable=True),
         sa.Column('area_code', sa.String(length=64), nullable=True),
@@ -63,8 +63,8 @@ def upgrade():
         sa.Column('always_ld', sa.Boolean(), nullable=False),
         sa.ForeignKeyConstraint(['tenant_uuid'], ['tenants.uuid'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('name'),
         sa.UniqueConstraint('tenant_uuid', 'id'),
+        sa.UniqueConstraint('tenant_uuid', 'name'),
     )
     op.create_index(
         op.f('ix_normalization_profiles_id'),
@@ -75,7 +75,7 @@ def upgrade():
     op.create_table(
         'carrier_trunks',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('carrier_id', sa.Integer(), nullable=False),
         sa.Column('normalization_profile_id', sa.Integer(), nullable=True),
         sa.Column('name', sa.String(length=256), nullable=True),
@@ -102,17 +102,18 @@ def upgrade():
         ),
         sa.ForeignKeyConstraint(['tenant_uuid'], ['tenants.uuid'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('tenant_uuid', 'carrier_id', 'name'),
     )
     op.create_index(
         op.f('ix_carrier_trunks_id'), 'carrier_trunks', ['id'], unique=False
     )
     op.create_index(
-        op.f('ix_carrier_trunks_name'), 'carrier_trunks', ['name'], unique=True
+        op.f('ix_carrier_trunks_name'), 'carrier_trunks', ['name'], unique=False
     )
     op.create_table(
         'ipbx',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('domain_id', sa.Integer(), nullable=False),
         sa.Column('normalization_profile_id', sa.Integer(), nullable=True),
         sa.Column('customer', sa.Integer(), nullable=True),
@@ -123,6 +124,7 @@ def upgrade():
         sa.Column('username', sa.String(length=50), nullable=True),
         sa.Column('password', sa.String(length=192), nullable=True),
         sa.Column('password_ha1', sa.String(length=64), nullable=True),
+        sa.Column('realm', sa.String(length=64), nullable=True),
         sa.ForeignKeyConstraint(
             ['tenant_uuid', 'domain_id'],
             ['domains.tenant_uuid', 'domains.id'],
@@ -160,7 +162,7 @@ def upgrade():
     op.create_table(
         'cdrs',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('ipbx_id', sa.Integer(), nullable=True),
         sa.Column('carrier_trunk_id', sa.Integer(), nullable=True),
         sa.Column('source_ip', sa.String(length=64), nullable=False),
@@ -181,7 +183,7 @@ def upgrade():
     op.create_table(
         'dids',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('ipbx_id', sa.Integer(), nullable=False),
         sa.Column('carrier_trunk_id', sa.Integer(), nullable=False),
         sa.Column('did_regex', sa.String(length=256), nullable=True),
@@ -218,7 +220,7 @@ def upgrade():
     op.create_table(
         'routing_groups',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('tenant_uuid', sqlalchemy_utils.UUIDType(), nullable=False),
+        sa.Column('tenant_uuid', UUIDType(), nullable=False),
         sa.Column('routing_rule', sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ['routing_rule'], ['routing_rules.id'], ondelete='CASCADE'
