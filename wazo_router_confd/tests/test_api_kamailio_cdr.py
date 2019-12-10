@@ -72,7 +72,7 @@ def test_kamailio_cdr(app, client):
     }
 
 
-def test_kamailio_cdr_failed_no_domain(app, client):
+def test_kamailio_cdr_failed_no_tenant(app, client):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -115,11 +115,7 @@ def test_kamailio_cdr_failed_no_domain(app, client):
     response = client.post(
         "/kamailio/cdr",
         json={
-            # FIXME(sileht): Fail for the wrong reason, it should be because
-            # domain is wrong, but it fails because tenant uuid is wrong.
-            # With correct tenant uuid, the cdr is created
             "tenant_uuid": "5ecdf9dd-36d3-4735-a5e8-99bd297bc325",
-            # "tenant_uuid": str(tenant.uuid),
             "event": "sip-routing",
             "source_ip": "10.0.0.1",
             "source_port": 5060,

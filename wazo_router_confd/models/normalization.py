@@ -15,14 +15,17 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class NormalizationProfile(Base):
     __tablename__ = "normalization_profiles"
-    __table_args__ = (UniqueConstraint('tenant_uuid', 'id'),)
+    __table_args__ = (
+        UniqueConstraint('tenant_uuid', 'id'),
+        UniqueConstraint('tenant_uuid', 'name'),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     tenant_uuid = Column(  # type: ignore
         UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
-    name = Column(String(256), nullable=False, unique=True)
+    name = Column(String(256), nullable=False)
     country_code = Column(String(64), nullable=True)
     area_code = Column(String(64), nullable=True)
     intl_prefix = Column(String(64), nullable=True)

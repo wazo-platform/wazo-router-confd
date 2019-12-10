@@ -9,6 +9,7 @@ from sqlalchemy import (
     String,
     ForeignKey,
     ForeignKeyConstraint,
+    UniqueConstraint,
     Boolean,
 )
 from sqlalchemy.orm import relationship
@@ -35,6 +36,7 @@ class CarrierTrunk(Base):
             ['normalization_profiles.tenant_uuid', 'normalization_profiles.id'],
             ondelete='SET NULL',
         ),
+        UniqueConstraint('tenant_uuid', 'carrier_id', 'name'),
     )
 
     id = Column(Integer, primary_key=True, index=True)
@@ -46,7 +48,7 @@ class CarrierTrunk(Base):
     carrier = relationship('Carrier')
     normalization_profile_id = Column(Integer, nullable=True)
     normalization_profile = relationship("NormalizationProfile")
-    name = Column(String(256), unique=True, index=True)
+    name = Column(String(256), index=True)
     sip_proxy = Column(String(128), nullable=False)
     sip_proxy_port = Column(Integer, nullable=False, default=5060)
     ip_address = Column(String(256), nullable=True)
