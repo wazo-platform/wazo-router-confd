@@ -5,7 +5,7 @@ Before=monit.service
 
 [Service]
 ExecStartPre=/usr/bin/install -d -o www-data -g www-data /var/run/wazo-router-confd
-ExecStart=/usr/bin/wazo-router-confd --config-file=/etc/wazo/wazo-router-confd.ini
+ExecStart=/usr/bin/wazo-router-confd --config-file=/etc/wazo-router-confd/wazo-router-confd.ini
 PIDFile=/var/run/wazo-router-confd/wazo-router-confd.pid
 
 [Install]
