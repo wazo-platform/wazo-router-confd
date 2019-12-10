@@ -239,7 +239,21 @@ def test_update_did(app, client):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([tenant, tenant_b, domain, domain_b, ipbx, ipbx_b, carrier, carrier_b, carrier_trunk, carrier_trunk_b, did])
+    session.add_all(
+        [
+            tenant,
+            tenant_b,
+            domain,
+            domain_b,
+            ipbx,
+            ipbx_b,
+            carrier,
+            carrier_b,
+            carrier_trunk,
+            carrier_trunk_b,
+            did,
+        ]
+    )
     session.commit()
     response = client.put(
         "/dids/%s" % did.id,
