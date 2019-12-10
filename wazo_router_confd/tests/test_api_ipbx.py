@@ -193,6 +193,7 @@ def test_update_ipbx(app, client):
             'tenant_uuid': str(tenant_2.uuid),
             'domain_id': domain_2.id,
             'username': 'otheruser',
+            'password': 'otherpassword',
             'registered': False,
         },
     )
