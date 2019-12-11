@@ -41,12 +41,11 @@ def test_normalize_local_number_to_e164(app, database_uri, event_loop):
         dsn = from_database_uri_to_dsn(database_uri)
         pool = await aiopg.create_pool(dsn=dsn)
         async with pool.acquire() as conn:
-            try:
-                return await normalize_local_number_to_e164(
-                    conn, '+39 011 625234', profile=normalization_profile
-                )
-            finally:
-                conn.close()
+            return await normalize_local_number_to_e164(
+                conn, '+39 011 625234', profile=normalization_profile
+            )
+        pool.close()
+        await pool.wait_closed()
 
     ret = event_loop.run_until_complete(test())
     assert '36011625234' == ret
@@ -87,12 +86,11 @@ def test_normalize_e164_to_local_number(app, database_uri, event_loop):
         dsn = from_database_uri_to_dsn(database_uri)
         pool = await aiopg.create_pool(dsn=dsn)
         async with pool.acquire() as conn:
-            try:
-                return await normalize_e164_to_local_number(
-                    conn, '39011625234', profile=normalization_profile
-                )
-            finally:
-                conn.close()
+            return await normalize_e164_to_local_number(
+                conn, '39011625234', profile=normalization_profile
+            )
+        pool.close()
+        await pool.wait_closed()
 
     ret = event_loop.run_until_complete(test())
     assert '+36011625234' == ret

@@ -326,8 +326,8 @@ async def routing(
 
 
 async def auth(pool: aiopg.Pool, request: schema.AuthRequest) -> schema.AuthResponse:
-    async with pool.acquire() as conn:
-        if request.source_ip or request.username:
+    if request.source_ip or request.username:
+        async with pool.acquire() as conn:
             where = ["1 = 1"]
             where_args = []
             if request.source_ip:
@@ -354,7 +354,6 @@ async def auth(pool: aiopg.Pool, request: schema.AuthRequest) -> schema.AuthResp
                         or ipbx['password']
                         and password_service.verify(ipbx['password'], request.password)
                     ):
-                        await conn.close()
                         return schema.AuthResponse(
                             success=True,
                             tenant_uuid=ipbx['tenant_uuid'],
@@ -374,7 +373,6 @@ async def auth(pool: aiopg.Pool, request: schema.AuthRequest) -> schema.AuthResp
                 async with conn.cursor(cursor_factory=DictCursor) as cur:
                     await cur.execute(sql, [request.source_ip])
                     carrier_trunk = await cur.fetchone()
-                    await conn.close()
                     if carrier_trunk is not None:
                         return schema.AuthResponse(
                             success=True,
@@ -469,5 +467,4 @@ async def dbtext_uacreg(pool: aiopg.Pool) -> schema.DBText:
                     )
                     + "\n"
                 )
-        await conn.close()
     return schema.DBText(content="".join(content))
