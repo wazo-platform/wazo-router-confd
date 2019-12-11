@@ -6,7 +6,6 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.domain import Domain
-from wazo_router_confd.models.tenant import Tenant
 from wazo_router_confd.schemas import domain as schema
 
 
