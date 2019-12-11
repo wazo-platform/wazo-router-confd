@@ -71,6 +71,9 @@ class AiopgConnectionPool(object):
     async def connect(self):
         self.pool = await aiopg.create_pool(self.dsn)
 
+    async def clear(self):
+        await self.pool.clear()
+
 
 def from_database_uri_to_dsn(database_uri: str) -> str:
     parsed_uri = urlparse(database_uri)
@@ -90,6 +93,7 @@ def setup_aiopg_database(app: FastAPI, config: dict):
     connection_pool = AiopgConnectionPool(dsn)
 
     app.add_event_handler("startup", connection_pool.connect)
+    app.add_event_handler("shutdown", connection_pool.clear)
 
     @app.middleware("http")
     async def db_aiopg_database_middleware(request: Request, call_next):
