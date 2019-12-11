@@ -3,6 +3,6 @@ location ^~ /api/router_confd/ {
     # client_max_body_size 16m;
 
     proxy_set_header    Host                $http_host;
-    proxy_set_header    X-Script-Name       /api/router_confd;
+    proxy_set_header    X-Script-Name       /api/router_router_confd;
     proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
 }
