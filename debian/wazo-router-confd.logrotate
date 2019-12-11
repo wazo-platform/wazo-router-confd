@@ -1,0 +1,8 @@
+/var/log/wazo-router-confd.log {
+    size 1M
+    daily
+    rotate 15
+    compress
+    copytruncate
+    missingok
+}
