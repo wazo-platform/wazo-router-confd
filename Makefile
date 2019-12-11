@@ -48,4 +48,4 @@ coverage:
 
 .PHONY: dockerfile
 dockerfile:
-	docker build -t wazo-router-confd:latest .
+	docker build -t wazopbx/wazo-router-confd:latest .
