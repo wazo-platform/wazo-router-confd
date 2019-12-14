@@ -6,6 +6,7 @@ import aiopg  # type: ignore
 from fastapi import APIRouter, Depends
 
 from wazo_router_confd.database import get_aiopg_pool
+from wazo_router_confd.redis import Redis, get_redis
 from wazo_router_confd.schemas import kamailio as schema
 from wazo_router_confd.services import kamailio as service
 
@@ -15,9 +16,11 @@ router = APIRouter()
 
 @router.post("/kamailio/routing")
 async def kamailio_routing(
-    request: schema.RoutingRequest, pool: aiopg.Pool = Depends(get_aiopg_pool)
+    request: schema.RoutingRequest,
+    pool: aiopg.Pool = Depends(get_aiopg_pool),
+    redis: Redis = Depends(get_redis),
 ):
-    return await service.routing(pool, request=request)
+    return await service.routing(pool, redis, request=request)
 
 
 @router.post("/kamailio/cdr")
@@ -29,9 +32,11 @@ async def kamailio_cdr(
 
 @router.post("/kamailio/auth")
 async def kamailio_auth(
-    request: schema.AuthRequest, pool: aiopg.Pool = Depends(get_aiopg_pool)
+    request: schema.AuthRequest,
+    pool: aiopg.Pool = Depends(get_aiopg_pool),
+    redis: Redis = Depends(get_redis),
 ):
-    return await service.auth(pool, request=request)
+    return await service.auth(pool, redis, request=request)
 
 
 @router.get("/kamailio/dbtext/uacreg")

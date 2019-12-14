@@ -10,13 +10,25 @@ def test_kamailio_routing_did_with_single_ipbx(app, client):
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.models.did import DID
+    from wazo_router_confd.models.normalization import NormalizationProfile
 
     session = SessionLocal(bind=app.engine)
     tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
+    normalization_profile = NormalizationProfile(
+        tenant=tenant,
+        name='Profile',
+        country_code='39',
+        area_code='040',
+        intl_prefix='00',
+        ld_prefix='',
+        always_intl_prefix_plus=False,
+        always_ld=False,
+    )
     ipbx = IPBX(
         tenant=tenant,
         domain=domain,
+        normalization_profile=normalization_profile,
         customer=1,
         ip_fqdn='mypbx.com',
         registered=True,
@@ -25,7 +37,10 @@ def test_kamailio_routing_did_with_single_ipbx(app, client):
     )
     carrier = Carrier(name='carrier', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='carrier_trunk1', carrier=carrier, sip_proxy='proxy.somedomain.com'
+        name='carrier_trunk1',
+        carrier=carrier,
+        sip_proxy='proxy.somedomain.com',
+        normalization_profile=normalization_profile,
     )
     did = DID(
         did_regex=r'^39[0-9]+$',
@@ -34,7 +49,9 @@ def test_kamailio_routing_did_with_single_ipbx(app, client):
         ipbx=ipbx,
         carrier_trunk=carrier_trunk,
     )
-    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
+    session.add_all(
+        [tenant, domain, normalization_profile, ipbx, carrier, carrier_trunk, did]
+    )
     session.commit()
     #
     request_from_name = "From name"

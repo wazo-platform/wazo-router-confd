@@ -60,6 +60,13 @@ from .app import get_app
     show_default=True,
 )
 @click.option(
+    "--redis-uri",
+    type=str,
+    default="redis://localhost",
+    help="REDIS URI, overwrites the configuration obtained from the Consul agent",
+    show_default=True,
+)
+@click.option(
     "--debug", is_flag=True, default=False, help="Enable debug mode", hidden=True
 )
 def main(
@@ -71,6 +78,7 @@ def main(
     consul_uri: Optional[str] = None,
     database_uri: Optional[str] = None,
     database_upgrade: bool = True,
+    redis_uri: Optional[str] = None,
     debug: bool = False,
 ):
     config = dict(
@@ -80,6 +88,7 @@ def main(
         advertise_port=advertise_port,
         consul_uri=consul_uri,
         database_uri=database_uri,
+        redis_uri=redis_uri,
         database_upgrade=database_upgrade,
         debug=debug,
     )
