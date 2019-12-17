@@ -53,11 +53,11 @@ def create_routing_rule(app, suffix=1):
 
     session.flush()
 
-    return routing_rule, ipbx, carrier_trunk, tenant
+    return routing_rule, ipbx, carrier_trunk, tenant, session
 
 
 def test_create_routing_rule(app, client):
-    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
+    routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
     response = client.post(
         "/routing_rules/",
@@ -81,7 +81,7 @@ def test_create_routing_rule(app, client):
 
 
 def test_get_routing_rule(app, client):
-    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
+    routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
     response = client.get("/routing_rules/%s" % routing_rule.id)
     assert response.status_code == 200
@@ -101,7 +101,7 @@ def test_get_routing_rule_not_found(app, client):
 
 
 def test_get_routing_rules(app, client):
-    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
+    routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
     response = client.get("/routing_rules/")
     assert response.status_code == 200
@@ -118,8 +118,8 @@ def test_get_routing_rules(app, client):
 
 
 def test_update_routing_rule(app, client):
-    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
-    routing_rule_2, ipbx_2, carrier_trunk_2, tenant_2 = create_routing_rule(app, 2)
+    routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
+    routing_rule_2, ipbx_2, carrier_trunk_2, tenant_2, _ = create_routing_rule(app, 2)
     #
     response = client.put(
         "/routing_rules/%s" % routing_rule.id,
@@ -157,7 +157,7 @@ def test_update_routing_rule_not_found(app, client):
 
 
 def test_delete_routing_rule(app, client):
-    routing_rule, ipbx, carrier_trunk, tenant = create_routing_rule(app)
+    routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
     response = client.delete("/routing_rules/%s" % routing_rule.id)
     assert response.status_code == 200
