@@ -50,11 +50,11 @@ def create_routing_group(app, suffix=1):
 
     session.flush()
 
-    return routing_group, routing_rule, tenant
+    return routing_group, routing_rule, tenant, session
 
 
 def test_create_routing_group(app, client):
-    routing_group, routing_rule, tenant = create_routing_group(app)
+    routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
     response = client.post(
         "/routing_groups/",
@@ -69,7 +69,7 @@ def test_create_routing_group(app, client):
 
 
 def test_get_routing_group(app, client):
-    routing_group, routing_rule, tenant = create_routing_group(app)
+    routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
     response = client.get("/routing_groups/%s" % routing_group.id)
     assert response.status_code == 200
@@ -86,7 +86,7 @@ def test_get_routing_group_not_found(app, client):
 
 
 def test_get_routing_groups(app, client):
-    routing_group, routing_rule, tenant = create_routing_group(app)
+    routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
     response = client.get("/routing_groups/")
     assert response.status_code == 200
@@ -100,8 +100,8 @@ def test_get_routing_groups(app, client):
 
 
 def test_update_routing_group(app, client):
-    routing_group, routing_rule, tenant = create_routing_group(app)
-    routing_group_2, routing_rule_2, tenant_2 = create_routing_group(app, 2)
+    routing_group, routing_rule, tenant, _ = create_routing_group(app)
+    routing_group_2, routing_rule_2, tenant_2, _ = create_routing_group(app, 2)
     #
     response = client.put(
         "/routing_groups/%s" % routing_group.id,
@@ -124,7 +124,7 @@ def test_update_routing_group_not_found(app, client):
 
 
 def test_delete_routing_group(app, client):
-    routing_group, routing_rule, tenant = create_routing_group(app)
+    routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
     response = client.delete("/routing_groups/%s" % routing_group.id)
     assert response.status_code == 200

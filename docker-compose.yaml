@@ -20,6 +20,10 @@ services:
       POSTGRES_USER: wazo
       POSTGRES_PASSWORD: wazo
       POSTGRES_DB: wazo
+  redis:
+    image: redis:5.0-alpine
+    ports:
+      - '6379:6379'
 
 volumes:
   postgres-data:

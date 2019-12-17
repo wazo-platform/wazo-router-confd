@@ -23,9 +23,11 @@ setup(
     url='http://www.wazo-platform.org/',
     install_requires=[
         'aiopg',
+        'aioredis',
         'alembic',
         'Click',
         'fastapi',
+        'hiredis',
         'python-consul',
         'python-dateutil',
         'psycopg2',

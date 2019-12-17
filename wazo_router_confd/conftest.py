@@ -39,7 +39,13 @@ def database_uri(request):
 
 @pytest.fixture(scope="function")
 def app(request, database_uri):
-    config = dict(database_uri=database_uri, database_upgrade=True, debug=True)
+    config = dict(
+        database_uri=database_uri,
+        redis_uri='redis://localhost',
+        redis_flush_on_connect=True,
+        database_upgrade=True,
+        debug=True,
+    )
     app = get_app(config)
 
     from wazo_router_confd.database import SessionLocal

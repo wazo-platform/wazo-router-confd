@@ -9,15 +9,28 @@ def test_kamailio_routing_outbound_with_single_ipbx(app, client):
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
     from wazo_router_confd.models.ipbx import IPBX
+    from wazo_router_confd.models.normalization import NormalizationProfile
 
     session = SessionLocal(bind=app.engine)
     tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
+    normalization_profile = NormalizationProfile(
+        tenant=tenant,
+        name='Profile',
+        country_code='39',
+        area_code='040',
+        intl_prefix='00',
+        ld_prefix='',
+        always_intl_prefix_plus=False,
+        always_ld=False,
+    )
     carrier = Carrier(name='carrier1', tenant=tenant)
     carrier_trunk = CarrierTrunk(
-        name='trunk1', carrier=carrier, sip_proxy='192.168.1.1'
+        name='trunk1',
+        carrier=carrier,
+        sip_proxy='192.168.1.1',
+        normalization_profile=normalization_profile,
     )
-
     ipbx = IPBX(
         customer=1,
         ip_fqdn='10.0.0.1',
@@ -26,8 +39,11 @@ def test_kamailio_routing_outbound_with_single_ipbx(app, client):
         username='user',
         password='password',
         tenant=tenant,
+        normalization_profile=normalization_profile,
     )
-    session.add_all([tenant, domain, ipbx, carrier, carrier_trunk])
+    session.add_all(
+        [tenant, domain, normalization_profile, ipbx, carrier, carrier_trunk]
+    )
     session.commit()
     #
     request_from_name = "From name"
