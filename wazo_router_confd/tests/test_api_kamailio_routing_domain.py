@@ -7,10 +7,21 @@ def test_kamailio_routing_domain_with_single_ipbx(app, client):
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
+    from wazo_router_confd.models.normalization import NormalizationProfile
 
     session = SessionLocal(bind=app.engine)
     tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
     domain = Domain(domain='testdomain.com', tenant=tenant)
+    normalization_profile = NormalizationProfile(
+        tenant=tenant,
+        name='Profile',
+        country_code='39',
+        area_code='040',
+        intl_prefix='00',
+        ld_prefix='',
+        always_intl_prefix_plus=False,
+        always_ld=False,
+    )
     ipbx = IPBX(
         customer=1,
         ip_fqdn='mypbx.com',
@@ -18,9 +29,10 @@ def test_kamailio_routing_domain_with_single_ipbx(app, client):
         registered=True,
         username='user',
         password='password',
+        normalization_profile=normalization_profile,
         tenant=tenant,
     )
-    session.add_all([tenant, domain, ipbx])
+    session.add_all([tenant, domain, normalization_profile, ipbx])
     session.commit()
     #
     request_from_name = "From name"

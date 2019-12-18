@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from .consul import setup_consul
 from .database import setup_database, setup_aiopg_database, upgrade_database
+from .redis import setup_redis
 from .routers import carriers
 from .routers import carrier_trunks
 from .routers import cdr
@@ -26,6 +27,7 @@ def get_app(config: dict):
     app = setup_aiopg_database(app, config)
     if config.get('database_upgrade'):
         upgrade_database(app, config)
+    app = setup_redis(app, config)
     app.include_router(carriers.router)
     app.include_router(carrier_trunks.router)
     app.include_router(cdr.router)
