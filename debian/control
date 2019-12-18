@@ -10,10 +10,12 @@ Package: wazo-router-confd
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}, ${shlibs:Depends},
  alembic,
+ python3-aioredis,
  python3-alembic,
  python3-click,
  python3-consul,
  python3-dateutil,
+ python3-hiredis,
  python3-psycopg2,
  python3-requests,
  python3-sqlalchemy,
