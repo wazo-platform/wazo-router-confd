@@ -20,7 +20,12 @@ from .routers import tenants
 
 
 def get_app(config: dict):
-    app = FastAPI()
+    app = FastAPI(
+        title="wazo-router-confd",
+        description="Configuration API for Wazo C4 Router components",
+        version="1.0.0",
+        openapi_url="/api/v1/openapi.json",
+    )
     if config.get('consul_uri') is not None:
         app = setup_consul(app, config)
     app = setup_database(app, config)
@@ -28,16 +33,16 @@ def get_app(config: dict):
     if config.get('database_upgrade'):
         upgrade_database(app, config)
     app = setup_redis(app, config)
-    app.include_router(carriers.router)
-    app.include_router(carrier_trunks.router)
-    app.include_router(cdr.router)
-    app.include_router(dids.router)
-    app.include_router(domains.router)
-    app.include_router(ipbx.router)
-    app.include_router(kamailio.router)
-    app.include_router(normalization.router)
-    app.include_router(routing_rules.router)
-    app.include_router(routing_group.router)
-    app.include_router(tenants.router)
+    app.include_router(carriers.router, tags=['carriers'])
+    app.include_router(carrier_trunks.router, tags=['carriers'])
+    app.include_router(cdr.router, tags=['cdr'])
+    app.include_router(dids.router, tags=['dids'])
+    app.include_router(domains.router, tags=['domains'])
+    app.include_router(ipbx.router, tags=['ipbx'])
+    app.include_router(kamailio.router, tags=['kamailio'])
+    app.include_router(normalization.router, tags=['normalization'])
+    app.include_router(routing_rules.router, tags=['routing'])
+    app.include_router(routing_group.router, tags=['routing'])
+    app.include_router(tenants.router, tags=['tenants'])
 
     return app
