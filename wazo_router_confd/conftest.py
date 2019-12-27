@@ -4,12 +4,11 @@ import uuid
 
 import sqlalchemy
 
-from sqlalchemy.orm.session import close_all_sessions  # type: ignore
 from starlette.testclient import TestClient
 from urllib.parse import urlsplit, urlunsplit
 
 from wazo_router_confd.app import get_app
-from wazo_router_confd.database import wait_for_database
+from wazo_router_confd.database import SessionLocal, wait_for_database
 
 
 def create_temporary_database():
@@ -33,7 +32,7 @@ def create_temporary_database():
 
 @pytest.fixture(scope="session")
 def database_uri(request):
-    request.addfinalizer(close_all_sessions)
+    request.addfinalizer(SessionLocal.close_all)
     return create_temporary_database()
 
 

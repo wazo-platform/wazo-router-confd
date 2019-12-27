@@ -6,7 +6,6 @@ import pprint
 
 from alembic.migration import MigrationContext  # type: ignore
 from alembic.autogenerate import compare_metadata  # type: ignore
-from sqlalchemy.orm.session import close_all_sessions  # type: ignore
 
 from wazo_router_confd import database
 from wazo_router_confd import conftest
@@ -26,5 +25,5 @@ def test_database_migration():
             diff = compare_metadata(ctx, Base.metadata)
             assert diff == [], pprint.pformat(diff, indent=2, width=20)
     finally:
-        close_all_sessions()
+        database.SessionLocal.close_all()
         app.engine.dispose()
