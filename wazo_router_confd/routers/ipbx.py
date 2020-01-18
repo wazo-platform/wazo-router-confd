@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -19,7 +17,7 @@ def create_ipbx(ipbx: schema.IPBXCreate, db: Session = Depends(get_db)):
     return service.create_ipbx(db=db, ipbx=ipbx)
 
 
-@router.get("/ipbx", response_model=List[schema.IPBXRead])
+@router.get("/ipbx", response_model=schema.IPBXList)
 def read_ipbxs(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     ipbxs = service.get_ipbxs(db, offset=offset, limit=limit)
     return ipbxs

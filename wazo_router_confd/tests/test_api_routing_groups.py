@@ -90,13 +90,15 @@ def test_get_routing_groups(app, client):
     #
     response = client.get("/1.0/routing_groups")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": routing_group.id,
-            "routing_rule": routing_rule.id,
-            "tenant_uuid": str(tenant.uuid),
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": routing_group.id,
+                "routing_rule": routing_rule.id,
+                "tenant_uuid": str(tenant.uuid),
+            }
+        ]
+    }
 
 
 def test_update_routing_group(app, client):

@@ -102,19 +102,21 @@ def test_get_normalization_profiles(app, client):
     #
     response = client.get("/1.0/normalization-profiles")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": normalization_profile.id,
-            "name": "profile 1",
-            "tenant_uuid": str(tenant.uuid),
-            "country_code": None,
-            "area_code": None,
-            "intl_prefix": None,
-            "ld_prefix": None,
-            "always_ld": False,
-            "always_intl_prefix_plus": False,
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": normalization_profile.id,
+                "name": "profile 1",
+                "tenant_uuid": str(tenant.uuid),
+                "country_code": None,
+                "area_code": None,
+                "intl_prefix": None,
+                "ld_prefix": None,
+                "always_ld": False,
+                "always_intl_prefix_plus": False,
+            }
+        ]
+    }
 
 
 def test_update_normalization_profile(app, client):
@@ -168,7 +170,9 @@ def test_delete_normalization_profile(app, client):
     session.add_all([normalization_profile, tenant])
     session.commit()
     #
-    response = client.delete("/1.0/normalization-profiles/%s" % normalization_profile.id)
+    response = client.delete(
+        "/1.0/normalization-profiles/%s" % normalization_profile.id
+    )
     assert response.status_code == 200
     assert response.json() == {
         "id": normalization_profile.id,

@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -20,8 +18,10 @@ def get_carrier_trunk_by_name(db: Session, name: str) -> CarrierTrunk:
 
 def get_carrier_trunks(
     db: Session, offset: int = 0, limit: int = 100
-) -> List[CarrierTrunk]:
-    return db.query(CarrierTrunk).offset(offset).limit(limit).all()
+) -> schema.CarrierTrunkList:
+    return schema.CarrierTrunkList(
+        items=db.query(CarrierTrunk).offset(offset).limit(limit).all()
+    )
 
 
 def create_carrier_trunk(

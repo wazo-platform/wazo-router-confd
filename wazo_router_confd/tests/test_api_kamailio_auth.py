@@ -141,7 +141,8 @@ def test_kamailio_auth_username_fails(app, client):
     session.commit()
     #
     response = client.post(
-        "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user_is_wrong"}
+        "/1.0/kamailio/auth",
+        json={"source_ip": "10.0.0.1", "username": "user_is_wrong"},
     )
     assert response.status_code == 200
     assert response.json() == {

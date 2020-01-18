@@ -3,7 +3,7 @@
 
 import re
 
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -22,8 +22,8 @@ def get_did_by_regex(db: Session, regex: Optional[str]) -> DID:
     return db.query(DID).filter(DID.did_regex == regex).first()
 
 
-def get_dids(db: Session, offset: int = 0, limit: int = 100) -> List[DID]:
-    return db.query(DID).offset(offset).limit(limit).all()
+def get_dids(db: Session, offset: int = 0, limit: int = 100) -> schema.DIDList:
+    return schema.DIDList(items=db.query(DID).offset(offset).limit(limit).all())
 
 
 def get_did_prefix_from_regex(did_regex: Optional[str] = None) -> str:

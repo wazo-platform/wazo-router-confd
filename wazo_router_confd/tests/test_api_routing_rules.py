@@ -105,16 +105,18 @@ def test_get_routing_rules(app, client):
     #
     response = client.get("/1.0/routing_rules")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": routing_rule.id,
-            "prefix": "39",
-            "carrier_trunk_id": carrier_trunk.id,
-            "ipbx_id": ipbx.id,
-            "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "route_type": "pstn",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": routing_rule.id,
+                "prefix": "39",
+                "carrier_trunk_id": carrier_trunk.id,
+                "ipbx_id": ipbx.id,
+                "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
+                "route_type": "pstn",
+            }
+        ]
+    }
 
 
 def test_update_routing_rule(app, client):

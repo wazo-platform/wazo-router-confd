@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -21,7 +19,7 @@ def create_routing_group(
     return service.create_routing_group(db=db, routing_group=routing_group)
 
 
-@router.get("/routing_groups", response_model=List[schema.RoutingGroup])
+@router.get("/routing_groups", response_model=schema.RoutingGroupList)
 def read_routing_groups(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):

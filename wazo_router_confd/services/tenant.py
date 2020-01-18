@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from pydantic import UUID4
-from typing import List
 from uuid import uuid4
 
 from sqlalchemy.orm import Session
@@ -19,8 +18,8 @@ def get_tenant_by_name(db: Session, name: str) -> Tenant:
     return db.query(Tenant).filter(Tenant.name == name).first()
 
 
-def get_tenants(db: Session, offset: int = 0, limit: int = 100) -> List[Tenant]:
-    return db.query(Tenant).offset(offset).limit(limit).all()
+def get_tenants(db: Session, offset: int = 0, limit: int = 100) -> schema.TenantList:
+    return schema.TenantList(items=db.query(Tenant).offset(offset).limit(limit).all())
 
 
 def create_tenant(db: Session, tenant: schema.TenantCreate) -> Tenant:

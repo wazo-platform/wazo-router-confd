@@ -182,15 +182,17 @@ def test_get_dids(app, client):
     #
     response = client.get("/1.0/dids")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": did.id,
-            "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "tenant_uuid": str(tenant.uuid),
-            "ipbx_id": ipbx.id,
-            "carrier_trunk_id": carrier_trunk.id,
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": did.id,
+                "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
+                "tenant_uuid": str(tenant.uuid),
+                "ipbx_id": ipbx.id,
+                "carrier_trunk_id": carrier_trunk.id,
+            }
+        ]
+    }
 
 
 def test_update_did(app, client):

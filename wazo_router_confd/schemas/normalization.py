@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, constr, UUID4
 
@@ -43,6 +43,10 @@ class NormalizationProfileUpdate(BaseModel):
     always_intl_prefix_plus: bool = False
 
 
+class NormalizationProfileList(BaseModel):
+    items: List[NormalizationProfile]
+
+
 class NormalizationRule(BaseModel):
     id: int
     profile_id: int
@@ -69,3 +73,7 @@ class NormalizationRuleUpdate(BaseModel):
     priority: int = 0
     match_regex: constr(max_length=256)  # type: ignore
     replace_regex: constr(max_length=256)  # type: ignore
+
+
+class NormalizationRuleList(BaseModel):
+    items: List[NormalizationRule]

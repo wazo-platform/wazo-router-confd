@@ -99,21 +99,23 @@ def test_get_ipbxs(app, client):
     #
     response = client.get("/1.0/ipbx")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": ipbx.id,
-            "customer": 1,
-            "normalization_profile_id": None,
-            "ip_fqdn": "mypbx.com",
-            "port": 5060,
-            "ip_address": "10.0.0.1",
-            "domain_id": domain.id,
-            "tenant_uuid": str(tenant.uuid),
-            "registered": True,
-            "username": "user",
-            "realm": "realm",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": ipbx.id,
+                "customer": 1,
+                "normalization_profile_id": None,
+                "ip_fqdn": "mypbx.com",
+                "port": 5060,
+                "ip_address": "10.0.0.1",
+                "domain_id": domain.id,
+                "tenant_uuid": str(tenant.uuid),
+                "registered": True,
+                "username": "user",
+                "realm": "realm",
+            }
+        ]
+    }
 
 
 def test_get_ipbx(app, client):

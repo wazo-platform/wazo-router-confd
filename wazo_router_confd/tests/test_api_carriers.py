@@ -79,9 +79,11 @@ def test_get_carriers(app, client):
     #
     response = client.get("/1.0/carriers")
     assert response.status_code == 200
-    assert response.json() == [
-        {'id': carrier.id, 'name': 'carrier1', 'tenant_uuid': str(tenant.uuid)}
-    ]
+    assert response.json() == {
+        "items": [
+            {'id': carrier.id, 'name': 'carrier1', 'tenant_uuid': str(tenant.uuid)}
+        ]
+    }
 
 
 def test_update_carrier(app, client):

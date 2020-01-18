@@ -59,7 +59,7 @@ def test_get_tenants(app, client):
     #
     response = client.get("/1.0/tenants")
     assert response.status_code == 200
-    assert response.json() == [{'uuid': str(tenant.uuid), 'name': 'fabio'}]
+    assert response.json() == {"items": [{'uuid': str(tenant.uuid), 'name': 'fabio'}]}
 
 
 def test_update_tenant(app, client):

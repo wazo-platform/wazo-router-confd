@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.cdr import CDR
@@ -13,8 +11,8 @@ def get_cdr(db: Session, cdr_id: int) -> CDR:
     return db.query(CDR).filter(CDR.id == cdr_id).first()
 
 
-def get_cdrs(db: Session, offset: int = 0, limit: int = 100) -> List[CDR]:
-    return db.query(CDR).offset(offset).limit(limit).all()
+def get_cdrs(db: Session, offset: int = 0, limit: int = 100) -> schema.CDRList:
+    return schema.CDRList(items=db.query(CDR).offset(offset).limit(limit).all())
 
 
 def create_cdr(db: Session, cdr: schema.CDRCreate) -> CDR:

@@ -3,6 +3,8 @@
 
 from pydantic import BaseModel, constr, UUID4
 
+from typing import List
+
 
 class Tenant(BaseModel):
     name: constr(max_length=256)  # type: ignore
@@ -19,3 +21,7 @@ class TenantCreate(BaseModel):
 
 class TenantUpdate(BaseModel):
     name: str
+
+
+class TenantList(BaseModel):
+    items: List[Tenant]

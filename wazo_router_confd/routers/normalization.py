@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from time import time
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -47,9 +46,7 @@ def create_normalization_profile(
     )
 
 
-@router.get(
-    "/normalization-profiles", response_model=List[schema.NormalizationProfile]
-)
+@router.get("/normalization-profiles", response_model=schema.NormalizationProfileList)
 def read_normalization_profiles(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
@@ -139,7 +136,7 @@ def create_normalization_rule(
     )
 
 
-@router.get("/normalization-rules", response_model=List[schema.NormalizationRule])
+@router.get("/normalization-rules", response_model=schema.NormalizationRuleList)
 def read_normalization_rules(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):

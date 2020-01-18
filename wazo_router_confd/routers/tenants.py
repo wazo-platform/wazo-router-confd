@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from time import time
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import UUID4
@@ -41,7 +40,7 @@ def create_tenant(tenant: schema.TenantCreate, db: Session = Depends(get_db)):
     return service.create_tenant(db=db, tenant=tenant)
 
 
-@router.get("/tenants", response_model=List[schema.Tenant])
+@router.get("/tenants", response_model=schema.TenantList)
 def read_tenants(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     tenants = service.get_tenants(db, offset=offset, limit=limit)
     return tenants

@@ -156,25 +156,27 @@ def test_get_carrier_trunks(app, client):
     #
     response = client.get("/1.0/carrier_trunks")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            'id': carrier_trunk.id,
-            'name': 'carrier_trunk1',
-            "tenant_uuid": str(tenant.uuid),
-            "carrier_id": carrier.id,
-            "normalization_profile_id": None,
-            'sip_proxy': 'proxy.somedomain.com',
-            "sip_proxy_port": 5060,
-            "ip_address": None,
-            'registered': False,
-            'auth_username': None,
-            'realm': None,
-            'registrar_proxy': None,
-            'from_domain': None,
-            'expire_seconds': 3600,
-            'retry_seconds': 30,
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                'id': carrier_trunk.id,
+                'name': 'carrier_trunk1',
+                "tenant_uuid": str(tenant.uuid),
+                "carrier_id": carrier.id,
+                "normalization_profile_id": None,
+                'sip_proxy': 'proxy.somedomain.com',
+                "sip_proxy_port": 5060,
+                "ip_address": None,
+                'registered': False,
+                'auth_username': None,
+                'realm': None,
+                'registrar_proxy': None,
+                'from_domain': None,
+                'expire_seconds': 3600,
+                'retry_seconds': 30,
+            }
+        ]
+    }
 
 
 def test_update_carrier_trunk(app, client):

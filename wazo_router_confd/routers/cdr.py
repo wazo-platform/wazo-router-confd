@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -19,7 +17,7 @@ def create_cdr(cdr: schema.CDRCreate, db: Session = Depends(get_db)):
     return service.create_cdr(db=db, cdr=cdr)
 
 
-@router.get("/cdrs", response_model=List[schema.CDR])
+@router.get("/cdrs", response_model=schema.CDRList)
 def read_cdrs(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     cdrs = service.get_cdrs(db, offset=offset, limit=limit)
     return cdrs

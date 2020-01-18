@@ -14,7 +14,8 @@ def test_create_domain(app, client):
     session.commit()
 
     response = client.post(
-        "/1.0/domains", json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)}
+        "/1.0/domains",
+        json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)},
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -36,7 +37,8 @@ def test_create_duplicated_domain(app, client):
     session.commit()
     #
     response = client.post(
-        "/1.0/domains", json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)}
+        "/1.0/domains",
+        json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)},
     )
     assert response.status_code == 409
 
@@ -79,9 +81,15 @@ def test_get_domains(app, client):
     #
     response = client.get("/1.0/domains")
     assert response.status_code == 200
-    assert response.json() == [
-        {'id': domain.id, 'domain': 'testdomain.com', 'tenant_uuid': str(tenant.uuid)}
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                'id': domain.id,
+                'domain': 'testdomain.com',
+                'tenant_uuid': str(tenant.uuid),
+            }
+        ]
+    }
 
 
 def test_update_domain(app, client):

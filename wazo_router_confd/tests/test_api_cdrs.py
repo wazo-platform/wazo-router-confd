@@ -104,19 +104,21 @@ def test_get_cdrs(app, client):
     #
     response = client.get("/1.0/cdrs")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": cdr.id,
-            "from_uri": "100@localhost",
-            "to_uri": "200@localhost",
-            "call_id": "1000",
-            "source_ip": "10.0.0.1",
-            "source_port": 5060,
-            "duration": 60,
-            "call_start": "2019-09-01T00:00:00",
-            "tenant_uuid": str(tenant.uuid),
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": cdr.id,
+                "from_uri": "100@localhost",
+                "to_uri": "200@localhost",
+                "call_id": "1000",
+                "source_ip": "10.0.0.1",
+                "source_port": 5060,
+                "duration": 60,
+                "call_start": "2019-09-01T00:00:00",
+                "tenant_uuid": str(tenant.uuid),
+            }
+        ]
+    }
 
 
 def test_update_cdr(app, client):

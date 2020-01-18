@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -21,7 +19,7 @@ def create_routing_rule(
     return service.create_routing_rule(db=db, routing_rule=routing_rule)
 
 
-@router.get("/routing_rules", response_model=List[schema.RoutingRule])
+@router.get("/routing_rules", response_model=schema.RoutingRuleList)
 def read_routing_rules(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):

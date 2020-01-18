@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.domain import Domain
@@ -15,8 +13,8 @@ def get_ipbx(db: Session, ipbx_id: int) -> IPBX:
     return db.query(IPBX).filter(IPBX.id == ipbx_id).first()
 
 
-def get_ipbxs(db: Session, offset: int = 0, limit: int = 100) -> List[IPBX]:
-    return db.query(IPBX).offset(offset).limit(limit).all()
+def get_ipbxs(db: Session, offset: int = 0, limit: int = 100) -> schema.IPBXList:
+    return schema.IPBXList(items=db.query(IPBX).offset(offset).limit(limit).all())
 
 
 def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:

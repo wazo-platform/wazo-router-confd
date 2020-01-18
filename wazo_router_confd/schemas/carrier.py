@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, constr, UUID4
 
@@ -23,3 +23,7 @@ class CarrierCreate(BaseModel):
 class CarrierUpdate(BaseModel):
     name: Optional[constr(max_length=256)] = None  # type: ignore
     tenant_uuid: UUID4
+
+
+class CarrierList(BaseModel):
+    items: List[Carrier]
