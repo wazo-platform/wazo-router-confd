@@ -1,0 +1,13 @@
+version: '2'
+services:
+  wazo-router-confd:
+    image: wazopbx/wazo-router-confd:latest
+    ports:
+    - 8000:8000
+    command: "wazo-router-confd \
+        --host 0.0.0.0 --port 8000 \
+        --advertise-host router-confd \
+        --advertise-port 8000 \
+        --consul-uri http://consul:8500 \
+        --database-uri postgresql://wazo:wazo@postgresql:5432/wazo \
+        --redis-uri redis://redis"
