@@ -3,6 +3,8 @@
 
 from fastapi import FastAPI
 
+from starlette.middleware.cors import CORSMiddleware
+
 from .consul import setup_consul
 from .database import setup_database, setup_aiopg_database, upgrade_database
 from .redis import setup_redis
@@ -44,5 +46,13 @@ def get_app(config: dict):
     app.include_router(routing_rules.router, prefix="/1.0", tags=['routing'])
     app.include_router(routing_group.router, prefix="/1.0", tags=['routing'])
     app.include_router(tenants.router, prefix="/1.0", tags=['tenants'])
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     return app
