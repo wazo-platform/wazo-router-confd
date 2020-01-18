@@ -14,12 +14,12 @@ from wazo_router_confd.services import cdr as service
 router = APIRouter()
 
 
-@router.post("/cdrs/", response_model=schema.CDR)
+@router.post("/cdrs", response_model=schema.CDR)
 def create_cdr(cdr: schema.CDRCreate, db: Session = Depends(get_db)):
     return service.create_cdr(db=db, cdr=cdr)
 
 
-@router.get("/cdrs/", response_model=List[schema.CDR])
+@router.get("/cdrs", response_model=List[schema.CDR])
 def read_cdrs(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     cdrs = service.get_cdrs(db, offset=offset, limit=limit)
     return cdrs

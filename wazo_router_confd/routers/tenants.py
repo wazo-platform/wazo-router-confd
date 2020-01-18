@@ -16,7 +16,7 @@ from wazo_router_confd.services import tenant as service
 router = APIRouter()
 
 
-@router.post("/tenants/", response_model=schema.Tenant)
+@router.post("/tenants", response_model=schema.Tenant)
 def create_tenant(tenant: schema.TenantCreate, db: Session = Depends(get_db)):
     db_tenant = service.get_tenant_by_name(db, name=tenant.name)
     if db_tenant:
@@ -41,7 +41,7 @@ def create_tenant(tenant: schema.TenantCreate, db: Session = Depends(get_db)):
     return service.create_tenant(db=db, tenant=tenant)
 
 
-@router.get("/tenants/", response_model=List[schema.Tenant])
+@router.get("/tenants", response_model=List[schema.Tenant])
 def read_tenants(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     tenants = service.get_tenants(db, offset=offset, limit=limit)
     return tenants

@@ -14,7 +14,7 @@ def test_create_domain(app, client):
     session.commit()
 
     response = client.post(
-        "/domains/", json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)}
+        "/1.0/domains", json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)}
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -36,7 +36,7 @@ def test_create_duplicated_domain(app, client):
     session.commit()
     #
     response = client.post(
-        "/domains/", json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)}
+        "/1.0/domains", json={"domain": "testdomain.com", "tenant_uuid": str(tenant.uuid)}
     )
     assert response.status_code == 409
 
@@ -52,7 +52,7 @@ def test_get_domain(app, client):
     session.add_all([domain, tenant])
     session.commit()
     #
-    response = client.get("/domains/%s" % domain.id)
+    response = client.get("/1.0/domains/%s" % domain.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": domain.id,
@@ -62,7 +62,7 @@ def test_get_domain(app, client):
 
 
 def test_get_domain_not_found(app, client):
-    response = client.get("/domains/1")
+    response = client.get("/1.0/domains/1")
     assert response.status_code == 404
 
 
@@ -77,7 +77,7 @@ def test_get_domains(app, client):
     session.add_all([domain, tenant])
     session.commit()
     #
-    response = client.get("/domains/")
+    response = client.get("/1.0/domains")
     assert response.status_code == 200
     assert response.json() == [
         {'id': domain.id, 'domain': 'testdomain.com', 'tenant_uuid': str(tenant.uuid)}
@@ -97,7 +97,7 @@ def test_update_domain(app, client):
     session.commit()
     #
     response = client.put(
-        "/domains/%s" % domain.id,
+        "/1.0/domains/%s" % domain.id,
         json={'domain': 'otherdomain.com', 'tenant_uuid': str(tenant_2.uuid)},
     )
     assert response.status_code == 200
@@ -110,7 +110,7 @@ def test_update_domain(app, client):
 
 def test_update_domain_not_found(app, client):
     response = client.put(
-        "/domains/1",
+        "/1.0/domains/1",
         json={
             'domain': 'otherdomain.com',
             'tenant_uuid': "facf0787-c93b-4997-a130-749a1bc41740",
@@ -130,7 +130,7 @@ def test_delete_domain(app, client):
     session.add_all([domain, tenant])
     session.commit()
     #
-    response = client.delete("/domains/%s" % domain.id)
+    response = client.delete("/1.0/domains/%s" % domain.id)
     assert response.status_code == 200
     assert response.json() == {
         'id': domain.id,
@@ -140,5 +140,5 @@ def test_delete_domain(app, client):
 
 
 def test_delete_domain_not_found(app, client):
-    response = client.delete("/domains/1")
+    response = client.delete("/1.0/domains/1")
     assert response.status_code == 404

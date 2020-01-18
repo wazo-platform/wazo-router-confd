@@ -15,7 +15,7 @@ from wazo_router_confd.services import did as service
 router = APIRouter()
 
 
-@router.post("/dids/", response_model=schema.DID)
+@router.post("/dids", response_model=schema.DID)
 def create_did(did: schema.DIDCreate, db: Session = Depends(get_db)):
     db_did = service.get_did_by_regex(db, regex=did.did_regex)
     if db_did:
@@ -40,7 +40,7 @@ def create_did(did: schema.DIDCreate, db: Session = Depends(get_db)):
     return service.create_did(db=db, did=did)
 
 
-@router.get("/dids/", response_model=List[schema.DID])
+@router.get("/dids", response_model=List[schema.DID])
 def read_dids(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     dids = service.get_dids(db, offset=offset, limit=limit)
     return dids

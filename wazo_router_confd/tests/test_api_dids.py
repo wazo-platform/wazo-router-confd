@@ -32,7 +32,7 @@ def test_create_did(app, client):
     session.commit()
     #
     response = client.post(
-        "/dids/",
+        "/1.0/dids",
         json={
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
             "tenant_uuid": str(tenant.uuid),
@@ -85,7 +85,7 @@ def test_create_duplicated_did(app, client):
     session.commit()
     #
     response = client.post(
-        "/dids/",
+        "/1.0/dids",
         json={
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
             "tenant_uuid": str(tenant.uuid),
@@ -130,7 +130,7 @@ def test_get_did(app, client):
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
-    response = client.get("/dids/%s" % did.id)
+    response = client.get("/1.0/dids/%s" % did.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": did.id,
@@ -142,7 +142,7 @@ def test_get_did(app, client):
 
 
 def test_get_did_not_found(app, client):
-    response = client.get("/dids/1")
+    response = client.get("/1.0/dids/1")
     assert response.status_code == 404
 
 
@@ -180,7 +180,7 @@ def test_get_dids(app, client):
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
-    response = client.get("/dids/")
+    response = client.get("/1.0/dids")
     assert response.status_code == 200
     assert response.json() == [
         {
@@ -256,7 +256,7 @@ def test_update_did(app, client):
     )
     session.commit()
     response = client.put(
-        "/dids/%s" % did.id,
+        "/1.0/dids/%s" % did.id,
         json={
             "id": did.id,
             "did_regex": r"^(\+?1)?(800)[1-9]\d{6})$",
@@ -277,7 +277,7 @@ def test_update_did(app, client):
 
 def test_update_did_not_found(app, client):
     response = client.put(
-        "/dids/1",
+        "/1.0/dids/1",
         json={
             "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
             "tenant_uuid": "281f5d35-3089-4af3-9773-f8769dfcd878",
@@ -322,7 +322,7 @@ def test_delete_did(app, client):
     session.add_all([tenant, domain, ipbx, carrier, carrier_trunk, did])
     session.commit()
     #
-    response = client.delete("/dids/%s" % did.id)
+    response = client.delete("/1.0/dids/%s" % did.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": did.id,
@@ -334,5 +334,5 @@ def test_delete_did(app, client):
 
 
 def test_delete_did_not_found(app, client):
-    response = client.delete("/dids/1")
+    response = client.delete("/1.0/dids/1")
     assert response.status_code == 404

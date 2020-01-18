@@ -58,7 +58,7 @@ def test_kamailio_routing_domain_with_single_ipbx_and_auth(app, client):
     request_to_tag = "to_tag"
     #
     response = client.post(
-        "/kamailio/routing",
+        "/1.0/kamailio/routing",
         json={
             "event": "sip-routing",
             "source_ip": "10.0.0.1",

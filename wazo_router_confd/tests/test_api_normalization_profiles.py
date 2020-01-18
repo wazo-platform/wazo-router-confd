@@ -14,7 +14,7 @@ def test_create_normalization_profile(app, client):
     session.commit()
     #
     response = client.post(
-        "/normalization-profiles/",
+        "/1.0/normalization-profiles",
         json={
             "name": "profile 1",
             "tenant_uuid": str(tenant.uuid),
@@ -52,7 +52,7 @@ def test_create_duplicated_normalization_profile(app, client):
     session.commit()
     #
     response = client.post(
-        "/normalization-profiles/",
+        "/1.0/normalization-profiles",
         json={"name": "profile 1", "tenant_uuid": str(tenant.uuid)},
     )
     assert response.status_code == 409
@@ -69,7 +69,7 @@ def test_get_normalization_profile(app, client):
     session.add_all([normalization_profile, tenant])
     session.commit()
     #
-    response = client.get("/normalization-profiles/%s" % normalization_profile.id)
+    response = client.get("/1.0/normalization-profiles/%s" % normalization_profile.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": normalization_profile.id,
@@ -85,7 +85,7 @@ def test_get_normalization_profile(app, client):
 
 
 def test_get_normalization_profile_not_found(app, client):
-    response = client.get("/normalization-profiles/1")
+    response = client.get("/1.0/normalization-profiles/1")
     assert response.status_code == 404
 
 
@@ -100,7 +100,7 @@ def test_get_normalization_profiles(app, client):
     session.add_all([normalization_profile, tenant])
     session.commit()
     #
-    response = client.get("/normalization-profiles/")
+    response = client.get("/1.0/normalization-profiles")
     assert response.status_code == 200
     assert response.json() == [
         {
@@ -129,7 +129,7 @@ def test_update_normalization_profile(app, client):
     session.commit()
     #
     response = client.put(
-        "/normalization-profiles/%s" % normalization_profile.id,
+        "/1.0/normalization-profiles/%s" % normalization_profile.id,
         json={'name': 'profile 2', 'tenant_uuid': str(tenant.uuid)},
     )
     assert response.status_code == 200
@@ -148,7 +148,7 @@ def test_update_normalization_profile(app, client):
 
 def test_update_normalization_profile_not_found(app, client):
     response = client.put(
-        "/normalization-profiles/1",
+        "/1.0/normalization-profiles/1",
         json={
             'name': 'profile 2',
             'tenant_uuid': "7e614b21-a9c0-4118-a3e8-6748bc24c5ee",
@@ -168,7 +168,7 @@ def test_delete_normalization_profile(app, client):
     session.add_all([normalization_profile, tenant])
     session.commit()
     #
-    response = client.delete("/normalization-profiles/%s" % normalization_profile.id)
+    response = client.delete("/1.0/normalization-profiles/%s" % normalization_profile.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": normalization_profile.id,
@@ -184,5 +184,5 @@ def test_delete_normalization_profile(app, client):
 
 
 def test_delete_normalization_profile_not_found(app, client):
-    response = client.delete("/normalization-profiles/1")
+    response = client.delete("/1.0/normalization-profiles/1")
     assert response.status_code == 404

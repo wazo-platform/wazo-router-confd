@@ -15,7 +15,7 @@ from wazo_router_confd.services import carrier as service
 router = APIRouter()
 
 
-@router.post("/carriers/", response_model=schema.Carrier)
+@router.post("/carriers", response_model=schema.Carrier)
 def create_carrier(carrier: schema.CarrierCreate, db: Session = Depends(get_db)):
     db_carrier = service.get_carrier_by_name(db, name=carrier.name)
     if db_carrier:
@@ -40,7 +40,7 @@ def create_carrier(carrier: schema.CarrierCreate, db: Session = Depends(get_db))
     return service.create_carrier(db=db, carrier=carrier)
 
 
-@router.get("/carriers/", response_model=List[schema.Carrier])
+@router.get("/carriers", response_model=List[schema.Carrier])
 def read_carriers(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     carriers = service.get_carriers(db, offset=offset, limit=limit)
     return carriers

@@ -14,14 +14,14 @@ from wazo_router_confd.services import routing_rule as service
 router = APIRouter()
 
 
-@router.post("/routing_rules/", response_model=schema.RoutingRule)
+@router.post("/routing_rules", response_model=schema.RoutingRule)
 def create_routing_rule(
     routing_rule: schema.RoutingRuleCreate, db: Session = Depends(get_db)
 ):
     return service.create_routing_rule(db=db, routing_rule=routing_rule)
 
 
-@router.get("/routing_rules/", response_model=List[schema.RoutingRule])
+@router.get("/routing_rules", response_model=List[schema.RoutingRule])
 def read_routing_rules(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):

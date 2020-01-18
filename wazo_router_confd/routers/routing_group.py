@@ -14,14 +14,14 @@ from wazo_router_confd.services import routing_group as service
 router = APIRouter()
 
 
-@router.post("/routing_groups/", response_model=schema.RoutingGroup)
+@router.post("/routing_groups", response_model=schema.RoutingGroup)
 def create_routing_group(
     routing_group: schema.RoutingGroupCreate, db: Session = Depends(get_db)
 ):
     return service.create_routing_group(db=db, routing_group=routing_group)
 
 
-@router.get("/routing_groups/", response_model=List[schema.RoutingGroup])
+@router.get("/routing_groups", response_model=List[schema.RoutingGroup])
 def read_routing_groups(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):

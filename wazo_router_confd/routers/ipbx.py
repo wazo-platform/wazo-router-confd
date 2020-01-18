@@ -14,12 +14,12 @@ from wazo_router_confd.services import ipbx as service
 router = APIRouter()
 
 
-@router.post("/ipbx/", response_model=schema.IPBXRead)
+@router.post("/ipbx", response_model=schema.IPBXRead)
 def create_ipbx(ipbx: schema.IPBXCreate, db: Session = Depends(get_db)):
     return service.create_ipbx(db=db, ipbx=ipbx)
 
 
-@router.get("/ipbx/", response_model=List[schema.IPBXRead])
+@router.get("/ipbx", response_model=List[schema.IPBXRead])
 def read_ipbxs(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     ipbxs = service.get_ipbxs(db, offset=offset, limit=limit)
     return ipbxs

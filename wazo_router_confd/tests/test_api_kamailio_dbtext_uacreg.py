@@ -29,7 +29,7 @@ def test_kamailio_dbtext_uacreg(app, client):
     session.add_all([tenant, domain, carrier, carrier_trunk])
     session.commit()
     #
-    response = client.get("/kamailio/dbtext/uacreg")
+    response = client.get("/1.0/kamailio/dbtext/uacreg")
     assert response.status_code == 200
     assert response.json() == {
         "content": (

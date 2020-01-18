@@ -16,7 +16,7 @@ def test_create_cdr(app, client):
     session.commit()
     #
     response = client.post(
-        "/cdrs/",
+        "/1.0/cdrs",
         json={
             "from_uri": "100@localhost",
             "to_uri": "200@localhost",
@@ -62,7 +62,7 @@ def test_get_cdr(app, client):
     session.add_all([tenant, cdr])
     session.commit()
     #
-    response = client.get("/cdrs/%s" % cdr.id)
+    response = client.get("/1.0/cdrs/%s" % cdr.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": cdr.id,
@@ -78,7 +78,7 @@ def test_get_cdr(app, client):
 
 
 def test_get_cdr_not_found(app, client):
-    response = client.get("/cdrs/1")
+    response = client.get("/1.0/cdrs/1")
     assert response.status_code == 404
 
 
@@ -102,7 +102,7 @@ def test_get_cdrs(app, client):
     session.add_all([tenant, cdr])
     session.commit()
     #
-    response = client.get("/cdrs/")
+    response = client.get("/1.0/cdrs")
     assert response.status_code == 200
     assert response.json() == [
         {
@@ -140,7 +140,7 @@ def test_update_cdr(app, client):
     session.commit()
     #
     response = client.put(
-        "/cdrs/%s" % cdr.id,
+        "/1.0/cdrs/%s" % cdr.id,
         json={
             "id": cdr.id,
             "from_uri": "100@localhost",
@@ -169,7 +169,7 @@ def test_update_cdr(app, client):
 
 def test_update_cdr_not_found(app, client):
     response = client.put(
-        "/cdrs/1",
+        "/1.0/cdrs/1",
         json={
             "id": 1,
             "from_uri": "100@localhost",
@@ -205,7 +205,7 @@ def test_delete_cdr(app, client):
     session.add_all([tenant, cdr])
     session.commit()
     #
-    response = client.delete("/cdrs/%s" % cdr.id)
+    response = client.delete("/1.0/cdrs/%s" % cdr.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": cdr.id,
@@ -221,5 +221,5 @@ def test_delete_cdr(app, client):
 
 
 def test_delete_cdr_not_found(app, client):
-    response = client.delete("/cdrs/1")
+    response = client.delete("/1.0/cdrs/1")
     assert response.status_code == 404

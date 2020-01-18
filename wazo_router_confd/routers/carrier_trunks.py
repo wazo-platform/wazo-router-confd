@@ -15,7 +15,7 @@ from wazo_router_confd.services import carrier_trunk as service
 router = APIRouter()
 
 
-@router.post("/carrier_trunks/", response_model=schema.CarrierTrunkRead)
+@router.post("/carrier_trunks", response_model=schema.CarrierTrunkRead)
 def create_carrier_trunk(
     carrier_trunk: schema.CarrierTrunkCreate, db: Session = Depends(get_db)
 ):
@@ -42,7 +42,7 @@ def create_carrier_trunk(
     return service.create_carrier_trunk(db=db, carrier_trunk=carrier_trunk)
 
 
-@router.get("/carrier_trunks/", response_model=List[schema.CarrierTrunkRead])
+@router.get("/carrier_trunks", response_model=List[schema.CarrierTrunkRead])
 def read_carrier_trunks(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
