@@ -31,6 +31,7 @@ def create_carrier_trunk(
         tenant_uuid=carrier_trunk.tenant_uuid,
         carrier_id=carrier_trunk.carrier_id,
         name=carrier_trunk.name,
+        normalization_profile_id=carrier_trunk.normalization_profile_id,
         sip_proxy=carrier_trunk.sip_proxy,
         sip_proxy_port=carrier_trunk.sip_proxy_port,
         ip_address=carrier_trunk.ip_address,
@@ -60,6 +61,11 @@ def update_carrier_trunk(
             carrier_trunk.name
             if carrier_trunk.name is not None
             else db_carrier_trunk.name
+        )
+        db_carrier_trunk.normalization_profile_id = (
+            carrier_trunk.normalization_profile_id
+            if carrier_trunk.normalization_profile_id is not None
+            else db_carrier_trunk.normalization_profile_id
         )
         db_carrier_trunk.sip_proxy = (
             carrier_trunk.sip_proxy
