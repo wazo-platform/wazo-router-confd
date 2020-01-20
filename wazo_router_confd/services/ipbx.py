@@ -22,6 +22,7 @@ def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
     db_ipbx = IPBX(
         tenant_uuid=ipbx.tenant_uuid,
         domain_id=ipbx.domain_id,
+        normalization_profile_id=ipbx.normalization_profile_id,
         customer=ipbx.customer,
         ip_fqdn=ipbx.ip_fqdn,
         port=ipbx.port,
@@ -48,6 +49,9 @@ def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
         )
         db_ipbx.domain_id = (
             ipbx.domain_id if ipbx.domain_id is not None else db_ipbx.domain_id
+        )
+        db_ipbx.normalization_profile_id = (
+            ipbx.normalization_profile_id if ipbx.normalization_profile_id is not None else db_ipbx.normalization_profile_id
         )
         db_ipbx.customer = (
             ipbx.customer if ipbx.customer is not None else db_ipbx.customer
