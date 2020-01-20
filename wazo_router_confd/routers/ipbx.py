@@ -12,18 +12,18 @@ from wazo_router_confd.services import ipbx as service
 router = APIRouter()
 
 
-@router.post("/ipbx", response_model=schema.IPBXRead)
+@router.post("/ipbxs", response_model=schema.IPBXRead)
 def create_ipbx(ipbx: schema.IPBXCreate, db: Session = Depends(get_db)):
     return service.create_ipbx(db=db, ipbx=ipbx)
 
 
-@router.get("/ipbx", response_model=schema.IPBXList)
+@router.get("/ipbxs", response_model=schema.IPBXList)
 def read_ipbxs(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     ipbxs = service.get_ipbxs(db, offset=offset, limit=limit)
     return ipbxs
 
 
-@router.get("/ipbx/{ipbx_id}", response_model=schema.IPBXRead)
+@router.get("/ipbxs/{ipbx_id}", response_model=schema.IPBXRead)
 def read_ipbx(ipbx_id: int, db: Session = Depends(get_db)):
     db_ipbx = service.get_ipbx(db, ipbx_id=ipbx_id)
     if db_ipbx is None:
@@ -31,7 +31,7 @@ def read_ipbx(ipbx_id: int, db: Session = Depends(get_db)):
     return db_ipbx
 
 
-@router.put("/ipbx/{ipbx_id}", response_model=schema.IPBXRead)
+@router.put("/ipbxs/{ipbx_id}", response_model=schema.IPBXRead)
 def update_ipbx(ipbx_id: int, ipbx: schema.IPBXUpdate, db: Session = Depends(get_db)):
     db_ipbx = service.update_ipbx(db, ipbx=ipbx, ipbx_id=ipbx_id)
     if db_ipbx is None:
@@ -39,7 +39,7 @@ def update_ipbx(ipbx_id: int, ipbx: schema.IPBXUpdate, db: Session = Depends(get
     return db_ipbx
 
 
-@router.delete("/ipbx/{ipbx_id}", response_model=schema.IPBXRead)
+@router.delete("/ipbxs/{ipbx_id}", response_model=schema.IPBXRead)
 def delete_ipbx(ipbx_id: int, db: Session = Depends(get_db)):
     db_ipbx = service.delete_ipbx(db, ipbx_id=ipbx_id)
     if db_ipbx is None:
