@@ -57,7 +57,7 @@ def test_create_routing_group(app, client):
     routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
     response = client.post(
-        "/1.0/routing_groups",
+        "/1.0/routing-groups",
         json={"routing_rule": routing_rule.id, "tenant_uuid": str(tenant.uuid)},
     )
     assert response.status_code == 200
@@ -71,7 +71,7 @@ def test_create_routing_group(app, client):
 def test_get_routing_group(app, client):
     routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
-    response = client.get("/1.0/routing_groups/%s" % routing_group.id)
+    response = client.get("/1.0/routing-groups/%s" % routing_group.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": routing_group.id,
@@ -81,14 +81,14 @@ def test_get_routing_group(app, client):
 
 
 def test_get_routing_group_not_found(app, client):
-    response = client.get("/1.0/routing_groups/1")
+    response = client.get("/1.0/routing-groups/1")
     assert response.status_code == 404
 
 
 def test_get_routing_groups(app, client):
     routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
-    response = client.get("/1.0/routing_groups")
+    response = client.get("/1.0/routing-groups")
     assert response.status_code == 200
     assert response.json() == {
         "items": [
@@ -106,7 +106,7 @@ def test_update_routing_group(app, client):
     routing_group_2, routing_rule_2, tenant_2, _ = create_routing_group(app, 2)
     #
     response = client.put(
-        "/1.0/routing_groups/%s" % routing_group.id,
+        "/1.0/routing-groups/%s" % routing_group.id,
         json={'routing_rule': routing_rule_2.id, 'tenant_uuid': str(tenant_2.uuid)},
     )
     assert response.status_code == 200
@@ -119,7 +119,7 @@ def test_update_routing_group(app, client):
 
 def test_update_routing_group_not_found(app, client):
     response = client.put(
-        "/1.0/routing_groups/1",
+        "/1.0/routing-groups/1",
         json={'routing_rule': 2, 'tenant_uuid': '7e614b21-a9c0-4118-a3e8-6748bc24c5ee'},
     )
     assert response.status_code == 404
@@ -128,7 +128,7 @@ def test_update_routing_group_not_found(app, client):
 def test_delete_routing_group(app, client):
     routing_group, routing_rule, tenant, _ = create_routing_group(app)
     #
-    response = client.delete("/1.0/routing_groups/%s" % routing_group.id)
+    response = client.delete("/1.0/routing-groups/%s" % routing_group.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": routing_group.id,
@@ -138,5 +138,5 @@ def test_delete_routing_group(app, client):
 
 
 def test_delete_routing_group_not_found(app, client):
-    response = client.delete("/1.0/routing_groups/1")
+    response = client.delete("/1.0/routing-groups/1")
     assert response.status_code == 404
