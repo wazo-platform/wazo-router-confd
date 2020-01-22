@@ -16,7 +16,7 @@ def test_create_normalization_rule(app, client):
     session.commit()
     #
     response = client.post(
-        "/normalization-rules/",
+        "/1.0/normalization-rules",
         json={
             "profile_id": normalization_profile.id,
             "rule_type": 1,
@@ -55,7 +55,7 @@ def test_create_duplicated_normalization_rule(app, client):
     session.commit()
     #
     response = client.post(
-        "/normalization-rules/",
+        "/1.0/normalization-rules",
         json={
             "profile_id": normalization_profile.id,
             "match_regex": "^11",
@@ -83,7 +83,7 @@ def test_get_normalization_rule(app, client):
     session.add_all([tenant, normalization_profile, normalization_rule])
     session.commit()
     #
-    response = client.get("/normalization-rules/%s" % normalization_rule.id)
+    response = client.get("/1.0/normalization-rules/%s" % normalization_rule.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": normalization_rule.id,
@@ -96,7 +96,7 @@ def test_get_normalization_rule(app, client):
 
 
 def test_get_normalization_rule_not_found(app, client):
-    response = client.get("/normalization-rules/1")
+    response = client.get("/1.0/normalization-rules/1")
     assert response.status_code == 404
 
 
@@ -118,18 +118,20 @@ def test_get_normalization_rules(app, client):
     session.add_all([tenant, normalization_profile, normalization_rule])
     session.commit()
     #
-    response = client.get("/normalization-rules/")
+    response = client.get("/1.0/normalization-rules")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": normalization_rule.id,
-            "profile_id": normalization_profile.id,
-            "rule_type": 1,
-            "priority": 0,
-            "match_regex": "^11",
-            "replace_regex": '',
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": normalization_rule.id,
+                "profile_id": normalization_profile.id,
+                "rule_type": 1,
+                "priority": 0,
+                "match_regex": "^11",
+                "replace_regex": '',
+            }
+        ]
+    }
 
 
 def test_update_normalization_rule(app, client):
@@ -151,7 +153,7 @@ def test_update_normalization_rule(app, client):
     session.commit()
     #
     response = client.put(
-        "/normalization-rules/%s" % normalization_rule.id,
+        "/1.0/normalization-rules/%s" % normalization_rule.id,
         json={
             "match_regex": "^22",
             "replace_regex": "",
@@ -171,7 +173,7 @@ def test_update_normalization_rule(app, client):
 
 def test_update_normalization_rule_not_found(app, client):
     response = client.put(
-        "/normalization-rules/1",
+        "/1.0/normalization-rules/1",
         json={"match_regex": "^22", "replace_regex": "", "profile_id": 1},
     )
     assert response.status_code == 404
@@ -195,7 +197,7 @@ def test_delete_normalization_rule(app, client):
     session.add_all([tenant, normalization_profile, normalization_rule])
     session.commit()
     #
-    response = client.delete("/normalization-rules/%s" % normalization_rule.id)
+    response = client.delete("/1.0/normalization-rules/%s" % normalization_rule.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": normalization_rule.id,
@@ -208,5 +210,5 @@ def test_delete_normalization_rule(app, client):
 
 
 def test_delete_normalization_rule_not_found(app, client):
-    response = client.delete("/normalization-rules/1")
+    response = client.delete("/1.0/normalization-rules/1")
     assert response.status_code == 404

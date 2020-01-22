@@ -26,7 +26,7 @@ def test_kamailio_auth_username(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user"}
+        "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user"}
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -64,7 +64,7 @@ def test_kamailio_auth_username_password(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth",
+        "/1.0/kamailio/auth",
         json={"source_ip": "10.0.0.1", "username": "user", "password": "password"},
     )
     assert response.status_code == 200
@@ -103,7 +103,7 @@ def test_kamailio_auth_username_domain(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth",
+        "/1.0/kamailio/auth",
         json={"source_ip": "10.0.0.1", "username": "user", "domain": "testdomain.com"},
     )
     assert response.status_code == 200
@@ -141,7 +141,8 @@ def test_kamailio_auth_username_fails(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user_is_wrong"}
+        "/1.0/kamailio/auth",
+        json={"source_ip": "10.0.0.1", "username": "user_is_wrong"},
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -179,7 +180,7 @@ def test_kamailio_auth_username_domain_fails(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth",
+        "/1.0/kamailio/auth",
         json={
             "source_ip": "10.0.0.1",
             "username": "user",
@@ -223,7 +224,7 @@ def test_kamailio_auth_ip_address_username(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user"}
+        "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user"}
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -261,7 +262,7 @@ def test_kamailio_auth_ip_address_username_fails(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth",
+        "/1.0/kamailio/auth",
         json={
             "source_ip": "10.0.0.1",
             "username": "user",
@@ -304,7 +305,7 @@ def test_kamailio_auth_ip_address(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
+        "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -342,7 +343,7 @@ def test_kamailio_auth_ip_address_fails(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
+        "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -380,7 +381,7 @@ def test_kamailio_auth_ip_address_disabled(app, client):
     session.commit()
     #
     response = client.post(
-        "/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
+        "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
     )
     assert response.status_code == 200
     assert response.json() == {

@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -20,8 +18,10 @@ def get_carrier_trunk_by_name(db: Session, name: str) -> CarrierTrunk:
 
 def get_carrier_trunks(
     db: Session, offset: int = 0, limit: int = 100
-) -> List[CarrierTrunk]:
-    return db.query(CarrierTrunk).offset(offset).limit(limit).all()
+) -> schema.CarrierTrunkList:
+    return schema.CarrierTrunkList(
+        items=db.query(CarrierTrunk).offset(offset).limit(limit).all()
+    )
 
 
 def create_carrier_trunk(
@@ -31,6 +31,7 @@ def create_carrier_trunk(
         tenant_uuid=carrier_trunk.tenant_uuid,
         carrier_id=carrier_trunk.carrier_id,
         name=carrier_trunk.name,
+        normalization_profile_id=carrier_trunk.normalization_profile_id,
         sip_proxy=carrier_trunk.sip_proxy,
         sip_proxy_port=carrier_trunk.sip_proxy_port,
         ip_address=carrier_trunk.ip_address,
@@ -60,6 +61,11 @@ def update_carrier_trunk(
             carrier_trunk.name
             if carrier_trunk.name is not None
             else db_carrier_trunk.name
+        )
+        db_carrier_trunk.normalization_profile_id = (
+            carrier_trunk.normalization_profile_id
+            if carrier_trunk.normalization_profile_id is not None
+            else db_carrier_trunk.normalization_profile_id
         )
         db_carrier_trunk.sip_proxy = (
             carrier_trunk.sip_proxy

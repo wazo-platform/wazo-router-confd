@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, constr
 
@@ -32,3 +32,7 @@ class RoutingRuleUpdate(BaseModel):
     prefix: Optional[constr(max_length=128)] = None  # type: ignore
     did_regex: Optional[constr(max_length=256)] = None  # type: ignore
     route_type: constr(max_length=10)  # type: ignore
+
+
+class RoutingRuleList(BaseModel):
+    items: List[RoutingRule]

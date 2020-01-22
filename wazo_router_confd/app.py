@@ -3,6 +3,8 @@
 
 from fastapi import FastAPI
 
+from starlette.middleware.cors import CORSMiddleware
+
 from .consul import setup_consul
 from .database import setup_database, setup_aiopg_database, upgrade_database
 from .redis import setup_redis
@@ -33,16 +35,24 @@ def get_app(config: dict):
     if config.get('database_upgrade'):
         upgrade_database(app, config)
     app = setup_redis(app, config)
-    app.include_router(carriers.router, tags=['carriers'])
-    app.include_router(carrier_trunks.router, tags=['carriers'])
-    app.include_router(cdr.router, tags=['cdr'])
-    app.include_router(dids.router, tags=['dids'])
-    app.include_router(domains.router, tags=['domains'])
-    app.include_router(ipbx.router, tags=['ipbx'])
-    app.include_router(kamailio.router, tags=['kamailio'])
-    app.include_router(normalization.router, tags=['normalization'])
-    app.include_router(routing_rules.router, tags=['routing'])
-    app.include_router(routing_group.router, tags=['routing'])
-    app.include_router(tenants.router, tags=['tenants'])
+    app.include_router(carriers.router, prefix="/1.0", tags=['carriers'])
+    app.include_router(carrier_trunks.router, prefix="/1.0", tags=['carriers'])
+    app.include_router(cdr.router, prefix="/1.0", tags=['cdr'])
+    app.include_router(dids.router, prefix="/1.0", tags=['dids'])
+    app.include_router(domains.router, prefix="/1.0", tags=['domains'])
+    app.include_router(ipbx.router, prefix="/1.0", tags=['ipbx'])
+    app.include_router(kamailio.router, prefix="/1.0", tags=['kamailio'])
+    app.include_router(normalization.router, prefix="/1.0", tags=['normalization'])
+    app.include_router(routing_rules.router, prefix="/1.0", tags=['routing'])
+    app.include_router(routing_group.router, prefix="/1.0", tags=['routing'])
+    app.include_router(tenants.router, prefix="/1.0", tags=['tenants'])
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     return app

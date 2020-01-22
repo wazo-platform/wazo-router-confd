@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, constr, UUID4
 
@@ -80,3 +80,7 @@ class CarrierTrunkUpdate(BaseModel):
     from_domain: Optional[constr(max_length=64)] = None  # type: ignore
     expire_seconds: int = 3600
     retry_seconds: int = 30
+
+
+class CarrierTrunkList(BaseModel):
+    items: List[CarrierTrunkRead]

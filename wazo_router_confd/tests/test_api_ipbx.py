@@ -16,7 +16,7 @@ def test_create_ipbx(app, client):
     session.commit()
     #
     response = client.post(
-        "/ipbx/",
+        "/1.0/ipbxs",
         json={
             "tenant_uuid": str(tenant.uuid),
             "domain_id": domain.id,
@@ -58,7 +58,7 @@ def test_create_ipbx_password_too_long(app, client):
     session.commit()
     #
     response = client.post(
-        "/ipbx/",
+        "/1.0/ipbxs",
         json={
             "tenant_uuid": str(tenant.uuid),
             "domain_id": domain.id,
@@ -97,23 +97,25 @@ def test_get_ipbxs(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.get("/ipbx/")
+    response = client.get("/1.0/ipbxs")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": ipbx.id,
-            "customer": 1,
-            "normalization_profile_id": None,
-            "ip_fqdn": "mypbx.com",
-            "port": 5060,
-            "ip_address": "10.0.0.1",
-            "domain_id": domain.id,
-            "tenant_uuid": str(tenant.uuid),
-            "registered": True,
-            "username": "user",
-            "realm": "realm",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": ipbx.id,
+                "customer": 1,
+                "normalization_profile_id": None,
+                "ip_fqdn": "mypbx.com",
+                "port": 5060,
+                "ip_address": "10.0.0.1",
+                "domain_id": domain.id,
+                "tenant_uuid": str(tenant.uuid),
+                "registered": True,
+                "username": "user",
+                "realm": "realm",
+            }
+        ]
+    }
 
 
 def test_get_ipbx(app, client):
@@ -139,7 +141,7 @@ def test_get_ipbx(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.get("/ipbx/%s" % ipbx.id)
+    response = client.get("/1.0/ipbxs/%s" % ipbx.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": ipbx.id,
@@ -157,7 +159,7 @@ def test_get_ipbx(app, client):
 
 
 def test_get_ipbx_not_found(app, client):
-    response = client.get("/ipbx/1")
+    response = client.get("/1.0/ipbxs/1")
     assert response.status_code == 404
 
 
@@ -187,7 +189,7 @@ def test_update_ipbx(app, client):
     session.commit()
     #
     response = client.put(
-        "/ipbx/%s" % ipbx.id,
+        "/1.0/ipbxs/%s" % ipbx.id,
         json={
             'ip_fqdn': 'mypbx2.com',
             'tenant_uuid': str(tenant_2.uuid),
@@ -215,7 +217,7 @@ def test_update_ipbx(app, client):
 
 def test_update_ipbx_not_found(app, client):
     response = client.put(
-        "/ipbx/1",
+        "/1.0/ipbxs/1",
         json={
             'ip_fqdn': 'mypbx2.com',
             'tenant_uuid': "2639b15e-4e36-4815-ad52-be57a06d7095",
@@ -250,7 +252,7 @@ def test_delete_ipbx(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.delete("/ipbx/%s" % ipbx.id)
+    response = client.delete("/1.0/ipbxs/%s" % ipbx.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": ipbx.id,
@@ -268,5 +270,5 @@ def test_delete_ipbx(app, client):
 
 
 def test_delete_ipbx_not_found(app, client):
-    response = client.delete("/ipbx/1")
+    response = client.delete("/1.0/ipbxs/1")
     assert response.status_code == 404

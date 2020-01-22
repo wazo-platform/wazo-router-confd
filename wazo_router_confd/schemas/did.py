@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, constr, UUID4
 
@@ -29,3 +29,7 @@ class DIDUpdate(BaseModel):
     ipbx_id: int
     carrier_trunk_id: int
     did_regex: Optional[constr(max_length=256)] = None  # type: ignore
+
+
+class DIDList(BaseModel):
+    items: List[DID]

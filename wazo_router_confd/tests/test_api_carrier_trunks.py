@@ -16,7 +16,7 @@ def test_create_carrier_trunk(app, client):
     session.commit()
 
     response = client.post(
-        "/carrier_trunks/",
+        "/1.0/carrier_trunks",
         json={
             "name": "carrier_trunk1",
             "tenant_uuid": str(tenant.uuid),
@@ -72,7 +72,7 @@ def test_create_duplicated_carrier_trunk(app, client):
     session.commit()
     #
     response = client.post(
-        "/carrier_trunks/",
+        "/1.0/carrier_trunks",
         json={
             "name": "carrier_trunk1",
             "tenant_uuid": str(tenant.uuid),
@@ -110,7 +110,7 @@ def test_get_carrier_trunk(app, client):
     session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
-    response = client.get("/carrier_trunks/%d" % carrier_trunk.id)
+    response = client.get("/1.0/carrier_trunks/%d" % carrier_trunk.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": carrier_trunk.id,
@@ -132,7 +132,7 @@ def test_get_carrier_trunk(app, client):
 
 
 def test_get_carrier_trunk_not_found(app, client):
-    response = client.get("/carrier_trunks/1")
+    response = client.get("/1.0/carrier_trunks/1")
     assert response.status_code == 404
 
 
@@ -154,27 +154,29 @@ def test_get_carrier_trunks(app, client):
     session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
-    response = client.get("/carrier_trunks/")
+    response = client.get("/1.0/carrier_trunks")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            'id': carrier_trunk.id,
-            'name': 'carrier_trunk1',
-            "tenant_uuid": str(tenant.uuid),
-            "carrier_id": carrier.id,
-            "normalization_profile_id": None,
-            'sip_proxy': 'proxy.somedomain.com',
-            "sip_proxy_port": 5060,
-            "ip_address": None,
-            'registered': False,
-            'auth_username': None,
-            'realm': None,
-            'registrar_proxy': None,
-            'from_domain': None,
-            'expire_seconds': 3600,
-            'retry_seconds': 30,
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                'id': carrier_trunk.id,
+                'name': 'carrier_trunk1',
+                "tenant_uuid": str(tenant.uuid),
+                "carrier_id": carrier.id,
+                "normalization_profile_id": None,
+                'sip_proxy': 'proxy.somedomain.com',
+                "sip_proxy_port": 5060,
+                "ip_address": None,
+                'registered': False,
+                'auth_username': None,
+                'realm': None,
+                'registrar_proxy': None,
+                'from_domain': None,
+                'expire_seconds': 3600,
+                'retry_seconds': 30,
+            }
+        ]
+    }
 
 
 def test_update_carrier_trunk(app, client):
@@ -198,7 +200,7 @@ def test_update_carrier_trunk(app, client):
     session.commit()
     #
     response = client.put(
-        "/carrier_trunks/%s" % carrier_trunk.id,
+        "/1.0/carrier_trunks/%s" % carrier_trunk.id,
         json={
             'name': 'updated_carrier_trunk1',
             "tenant_uuid": str(tenant.uuid),
@@ -239,7 +241,7 @@ def test_update_carrier_trunk(app, client):
 
 def test_update_carrier_trunk_not_found(app, client):
     response = client.put(
-        "/carrier_trunks/1",
+        "/1.0/carrier_trunks/1",
         json={
             'name': 'updated_carrier_trunk1',
             "tenant_uuid": "acfbc1a7-7ae2-4970-a6a4-0a8eae6a777b",
@@ -279,7 +281,7 @@ def test_delete_carrier_trunk(app, client):
     session.add_all([tenant, carrier, carrier_trunk])
     session.commit()
     #
-    response = client.delete("/carrier_trunks/%s" % carrier_trunk.id)
+    response = client.delete("/1.0/carrier_trunks/%s" % carrier_trunk.id)
     assert response.status_code == 200
     assert response.json() == {
         'id': carrier_trunk.id,
@@ -301,5 +303,5 @@ def test_delete_carrier_trunk(app, client):
 
 
 def test_delete_carrier_trunk_not_found(app, client):
-    response = client.delete("/carrier_trunks/1")
+    response = client.delete("/1.0/carrier_trunks/1")
     assert response.status_code == 404

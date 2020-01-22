@@ -50,8 +50,10 @@ def get_normalization_profile_by_name(
 
 def get_normalization_profiles(
     db: Session, offset: int = 0, limit: int = 100
-) -> List[NormalizationProfile]:
-    return db.query(NormalizationProfile).offset(offset).limit(limit).all()
+) -> schema.NormalizationProfileList:
+    return schema.NormalizationProfileList(
+        items=db.query(NormalizationProfile).offset(offset).limit(limit).all()
+    )
 
 
 def create_normalization_profile(
@@ -165,8 +167,10 @@ def get_normalization_rule_by_match_regex(
 
 def get_normalization_rules(
     db: Session, offset: int = 0, limit: int = 100
-) -> List[NormalizationRule]:
-    return db.query(NormalizationRule).offset(offset).limit(limit).all()
+) -> schema.NormalizationRuleList:
+    return schema.NormalizationRuleList(
+        items=db.query(NormalizationRule).offset(offset).limit(limit).all()
+    )
 
 
 def create_normalization_rule(

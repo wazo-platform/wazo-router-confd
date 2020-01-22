@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.routing_group import RoutingGroup
@@ -15,8 +13,10 @@ def get_routing_group(db: Session, routing_group_id: int) -> RoutingGroup:
 
 def get_routing_groups(
     db: Session, offset: int = 0, limit: int = 100
-) -> List[RoutingGroup]:
-    return db.query(RoutingGroup).offset(offset).limit(limit).all()
+) -> schema.RoutingGroupList:
+    return schema.RoutingGroupList(
+        items=db.query(RoutingGroup).offset(offset).limit(limit).all()
+    )
 
 
 def create_routing_group(

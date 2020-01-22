@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.routing_rule import RoutingRule
@@ -15,8 +13,10 @@ def get_routing_rule(db: Session, routing_rule_id: int) -> RoutingRule:
 
 def get_routing_rules(
     db: Session, offset: int = 0, limit: int = 100
-) -> List[RoutingRule]:
-    return db.query(RoutingRule).offset(offset).limit(limit).all()
+) -> schema.RoutingRuleList:
+    return schema.RoutingRuleList(
+        items=db.query(RoutingRule).offset(offset).limit(limit).all()
+    )
 
 
 def create_routing_rule(

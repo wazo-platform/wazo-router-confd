@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -14,14 +12,14 @@ from wazo_router_confd.services import routing_rule as service
 router = APIRouter()
 
 
-@router.post("/routing_rules/", response_model=schema.RoutingRule)
+@router.post("/routing-rules", response_model=schema.RoutingRule)
 def create_routing_rule(
     routing_rule: schema.RoutingRuleCreate, db: Session = Depends(get_db)
 ):
     return service.create_routing_rule(db=db, routing_rule=routing_rule)
 
 
-@router.get("/routing_rules/", response_model=List[schema.RoutingRule])
+@router.get("/routing-rules", response_model=schema.RoutingRuleList)
 def read_routing_rules(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
@@ -29,7 +27,7 @@ def read_routing_rules(
     return routing_rules
 
 
-@router.get("/routing_rules/{routing_rule_id}", response_model=schema.RoutingRule)
+@router.get("/routing-rules/{routing_rule_id}", response_model=schema.RoutingRule)
 def read_routing_rule(routing_rule_id: int, db: Session = Depends(get_db)):
     db_routing_rule = service.get_routing_rule(db, routing_rule_id=routing_rule_id)
     if db_routing_rule is None:
@@ -37,7 +35,7 @@ def read_routing_rule(routing_rule_id: int, db: Session = Depends(get_db)):
     return db_routing_rule
 
 
-@router.put("/routing_rules/{routing_rule_id}", response_model=schema.RoutingRule)
+@router.put("/routing-rules/{routing_rule_id}", response_model=schema.RoutingRule)
 def update_routing_rule(
     routing_rule_id: int,
     routing_rule: schema.RoutingRuleUpdate,
@@ -51,7 +49,7 @@ def update_routing_rule(
     return db_routing_rule
 
 
-@router.delete("/routing_rules/{routing_rule_id}", response_model=schema.RoutingRule)
+@router.delete("/routing-rules/{routing_rule_id}", response_model=schema.RoutingRule)
 def delete_routing_rule(routing_rule_id: int, db: Session = Depends(get_db)):
     db_routing_rule = service.delete_routing_rule(db, routing_rule_id=routing_rule_id)
     if db_routing_rule is None:

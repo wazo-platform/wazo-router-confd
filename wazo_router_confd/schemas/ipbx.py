@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, constr, UUID4
 
@@ -70,3 +70,7 @@ class IPBXUpdate(BaseModel):
     password: Optional[str] = None
     password_ha1: Optional[str] = None
     realm: Optional[constr(max_length=50)] = None  # type: ignore
+
+
+class IPBXList(BaseModel):
+    items: List[IPBXRead]

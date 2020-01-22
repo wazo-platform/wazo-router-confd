@@ -22,7 +22,7 @@ from .app import get_app
     show_default=True,
 )
 @click.option(
-    "--port", type=int, default=8000, help="Bind socket to this port", show_default=True
+    "--port", type=int, default=9600, help="Bind socket to this port", show_default=True
 )
 @click.option(
     "--advertise-host",
@@ -34,7 +34,7 @@ from .app import get_app
 @click.option(
     "--advertise-port",
     type=int,
-    default=8000,
+    default=9600,
     help="Port to be advertised in Consul",
     show_default=True,
 )

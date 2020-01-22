@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, constr, UUID4
 
@@ -43,3 +43,7 @@ class CDRUpdate(BaseModel):
     call_id: constr(max_length=256)  # type: ignore
     call_start: Optional[datetime] = None
     duration: Optional[int] = None
+
+
+class CDRList(BaseModel):
+    items: List[CDR]

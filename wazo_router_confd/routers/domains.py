@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from time import time
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -15,7 +14,7 @@ from wazo_router_confd.services import domain as service
 router = APIRouter()
 
 
-@router.post("/domains/", response_model=schema.Domain)
+@router.post("/domains", response_model=schema.Domain)
 def create_domain(domain: schema.DomainCreate, db: Session = Depends(get_db)):
     db_domain = service.get_domain(db, domain=domain.domain)
     if db_domain:
@@ -40,7 +39,7 @@ def create_domain(domain: schema.DomainCreate, db: Session = Depends(get_db)):
     return service.create_domain(db=db, domain=domain)
 
 
-@router.get("/domains/", response_model=List[schema.Domain])
+@router.get("/domains", response_model=schema.DomainList)
 def read_domains(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     domains = service.get_domains(db, offset=offset, limit=limit)
     return domains

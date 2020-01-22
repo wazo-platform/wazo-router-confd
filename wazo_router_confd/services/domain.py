@@ -1,8 +1,6 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.models.domain import Domain
@@ -17,8 +15,8 @@ def get_domain(db: Session, domain: str) -> Domain:
     return db.query(Domain).filter(Domain.domain == domain).first()
 
 
-def get_domains(db: Session, offset: int = 0, limit: int = 100) -> List[Domain]:
-    return db.query(Domain).offset(offset).limit(limit).all()
+def get_domains(db: Session, offset: int = 0, limit: int = 100) -> schema.DomainList:
+    return schema.DomainList(items=db.query(Domain).offset(offset).limit(limit).all())
 
 
 def create_domain(db: Session, domain: schema.DomainCreate) -> Domain:

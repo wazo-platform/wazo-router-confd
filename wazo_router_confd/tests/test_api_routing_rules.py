@@ -60,7 +60,7 @@ def test_create_routing_rule(app, client):
     routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
     response = client.post(
-        "/routing_rules/",
+        "/1.0/routing-rules",
         json={
             "prefix": "39",
             "carrier_trunk_id": carrier_trunk.id,
@@ -83,7 +83,7 @@ def test_create_routing_rule(app, client):
 def test_get_routing_rule(app, client):
     routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
-    response = client.get("/routing_rules/%s" % routing_rule.id)
+    response = client.get("/1.0/routing-rules/%s" % routing_rule.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": routing_rule.id,
@@ -96,25 +96,27 @@ def test_get_routing_rule(app, client):
 
 
 def test_get_routing_rule_not_found(app, client):
-    response = client.get("/routing_rules/1")
+    response = client.get("/1.0/routing-rules/1")
     assert response.status_code == 404
 
 
 def test_get_routing_rules(app, client):
     routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
-    response = client.get("/routing_rules/")
+    response = client.get("/1.0/routing-rules")
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": routing_rule.id,
-            "prefix": "39",
-            "carrier_trunk_id": carrier_trunk.id,
-            "ipbx_id": ipbx.id,
-            "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
-            "route_type": "pstn",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "id": routing_rule.id,
+                "prefix": "39",
+                "carrier_trunk_id": carrier_trunk.id,
+                "ipbx_id": ipbx.id,
+                "did_regex": r"^(\+?1)?(8(00|44|55|66|77|88)[2-9]\d{6})$",
+                "route_type": "pstn",
+            }
+        ]
+    }
 
 
 def test_update_routing_rule(app, client):
@@ -122,7 +124,7 @@ def test_update_routing_rule(app, client):
     routing_rule_2, ipbx_2, carrier_trunk_2, tenant_2, _ = create_routing_rule(app, 2)
     #
     response = client.put(
-        "/routing_rules/%s" % routing_rule.id,
+        "/1.0/routing-rules/%s" % routing_rule.id,
         json={
             'prefix': '40',
             'carrier_trunk_id': carrier_trunk_2.id,
@@ -144,7 +146,7 @@ def test_update_routing_rule(app, client):
 
 def test_update_routing_rule_not_found(app, client):
     response = client.put(
-        "/routing_rules/1",
+        "/1.0/routing-rules/1",
         json={
             'prefix': '40',
             'carrier_trunk_id': 2,
@@ -159,7 +161,7 @@ def test_update_routing_rule_not_found(app, client):
 def test_delete_routing_rule(app, client):
     routing_rule, ipbx, carrier_trunk, tenant, _ = create_routing_rule(app)
     #
-    response = client.delete("/routing_rules/%s" % routing_rule.id)
+    response = client.delete("/1.0/routing-rules/%s" % routing_rule.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": routing_rule.id,
@@ -172,5 +174,5 @@ def test_delete_routing_rule(app, client):
 
 
 def test_delete_routing_rule_not_found(app, client):
-    response = client.delete("/routing_rules/1")
+    response = client.delete("/1.0/routing-rules/1")
     assert response.status_code == 404

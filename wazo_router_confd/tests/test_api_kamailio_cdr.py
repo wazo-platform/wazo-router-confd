@@ -43,7 +43,7 @@ def test_kamailio_cdr(app, client):
     duration = 60
     #
     response = client.post(
-        "/kamailio/cdr",
+        "/1.0/kamailio/cdr",
         json={
             "tenant_uuid": str(tenant.uuid),
             "event": "sip-routing",
@@ -113,7 +113,7 @@ def test_kamailio_cdr_failed_no_tenant(app, client):
     duration = 60
     #
     response = client.post(
-        "/kamailio/cdr",
+        "/1.0/kamailio/cdr",
         json={
             "tenant_uuid": "5ecdf9dd-36d3-4735-a5e8-99bd297bc325",
             "event": "sip-routing",

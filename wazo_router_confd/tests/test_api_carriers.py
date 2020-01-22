@@ -14,7 +14,7 @@ def test_create_carrier(app, client):
     session.commit()
     #
     response = client.post(
-        "/carriers/", json={"name": "carrier1", "tenant_uuid": str(tenant.uuid)}
+        "/1.0/carriers", json={"name": "carrier1", "tenant_uuid": str(tenant.uuid)}
     )
     assert response.status_code == 200
     assert response.json() == {
@@ -36,7 +36,7 @@ def test_create_duplicated_carrier(app, client):
     session.commit()
     #
     response = client.post(
-        "/carriers/", json={"name": "carrier1", "tenant_uuid": str(tenant.uuid)}
+        "/1.0/carriers", json={"name": "carrier1", "tenant_uuid": str(tenant.uuid)}
     )
     assert response.status_code == 409
 
@@ -52,7 +52,7 @@ def test_get_carrier(app, client):
     session.add_all([tenant, carrier])
     session.commit()
     #
-    response = client.get("/carriers/%d" % carrier.id)
+    response = client.get("/1.0/carriers/%d" % carrier.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": carrier.id,
@@ -62,7 +62,7 @@ def test_get_carrier(app, client):
 
 
 def test_get_carrier_not_found(app, client):
-    response = client.get("/carriers/1")
+    response = client.get("/1.0/carriers/1")
     assert response.status_code == 404
 
 
@@ -77,11 +77,13 @@ def test_get_carriers(app, client):
     session.add_all([tenant, carrier])
     session.commit()
     #
-    response = client.get("/carriers/")
+    response = client.get("/1.0/carriers")
     assert response.status_code == 200
-    assert response.json() == [
-        {'id': carrier.id, 'name': 'carrier1', 'tenant_uuid': str(tenant.uuid)}
-    ]
+    assert response.json() == {
+        "items": [
+            {'id': carrier.id, 'name': 'carrier1', 'tenant_uuid': str(tenant.uuid)}
+        ]
+    }
 
 
 def test_update_carrier(app, client):
@@ -97,7 +99,7 @@ def test_update_carrier(app, client):
     session.commit()
     #
     response = client.put(
-        "/carriers/%d" % carrier.id,
+        "/1.0/carriers/%d" % carrier.id,
         json={'name': 'updated_carrier', 'tenant_uuid': str(tenant2.uuid)},
     )
     assert response.status_code == 200
@@ -110,7 +112,7 @@ def test_update_carrier(app, client):
 
 def test_update_carrier_not_found(app, client):
     response = client.put(
-        "/carriers/1",
+        "/1.0/carriers/1",
         json={
             'name': 'updated_carrier',
             'tenant_uuid': "458eb1a1-1769-4b7a-9970-45c5c9c2abe3",
@@ -130,7 +132,7 @@ def test_delete_carrier(app, client):
     session.add_all([tenant, carrier])
     session.commit()
     #
-    response = client.delete("/carriers/%d" % carrier.id)
+    response = client.delete("/1.0/carriers/%d" % carrier.id)
     assert response.status_code == 200
     assert response.json() == {
         'id': carrier.id,
@@ -140,5 +142,5 @@ def test_delete_carrier(app, client):
 
 
 def test_delete_carrier_not_found(app, client):
-    response = client.delete("/carriers/1")
+    response = client.delete("/1.0/carriers/1")
     assert response.status_code == 404
