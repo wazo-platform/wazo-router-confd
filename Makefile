@@ -1,6 +1,6 @@
 .PHONY:
 venv:
-	virtualenv -p python3 venv --no-site-packages
+	virtualenv -p python3.7 venv --no-site-packages
 
 .PHONY: setup
 setup:
@@ -17,7 +17,11 @@ clean:
 
 .PHONY: black
 black:
-	black --skip-string-normalization wazo_router_confd
+	black --skip-string-normalization wazo_router_confd *.py
+
+.PHONY: black-check
+black-check:
+	black --check --skip-string-normalization wazo_router_confd *.py
 
 .PHONY: flake8
 flake8:
@@ -34,6 +38,9 @@ pylint:
 .PHONY: pycodestyle
 pycodestyle:
 	pycodestyle --ignore=E501,W503,E402,E701 wazo_router_confd
+
+.PHONY: check
+check: black-check flake8 mypy pylint pycodestyle
 
 .PHONY: test
 test:
