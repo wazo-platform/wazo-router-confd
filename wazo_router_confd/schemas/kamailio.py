@@ -26,7 +26,7 @@ class AuthResponse(BaseModel):
 
 
 class CDRRequest(BaseModel):
-    tenant_uuid: UUID4
+    tenant_uuid: Optional[UUID4]
     event: Optional[str] = None
     source_ip: Optional[str] = None
     source_port: Optional[int] = None

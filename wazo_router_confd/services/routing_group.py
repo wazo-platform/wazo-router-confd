@@ -3,27 +3,44 @@
 
 from sqlalchemy.orm import Session
 
+from wazo_router_confd.auth import Principal
 from wazo_router_confd.models.routing_group import RoutingGroup
 from wazo_router_confd.schemas import routing_group as schema
+from wazo_router_confd.services import tenant as tenant_service
 
 
-def get_routing_group(db: Session, routing_group_id: int) -> RoutingGroup:
-    return db.query(RoutingGroup).filter(RoutingGroup.id == routing_group_id).first()
+def get_routing_group(
+    db: Session, principal: Principal, routing_group_id: int
+) -> RoutingGroup:
+    db_routing_group = db.query(RoutingGroup).filter(
+        RoutingGroup.id == routing_group_id
+    )
+    if principal is not None and principal.tenant_uuids:
+        db_routing_group = db_routing_group.filter(
+            RoutingGroup.tenant_uuid.in_(principal.tenant_uuids)
+        )
+    return db_routing_group.first()
 
 
 def get_routing_groups(
-    db: Session, offset: int = 0, limit: int = 100
+    db: Session, principal: Principal, offset: int = 0, limit: int = 100
 ) -> schema.RoutingGroupList:
-    return schema.RoutingGroupList(
-        items=db.query(RoutingGroup).offset(offset).limit(limit).all()
-    )
+    items = db.query(RoutingGroup)
+    if principal is not None and principal.tenant_uuid:
+        items = items.filter(RoutingGroup.tenant_uuid == principal.tenant_uuid)
+    items = items.offset(offset).limit(limit).all()
+    return schema.RoutingGroupList(items=items)
 
 
 def create_routing_group(
-    db: Session, routing_group: schema.RoutingGroupCreate
+    db: Session, principal: Principal, routing_group: schema.RoutingGroupCreate
 ) -> RoutingGroup:
+    routing_group.tenant_uuid = tenant_service.get_uuid(
+        principal, db, routing_group.tenant_uuid
+    )
     db_routing_group = RoutingGroup(
-        routing_rule=routing_group.routing_rule, tenant_uuid=routing_group.tenant_uuid
+        routing_rule_id=routing_group.routing_rule_id,
+        tenant_uuid=routing_group.tenant_uuid,
     )
     db.add(db_routing_group)
     db.commit()
@@ -32,16 +49,17 @@ def create_routing_group(
 
 
 def update_routing_group(
-    db: Session, routing_group_id: int, routing_group: schema.RoutingGroupUpdate
+    db: Session,
+    principal: Principal,
+    routing_group_id: int,
+    routing_group: schema.RoutingGroupUpdate,
 ) -> RoutingGroup:
-    db_routing_group = (
-        db.query(RoutingGroup).filter(RoutingGroup.id == routing_group_id).first()
-    )
+    db_routing_group = get_routing_group(db, principal, routing_group_id)
     if db_routing_group is not None:
-        db_routing_group.routing_rule = (
-            routing_group.routing_rule
-            if routing_group.routing_rule is not None
-            else db_routing_group.routing_rule
+        db_routing_group.routing_rule_id = (
+            routing_group.routing_rule_id
+            if routing_group.routing_rule_id is not None
+            else db_routing_group.routing_rule_id
         )
         db_routing_group.tenant_uuid = (
             routing_group.tenant_uuid
@@ -53,10 +71,10 @@ def update_routing_group(
     return db_routing_group
 
 
-def delete_routing_group(db: Session, routing_group_id: int) -> RoutingGroup:
-    db_routing_group = (
-        db.query(RoutingGroup).filter(RoutingGroup.id == routing_group_id).first()
-    )
+def delete_routing_group(
+    db: Session, principal: Principal, routing_group_id: int
+) -> RoutingGroup:
+    db_routing_group = get_routing_group(db, principal, routing_group_id)
     if db_routing_group is not None:
         db.delete(db_routing_group)
         db.commit()

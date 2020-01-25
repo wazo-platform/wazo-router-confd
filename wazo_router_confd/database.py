@@ -8,7 +8,8 @@ import aiopg  # type: ignore
 
 import alembic.config  # type: ignore
 import alembic.command  # type: ignore
-import alembic.migration  # type: ignore
+
+from alembic import migration
 
 from urllib.parse import urlparse
 
@@ -48,6 +49,7 @@ def setup_database(app: FastAPI, config: dict):
     engine = create_engine(database_uri, connect_args=connect_args)
     setattr(app, 'engine', engine)
 
+    # pylint: disable= unused-variable
     @app.middleware("http")
     async def db_session_middleware(request: Request, call_next):
         response = Response("Internal server error", status_code=500)
@@ -95,6 +97,7 @@ def setup_aiopg_database(app: FastAPI, config: dict):
     app.add_event_handler("startup", connection_pool.connect)
     app.add_event_handler("shutdown", connection_pool.clear)
 
+    # pylint: disable= unused-variable
     @app.middleware("http")
     async def db_aiopg_database_middleware(request: Request, call_next):
         response = Response("Internal server error", status_code=500)
@@ -114,7 +117,7 @@ def upgrade_database(app: FastAPI, config: dict, force_migration: bool = False):
     engine = getattr(app, "engine")
     wait_for_database(engine)
     with engine.begin() as connection:
-        ctxt = alembic.migration.MigrationContext.configure(connection)
+        ctxt = migration.MigrationContext.configure(connection)
         current_version = ctxt.get_current_revision()
         if current_version is None and not force_migration:
             Base.metadata.create_all(bind=engine)

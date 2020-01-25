@@ -1,5 +1,6 @@
 import os
 import pytest  # type: ignore
+import requests
 import uuid
 
 import sqlalchemy
@@ -37,7 +38,7 @@ def database_uri(request):
 
 
 @pytest.fixture(scope="function")
-def app(request, database_uri):
+def app(database_uri):
     config = dict(
         database_uri=database_uri,
         redis_uri='redis://localhost',
@@ -47,10 +48,9 @@ def app(request, database_uri):
     )
     app = get_app(config)
 
-    from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
 
-    session = SessionLocal(bind=app.engine)
+    session = SessionLocal(bind=getattr(app, 'engine'))
     session.query(Tenant).delete()
     session.commit()
 
@@ -58,7 +58,89 @@ def app(request, database_uri):
 
 
 @pytest.fixture(scope="function")
-def client(request, app):
+def client(app):
     client = TestClient(app)
     with client:
-        return client
+        yield client
+
+
+@pytest.fixture(scope="session")
+def wazo_auth_mock():
+    response = requests.post(
+        "https://localhost:9497/api/auth/_set_token",
+        json={
+            'auth_id': 'uuid',
+            'token': 'wazo-router-confd',
+            'metadata': {
+                'uuid': 'uuid',
+                'pbx_user_uuid': 'uuid',
+                'tenant_uuid': 'ffffffff-ffff-4c1c-ad1c-ffffffffffff',
+            },
+        },
+        verify=False,
+    )
+    assert response.status_code == 204
+    #
+    response = requests.post(
+        "https://localhost:9497/api/auth/_set_token",
+        json={
+            'auth_id': 'uuid',
+            'token': 'wazo-router-confd-no-tenant',
+            'metadata': {
+                'uuid': 'uuid',
+                'pbx_user_uuid': 'uuid',
+                'tenant_uuid': 'ffffffff-ffff-4c1c-ad1c-eeeeeeeeeeee',
+            },
+        },
+        verify=False,
+    )
+    assert response.status_code == 204
+    #
+    response = requests.post(
+        "https://localhost:9497/api/auth/_set_tenants",
+        json=[{'uuid': 'ffffffff-ffff-4c1c-ad1c-ffffffffffff'}],
+        verify=False,
+    )
+    assert response.status_code == 204
+
+
+# pylint: disable= unused-argument
+@pytest.fixture(scope="function")
+def app_auth(request, database_uri, wazo_auth_mock):
+    config = dict(
+        database_uri=database_uri,
+        redis_uri='redis://localhost',
+        redis_flush_on_connect=True,
+        database_upgrade=True,
+        debug=True,
+        wazo_auth=True,
+        wazo_auth_url="https://localhost:9497/api/auth/0.1",
+        wazo_auth_cert=None,
+    )
+    app = get_app(config)
+
+    from wazo_router_confd.models.tenant import Tenant
+
+    session = SessionLocal(bind=getattr(app, 'engine'))
+    session.query(Tenant).delete()
+    session.commit()
+
+    return app
+
+
+@pytest.fixture(scope="function")
+def client_auth(request, app_auth):
+    client_auth = TestClient(app_auth)
+    with client_auth:
+        yield client_auth
+
+
+@pytest.fixture(scope="function")
+def client_auth_with_token(client_auth):
+    client_auth.headers.update(
+        {
+            'X-Auth-Token': 'wazo-router-confd',
+            'Wazo-Tenant': 'ffffffff-ffff-4c1c-ad1c-ffffffffffff',
+        }
+    )
+    return client_auth

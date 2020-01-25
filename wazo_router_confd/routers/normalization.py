@@ -6,6 +6,7 @@ from time import time
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from wazo_router_confd.auth import Principal, get_principal
 from wazo_router_confd.database import get_db
 from wazo_router_confd.schemas import normalization as schema
 from wazo_router_confd.services import normalization as service
@@ -18,9 +19,10 @@ router = APIRouter()
 def create_normalization_profile(
     normalization_profile: schema.NormalizationProfileCreate,
     db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     db_normalization_profile = service.get_normalization_profile_by_name(
-        db, name=normalization_profile.name
+        db, principal, name=normalization_profile.name
     )
     if db_normalization_profile:
         raise HTTPException(
@@ -42,16 +44,19 @@ def create_normalization_profile(
             },
         )
     return service.create_normalization_profile(
-        db=db, normalization_profile=normalization_profile
+        db, principal, normalization_profile=normalization_profile
     )
 
 
 @router.get("/normalization-profiles", response_model=schema.NormalizationProfileList)
 def read_normalization_profiles(
-    offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    offset: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     normalization_profiles = service.get_normalization_profiles(
-        db, offset=offset, limit=limit
+        db, principal, offset=offset, limit=limit
     )
     return normalization_profiles
 
@@ -61,10 +66,12 @@ def read_normalization_profiles(
     response_model=schema.NormalizationProfile,
 )
 def read_normalization_profile(
-    normalization_profile_id: int, db: Session = Depends(get_db)
+    normalization_profile_id: int,
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     db_normalization_profile = service.get_normalization_profile(
-        db, normalization_profile_id=normalization_profile_id
+        db, principal, normalization_profile_id=normalization_profile_id
     )
     if db_normalization_profile is None:
         raise HTTPException(status_code=404, detail="Normalization profile not found")
@@ -79,9 +86,11 @@ def update_normalization_profile(
     normalization_profile_id: int,
     normalization_profile: schema.NormalizationProfileUpdate,
     db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     db_normalization_profile = service.update_normalization_profile(
         db,
+        principal,
         normalization_profile=normalization_profile,
         normalization_profile_id=normalization_profile_id,
     )
@@ -95,10 +104,12 @@ def update_normalization_profile(
     response_model=schema.NormalizationProfile,
 )
 def delete_normalization_profile(
-    normalization_profile_id: int, db: Session = Depends(get_db)
+    normalization_profile_id: int,
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     db_normalization_profile = service.delete_normalization_profile(
-        db, normalization_profile_id=normalization_profile_id
+        db, principal, normalization_profile_id=normalization_profile_id
     )
     if db_normalization_profile is None:
         raise HTTPException(status_code=404, detail="Normalization profile not found")
@@ -107,10 +118,12 @@ def delete_normalization_profile(
 
 @router.post("/normalization-rules", response_model=schema.NormalizationRule)
 def create_normalization_rule(
-    normalization_rule: schema.NormalizationRuleCreate, db: Session = Depends(get_db)
+    normalization_rule: schema.NormalizationRuleCreate,
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     db_normalization_rule = service.get_normalization_rule_by_match_regex(
-        db, match_regex=normalization_rule.match_regex
+        db, principal, match_regex=normalization_rule.match_regex
     )
     if db_normalization_rule:
         raise HTTPException(
@@ -132,16 +145,19 @@ def create_normalization_rule(
             },
         )
     return service.create_normalization_rule(
-        db=db, normalization_rule=normalization_rule
+        db, principal, normalization_rule=normalization_rule
     )
 
 
 @router.get("/normalization-rules", response_model=schema.NormalizationRuleList)
 def read_normalization_rules(
-    offset: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    offset: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     normalization_rules = service.get_normalization_rules(
-        db, offset=offset, limit=limit
+        db, principal, offset=offset, limit=limit
     )
     return normalization_rules
 
@@ -150,9 +166,13 @@ def read_normalization_rules(
     "/normalization-rules/{normalization_rule_id}",
     response_model=schema.NormalizationRule,
 )
-def read_normalization_rule(normalization_rule_id: int, db: Session = Depends(get_db)):
+def read_normalization_rule(
+    normalization_rule_id: int,
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
+):
     db_normalization_rule = service.get_normalization_rule(
-        db, normalization_rule_id=normalization_rule_id
+        db, principal, normalization_rule_id=normalization_rule_id
     )
     if db_normalization_rule is None:
         raise HTTPException(status_code=404, detail="Normalization rule not found")
@@ -167,9 +187,11 @@ def update_normalization_rule(
     normalization_rule_id: int,
     normalization_rule: schema.NormalizationRuleUpdate,
     db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     db_normalization_rule = service.update_normalization_rule(
         db,
+        principal,
         normalization_rule=normalization_rule,
         normalization_rule_id=normalization_rule_id,
     )
@@ -183,10 +205,12 @@ def update_normalization_rule(
     response_model=schema.NormalizationRule,
 )
 def delete_normalization_rule(
-    normalization_rule_id: int, db: Session = Depends(get_db)
+    normalization_rule_id: int,
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(get_principal),
 ):
     db_normalization_rule = service.delete_normalization_rule(
-        db, normalization_rule_id=normalization_rule_id
+        db, principal, normalization_rule_id=normalization_rule_id
     )
     if db_normalization_rule is None:
         raise HTTPException(status_code=404, detail="Normalization rule not found")

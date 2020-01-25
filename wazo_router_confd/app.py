@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from starlette.middleware.cors import CORSMiddleware
 
+from .auth import setup_auth
 from .consul import setup_consul
 from .database import setup_database, setup_aiopg_database, upgrade_database
 from .redis import setup_redis
@@ -18,6 +19,7 @@ from .routers import ipbx
 from .routers import normalization
 from .routers import routing_rules
 from .routers import routing_group
+from .routers import status
 from .routers import tenants
 
 
@@ -35,6 +37,8 @@ def get_app(config: dict):
     if config.get('database_upgrade'):
         upgrade_database(app, config)
     app = setup_redis(app, config)
+    app.include_router(status.router, tags=['status'])
+
     app.include_router(carriers.router, prefix="/1.0", tags=['carriers'])
     app.include_router(carrier_trunks.router, prefix="/1.0", tags=['carriers'])
     app.include_router(cdr.router, prefix="/1.0", tags=['cdr'])
@@ -54,5 +58,7 @@ def get_app(config: dict):
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app = setup_auth(app, config)
 
     return app

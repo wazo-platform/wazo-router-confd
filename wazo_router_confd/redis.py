@@ -25,6 +25,9 @@ class Redis(object):
         if self.flush_on_connect:
             await self.flushdb()
 
+    def disconnect(self):
+        self.pool.close()
+
     async def get_value(self, key: str) -> Optional[dict]:
         value = await self.pool.get(key)
         return loads(value) if value is not None else None
@@ -48,7 +51,9 @@ def setup_redis(app: FastAPI, config: dict):
     setattr(app, 'redis', redis)
 
     app.add_event_handler("startup", redis.connect)
+    app.add_event_handler("shutdown", redis.disconnect)
 
+    # pylint: disable= unused-variable
     @app.middleware("http")
     async def db_aioredis_database_middleware(request: Request, call_next):
         response = Response("Internal server error", status_code=500)

@@ -3,21 +3,33 @@
 
 from sqlalchemy.orm import Session
 
+from wazo_router_confd.auth import Principal
 from wazo_router_confd.models.domain import Domain
 from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.schemas import ipbx as schema
 from wazo_router_confd.services import password as password_service
+from wazo_router_confd.services import tenant as tenant_service
 
 
-def get_ipbx(db: Session, ipbx_id: int) -> IPBX:
-    return db.query(IPBX).filter(IPBX.id == ipbx_id).first()
+def get_ipbx(db: Session, principal: Principal, ipbx_id: int) -> IPBX:
+    db_ipbx = db.query(IPBX).filter(IPBX.id == ipbx_id)
+    if principal is not None and principal.tenant_uuids:
+        db_ipbx = db_ipbx.filter(IPBX.tenant_uuid.in_(principal.tenant_uuids))
+    return db_ipbx.first()
 
 
-def get_ipbxs(db: Session, offset: int = 0, limit: int = 100) -> schema.IPBXList:
-    return schema.IPBXList(items=db.query(IPBX).offset(offset).limit(limit).all())
+def get_ipbxs(
+    db: Session, principal: Principal, offset: int = 0, limit: int = 100
+) -> schema.IPBXList:
+    items = db.query(IPBX)
+    if principal is not None and principal.tenant_uuid:
+        items = items.filter(IPBX.tenant_uuid == principal.tenant_uuid)
+    items = items.offset(offset).limit(limit).all()
+    return schema.IPBXList(items=items)
 
 
-def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
+def create_ipbx(db: Session, principal: Principal, ipbx: schema.IPBXCreate) -> IPBX:
+    ipbx.tenant_uuid = tenant_service.get_uuid(principal, db, ipbx.tenant_uuid)
     domain = db.query(Domain).filter(Domain.id == ipbx.domain_id).first()
     db_ipbx = IPBX(
         tenant_uuid=ipbx.tenant_uuid,
@@ -41,8 +53,10 @@ def create_ipbx(db: Session, ipbx: schema.IPBXCreate) -> IPBX:
     return db_ipbx
 
 
-def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
-    db_ipbx = db.query(IPBX).filter(IPBX.id == ipbx_id).first()
+def update_ipbx(
+    db: Session, principal: Principal, ipbx_id: int, ipbx: schema.IPBXUpdate
+) -> IPBX:
+    db_ipbx = get_ipbx(db, principal, ipbx_id)
     if db_ipbx is not None:
         db_ipbx.tenant_uuid = (
             ipbx.tenant_uuid if ipbx.tenant_uuid is not None else db_ipbx.tenant_uuid
@@ -72,8 +86,8 @@ def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
         if ipbx.password is not None:
             domain = db.query(Domain).filter(Domain.id == ipbx.domain_id).first()
             db_ipbx.password = password_service.hash(ipbx.password)
-            db_ipbx.password_ha1 = (
-                password_service.hash_ha1(ipbx.username, domain.domain, ipbx.password),
+            db_ipbx.password_ha1 = password_service.hash_ha1(
+                ipbx.username, domain.domain, ipbx.password
             )
         db_ipbx.realm = ipbx.realm if ipbx.realm is not None else db_ipbx.realm
         db.commit()
@@ -81,8 +95,8 @@ def update_ipbx(db: Session, ipbx_id: int, ipbx: schema.IPBXUpdate) -> IPBX:
     return db_ipbx
 
 
-def delete_ipbx(db: Session, ipbx_id: int) -> IPBX:
-    db_ipbx = db.query(IPBX).filter(IPBX.id == ipbx_id).first()
+def delete_ipbx(db: Session, principal: Principal, ipbx_id: int) -> IPBX:
+    db_ipbx = get_ipbx(db, principal, ipbx_id)
     if db_ipbx is not None:
         db.delete(db_ipbx)
         db.commit()

@@ -67,6 +67,25 @@ from .app import get_app
     show_default=True,
 )
 @click.option(
+    "--wazo-auth/--no-wazo-auth",
+    default=False,
+    help='enable wazo-auth based authentication and authorization, requires wazo-auth-url',
+)
+@click.option(
+    "--wazo-auth-url",
+    type=str,
+    default="https://localhost:9497/api/auth/0.1",
+    help="URL of the wazo-auth service, if set requires authentication to use the API",
+    show_default=True,
+)
+@click.option(
+    "--wazo-auth-cert",
+    type=str,
+    default=None,
+    help="Path of the X509 certificate to verify when communicatin with the wazo-auth service",
+    show_default=True,
+)
+@click.option(
     "--debug", is_flag=True, default=False, help="Enable debug mode", hidden=True
 )
 def main(
@@ -79,7 +98,11 @@ def main(
     database_uri: Optional[str] = None,
     database_upgrade: bool = True,
     redis_uri: Optional[str] = None,
+    wazo_auth: bool = False,
+    wazo_auth_url: Optional[str] = None,
+    wazo_auth_cert: Optional[str] = None,
     debug: bool = False,
+    auto_envvar_prefix: Optional[str] = None,
 ):
     config = dict(
         host=host,
@@ -88,8 +111,11 @@ def main(
         advertise_port=advertise_port,
         consul_uri=consul_uri,
         database_uri=database_uri,
-        redis_uri=redis_uri,
         database_upgrade=database_upgrade,
+        redis_uri=redis_uri,
+        wazo_auth=wazo_auth,
+        wazo_auth_url=wazo_auth_url,
+        wazo_auth_cert=wazo_auth_cert,
         debug=debug,
     )
     if config_file is not None:
@@ -102,13 +128,7 @@ def main(
             config[k] = v
     app = get_app(config)
     log_level = "info" if not config['debug'] else "debug"
-    uvicorn.run(
-        app,
-        host=config['host'],
-        port=config['port'],
-        log_level=log_level,
-        reload=config['debug'],
-    )
+    uvicorn.run(app, host=config['host'], port=config['port'], log_level=log_level)
 
 
 def main_with_env():

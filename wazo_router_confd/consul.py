@@ -40,7 +40,7 @@ class ConsulService(object):
         self._consul.agent.service.deregister(service_id)
 
     def get(self, key: str) -> NoneBytes:
-        index, data = self._consul.kv.get(key)
+        _, data = self._consul.kv.get(key)
         return data['Value'] if data else None
 
     def put(self, key: str, value: str) -> bool:
@@ -59,10 +59,7 @@ def setup_consul(app: FastAPI, config: dict):
     # register the API HTTP service on consul
     service_id = 'wazo-router-confd-%s' % uuid4()
 
-    @app.get('/status')
-    async def health():
-        return {"status": "ok"}
-
+    # pylint: disable= unused-variable
     @app.on_event("startup")
     def startup_event():
         consul = getattr(app, 'consul')
@@ -84,6 +81,7 @@ def setup_consul(app: FastAPI, config: dict):
             else None,
         )
 
+    # pylint: disable= unused-variable
     @app.on_event("shutdown")
     def shutdown_event():
         consul = getattr(app, 'consul')

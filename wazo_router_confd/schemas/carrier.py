@@ -9,7 +9,7 @@ from pydantic import BaseModel, constr, UUID4
 class Carrier(BaseModel):
     id: int
     name: constr(max_length=256)  # type: ignore
-    tenant_uuid: UUID4
+    tenant_uuid: Optional[UUID4]
 
     class Config:
         orm_mode = True
@@ -17,12 +17,12 @@ class Carrier(BaseModel):
 
 class CarrierCreate(BaseModel):
     name: constr(max_length=256)  # type: ignore
-    tenant_uuid: UUID4
+    tenant_uuid: Optional[UUID4]
 
 
 class CarrierUpdate(BaseModel):
     name: Optional[constr(max_length=256)] = None  # type: ignore
-    tenant_uuid: UUID4
+    tenant_uuid: Optional[UUID4]
 
 
 class CarrierList(BaseModel):

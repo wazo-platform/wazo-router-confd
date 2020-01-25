@@ -1,10 +1,8 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import uuid
 
-
-def create_routing_group(app, suffix=1):
+def create_routing_group(app_auth, tenant_uuid, suffix=1):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.carrier import Carrier
     from wazo_router_confd.models.carrier_trunk import CarrierTrunk
@@ -14,8 +12,11 @@ def create_routing_group(app, suffix=1):
     from wazo_router_confd.models.routing_group import RoutingGroup
     from wazo_router_confd.models.routing_rule import RoutingRule
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name="tenant_{}".format(suffix), uuid=uuid.uuid4())
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = session.query(Tenant).filter(Tenant.uuid == tenant_uuid).first()
+    if tenant is None:
+        tenant = Tenant(name="tenant_{}".format(suffix), uuid=tenant_uuid)
+        session.add(tenant)
     domain = Domain(domain='testdomain_{}.com'.format(suffix), tenant=tenant)
     ipbx = IPBX(
         tenant=tenant,
@@ -41,7 +42,7 @@ def create_routing_group(app, suffix=1):
         route_type="pstn",
     )
 
-    session.add_all([tenant, domain, carrier, ipbx, routing_rule])
+    session.add_all([domain, carrier, ipbx, routing_rule])
     session.commit()
 
     routing_group = RoutingGroup(routing_rule=routing_rule, tenant=tenant)
@@ -53,10 +54,12 @@ def create_routing_group(app, suffix=1):
     return routing_group, routing_rule, tenant, session
 
 
-def test_create_routing_group(app, client):
-    routing_group, routing_rule, tenant, _ = create_routing_group(app)
+def test_create_routing_group(app_auth, client_auth_with_token):
+    routing_group, routing_rule, tenant, _ = create_routing_group(
+        app_auth, "ffffffff-ffff-4c1c-ad1c-ffffffffffff"
+    )
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/routing-groups",
         json={"routing_rule_id": routing_rule.id, "tenant_uuid": str(tenant.uuid)},
     )
@@ -68,10 +71,12 @@ def test_create_routing_group(app, client):
     }
 
 
-def test_get_routing_group(app, client):
-    routing_group, routing_rule, tenant, _ = create_routing_group(app)
+def test_get_routing_group(app_auth, client_auth_with_token):
+    routing_group, routing_rule, tenant, _ = create_routing_group(
+        app_auth, "ffffffff-ffff-4c1c-ad1c-ffffffffffff"
+    )
     #
-    response = client.get("/1.0/routing-groups/%s" % routing_group.id)
+    response = client_auth_with_token.get("/1.0/routing-groups/%s" % routing_group.id)
     assert response.status_code == 200
     assert response.json() == {
         "id": routing_group.id,
@@ -80,15 +85,17 @@ def test_get_routing_group(app, client):
     }
 
 
-def test_get_routing_group_not_found(app, client):
-    response = client.get("/1.0/routing-groups/1")
+def test_get_routing_group_not_found(app_auth, client_auth_with_token):
+    response = client_auth_with_token.get("/1.0/routing-groups/1")
     assert response.status_code == 404
 
 
-def test_get_routing_groups(app, client):
-    routing_group, routing_rule, tenant, _ = create_routing_group(app)
+def test_get_routing_groups(app_auth, client_auth_with_token):
+    routing_group, routing_rule, tenant, _ = create_routing_group(
+        app_auth, "ffffffff-ffff-4c1c-ad1c-ffffffffffff"
+    )
     #
-    response = client.get("/1.0/routing-groups")
+    response = client_auth_with_token.get("/1.0/routing-groups")
     assert response.status_code == 200
     assert response.json() == {
         "items": [
@@ -101,11 +108,15 @@ def test_get_routing_groups(app, client):
     }
 
 
-def test_update_routing_group(app, client):
-    routing_group, _, _, _ = create_routing_group(app)
-    _, routing_rule_2, tenant_2, _ = create_routing_group(app, 2)
+def test_update_routing_group(app_auth, client_auth_with_token):
+    routing_group, _, _, _ = create_routing_group(
+        app_auth, "ffffffff-ffff-4c1c-ad1c-ffffffffffff"
+    )
+    _, routing_rule_2, tenant_2, _ = create_routing_group(
+        app_auth, "ffffffff-ffff-4c1c-ad1c-ffffffffffff", 2
+    )
     #
-    response = client.put(
+    response = client_auth_with_token.put(
         "/1.0/routing-groups/%s" % routing_group.id,
         json={'routing_rule_id': routing_rule_2.id, 'tenant_uuid': str(tenant_2.uuid)},
     )
@@ -117,8 +128,8 @@ def test_update_routing_group(app, client):
     }
 
 
-def test_update_routing_group_not_found(app, client):
-    response = client.put(
+def test_update_routing_group_not_found(app_auth, client_auth_with_token):
+    response = client_auth_with_token.put(
         "/1.0/routing-groups/1",
         json={
             'routing_rule_id': 2,
@@ -128,10 +139,14 @@ def test_update_routing_group_not_found(app, client):
     assert response.status_code == 404
 
 
-def test_delete_routing_group(app, client):
-    routing_group, routing_rule, tenant, _ = create_routing_group(app)
+def test_delete_routing_group(app_auth, client_auth_with_token):
+    routing_group, routing_rule, tenant, _ = create_routing_group(
+        app_auth, "ffffffff-ffff-4c1c-ad1c-ffffffffffff"
+    )
     #
-    response = client.delete("/1.0/routing-groups/%s" % routing_group.id)
+    response = client_auth_with_token.delete(
+        "/1.0/routing-groups/%s" % routing_group.id
+    )
     assert response.status_code == 200
     assert response.json() == {
         "id": routing_group.id,
@@ -140,6 +155,6 @@ def test_delete_routing_group(app, client):
     }
 
 
-def test_delete_routing_group_not_found(app, client):
-    response = client.delete("/1.0/routing-groups/1")
+def test_delete_routing_group_not_found(app_auth, client_auth_with_token):
+    response = client_auth_with_token.delete("/1.0/routing-groups/1")
     assert response.status_code == 404

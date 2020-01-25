@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-def test_kamailio_routing_outbound_with_single_ipbx_authenticated(app, client):
+def test_kamailio_routing_outbound_with_single_ipbx_authenticated(
+    app_auth, client_auth_with_token
+):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -11,7 +13,7 @@ def test_kamailio_routing_outbound_with_single_ipbx_authenticated(app, client):
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.models.normalization import NormalizationProfile
 
-    session = SessionLocal(bind=app.engine)
+    session = SessionLocal(bind=app_auth.engine)
     tenant = Tenant(name='fabio', uuid='0839cb47-5d31-4b5e-8c5b-a2481f9e212a')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     carrier = Carrier(name='carrier1', tenant=tenant)
@@ -58,7 +60,7 @@ def test_kamailio_routing_outbound_with_single_ipbx_authenticated(app, client):
     request_to_uri = "sip:200@destinationdomain.com"
     request_to_tag = "to_tag"
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/routing",
         json={
             "event": "sip-routing",
