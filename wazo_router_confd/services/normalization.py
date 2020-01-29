@@ -10,11 +10,13 @@ from psycopg2.extras import DictCursor  # type: ignore
 from sqlalchemy.orm import Session
 
 
+from wazo_router_confd.auth import Principal
 from wazo_router_confd.models.normalization import (
     NormalizationProfile,
     NormalizationRule,
 )
 from wazo_router_confd.schemas import normalization as schema
+from wazo_router_confd.services import tenant as tenant_service
 
 
 re_clean_number = re.compile('[^0-9a-zA-Z]').sub
@@ -31,34 +33,49 @@ def get_match_prefix_from_regex(match_regex: Optional[str] = None) -> str:
 
 
 def get_normalization_profile(
-    db: Session, normalization_profile_id: int
+    db: Session, principal: Principal, normalization_profile_id: int
 ) -> NormalizationProfile:
-    return (
-        db.query(NormalizationProfile)
-        .filter(NormalizationProfile.id == normalization_profile_id)
-        .first()
+    db_normalization_profile = db.query(NormalizationProfile).filter(
+        NormalizationProfile.id == normalization_profile_id
     )
+    if principal is not None and principal.tenant_uuids:
+        db_normalization_profile = db_normalization_profile.filter(
+            NormalizationProfile.tenant_uuid.in_(principal.tenant_uuids)
+        )
+    return db_normalization_profile.first()
 
 
 def get_normalization_profile_by_name(
-    db: Session, name: Optional[str]
+    db: Session, principal: Principal, name: Optional[str]
 ) -> NormalizationProfile:
-    return (
-        db.query(NormalizationProfile).filter(NormalizationProfile.name == name).first()
+    db_normalization_profile = db.query(NormalizationProfile).filter(
+        NormalizationProfile.name == name
     )
+    if principal is not None and principal.tenant_uuids:
+        db_normalization_profile = db_normalization_profile.filter(
+            NormalizationProfile.tenant_uuid.in_(principal.tenant_uuids)
+        )
+    return db_normalization_profile.first()
 
 
 def get_normalization_profiles(
-    db: Session, offset: int = 0, limit: int = 100
+    db: Session, principal: Principal, offset: int = 0, limit: int = 100
 ) -> schema.NormalizationProfileList:
-    return schema.NormalizationProfileList(
-        items=db.query(NormalizationProfile).offset(offset).limit(limit).all()
-    )
+    items = db.query(NormalizationProfile)
+    if principal is not None and principal.tenant_uuid:
+        items = items.filter(NormalizationProfile.tenant_uuid == principal.tenant_uuid)
+    items = items.offset(offset).limit(limit).all()
+    return schema.NormalizationProfileList(items=items)
 
 
 def create_normalization_profile(
-    db: Session, normalization_profile: schema.NormalizationProfileCreate
+    db: Session,
+    principal: Principal,
+    normalization_profile: schema.NormalizationProfileCreate,
 ) -> NormalizationProfile:
+    normalization_profile.tenant_uuid = tenant_service.get_uuid(
+        principal, db, normalization_profile.tenant_uuid
+    )
     db_normalization_profile = NormalizationProfile(
         name=normalization_profile.name,
         tenant_uuid=normalization_profile.tenant_uuid,
@@ -77,13 +94,12 @@ def create_normalization_profile(
 
 def update_normalization_profile(
     db: Session,
+    principal: Principal,
     normalization_profile_id: int,
     normalization_profile: schema.NormalizationProfileUpdate,
 ) -> NormalizationProfile:
-    db_normalization_profile = (
-        db.query(NormalizationProfile)
-        .filter(NormalizationProfile.id == normalization_profile_id)
-        .first()
+    db_normalization_profile = get_normalization_profile(
+        db, principal, normalization_profile_id
     )
     if db_normalization_profile is not None:
         db_normalization_profile.tenant_uuid = (
@@ -132,12 +148,10 @@ def update_normalization_profile(
 
 
 def delete_normalization_profile(
-    db: Session, normalization_profile_id: int
+    db: Session, principal: Principal, normalization_profile_id: int
 ) -> NormalizationProfile:
-    db_normalization_profile = (
-        db.query(NormalizationProfile)
-        .filter(NormalizationProfile.id == normalization_profile_id)
-        .first()
+    db_normalization_profile = get_normalization_profile(
+        db, principal, normalization_profile_id
     )
     if db_normalization_profile is not None:
         db.delete(db_normalization_profile)
@@ -146,36 +160,51 @@ def delete_normalization_profile(
 
 
 def get_normalization_rule(
-    db: Session, normalization_rule_id: int
+    db: Session, principal: Principal, normalization_rule_id: int
 ) -> NormalizationRule:
-    return (
-        db.query(NormalizationRule)
-        .filter(NormalizationRule.id == normalization_rule_id)
-        .first()
+    db_normalization_rule = db.query(NormalizationRule).filter(
+        NormalizationRule.id == normalization_rule_id
     )
+    if principal is not None and principal.tenant_uuids:
+        db_normalization_rule = db_normalization_rule.join(NormalizationProfile).filter(
+            NormalizationProfile.tenant_uuid.in_(principal.tenant_uuids)
+        )
+    return db_normalization_rule.first()
 
 
 def get_normalization_rule_by_match_regex(
-    db: Session, match_regex: Optional[str]
+    db: Session, principal: Principal, match_regex: Optional[str]
 ) -> NormalizationRule:
-    return (
-        db.query(NormalizationRule)
-        .filter(NormalizationRule.match_regex == match_regex)
-        .first()
+    db_normalization_rule = db.query(NormalizationRule).filter(
+        NormalizationRule.match_regex == match_regex
     )
+    if principal is not None and principal.tenant_uuids:
+        db_normalization_rule = db_normalization_rule.join(NormalizationProfile).filter(
+            NormalizationProfile.tenant_uuid.in_(principal.tenant_uuids)
+        )
+    return db_normalization_rule.first()
 
 
 def get_normalization_rules(
-    db: Session, offset: int = 0, limit: int = 100
+    db: Session, principal: Principal, offset: int = 0, limit: int = 100
 ) -> schema.NormalizationRuleList:
-    return schema.NormalizationRuleList(
-        items=db.query(NormalizationRule).offset(offset).limit(limit).all()
-    )
+    items = db.query(NormalizationRule)
+    if principal is not None and principal.tenant_uuid:
+        items = items.join(NormalizationProfile).filter(
+            NormalizationProfile.tenant_uuid == principal.tenant_uuid
+        )
+    items = items.offset(offset).limit(limit).all()
+    return schema.NormalizationRuleList(items=items)
 
 
 def create_normalization_rule(
-    db: Session, normalization_rule: schema.NormalizationRuleCreate
+    db: Session,
+    principal: Principal,
+    normalization_rule: schema.NormalizationRuleCreate,
 ) -> NormalizationRule:
+    profile = get_normalization_profile(db, principal, normalization_rule.profile_id)
+    if profile is None:
+        return None
     db_normalization_rule = NormalizationRule(
         profile_id=normalization_rule.profile_id,
         rule_type=normalization_rule.rule_type,
@@ -192,14 +221,11 @@ def create_normalization_rule(
 
 def update_normalization_rule(
     db: Session,
+    principal: Principal,
     normalization_rule_id: int,
     normalization_rule: schema.NormalizationRuleUpdate,
 ) -> NormalizationRule:
-    db_normalization_rule = (
-        db.query(NormalizationRule)
-        .filter(NormalizationRule.id == normalization_rule_id)
-        .first()
-    )
+    db_normalization_rule = get_normalization_rule(db, principal, normalization_rule_id)
     if db_normalization_rule is not None:
         db_normalization_rule.profile_id = (
             normalization_rule.profile_id
@@ -235,13 +261,9 @@ def update_normalization_rule(
 
 
 def delete_normalization_rule(
-    db: Session, normalization_rule_id: int
+    db: Session, principal: Principal, normalization_rule_id: int
 ) -> NormalizationRule:
-    db_normalization_rule = (
-        db.query(NormalizationRule)
-        .filter(NormalizationRule.id == normalization_rule_id)
-        .first()
-    )
+    db_normalization_rule = get_normalization_rule(db, principal, normalization_rule_id)
     if db_normalization_rule is not None:
         db.delete(db_normalization_rule)
         db.commit()

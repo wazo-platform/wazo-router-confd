@@ -139,6 +139,9 @@ disable=print-statement,
         deprecated-sys-function,
         exception-escape,
         comprehension-escape,
+        redefined-builtin,
+        unused-argument,
+        redefined-outer-name,
         R,
         C
 

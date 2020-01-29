@@ -3,25 +3,44 @@
 
 from sqlalchemy.orm import Session
 
+from wazo_router_confd.auth import Principal
+from wazo_router_confd.models.routing_group import RoutingGroup
 from wazo_router_confd.models.routing_rule import RoutingRule
 from wazo_router_confd.schemas import routing_rule as schema
+from wazo_router_confd.services import carrier_trunk as carrier_trunk_service
 
 
-def get_routing_rule(db: Session, routing_rule_id: int) -> RoutingRule:
-    return db.query(RoutingRule).filter(RoutingRule.id == routing_rule_id).first()
+def get_routing_rule(
+    db: Session, principal: Principal, routing_rule_id: int
+) -> RoutingRule:
+    db_routing_rule = db.query(RoutingRule).filter(RoutingRule.id == routing_rule_id)
+    if principal is not None and principal.tenant_uuids:
+        db_routing_rule = db_routing_rule.join(RoutingGroup).filter(
+            RoutingGroup.tenant_uuid.in_(principal.tenant_uuids)
+        )
+    return db_routing_rule.first()
 
 
 def get_routing_rules(
-    db: Session, offset: int = 0, limit: int = 100
+    db: Session, principal: Principal, offset: int = 0, limit: int = 100
 ) -> schema.RoutingRuleList:
-    return schema.RoutingRuleList(
-        items=db.query(RoutingRule).offset(offset).limit(limit).all()
-    )
+    items = db.query(RoutingRule)
+    if principal is not None and principal.tenant_uuid:
+        items = items.join(RoutingGroup).filter(
+            RoutingGroup.tenant_uuid == principal.tenant_uuid
+        )
+    items = items.offset(offset).limit(limit).all()
+    return schema.RoutingRuleList(items=items)
 
 
 def create_routing_rule(
-    db: Session, routing_rule: schema.RoutingRuleCreate
+    db: Session, principal: Principal, routing_rule: schema.RoutingRuleCreate
 ) -> RoutingRule:
+    carrier = carrier_trunk_service.get_carrier_trunk(
+        db, principal, routing_rule.carrier_trunk_id
+    )
+    if carrier is None:
+        return None
     db_routing_rule = RoutingRule(
         prefix=routing_rule.prefix,
         carrier_trunk_id=routing_rule.carrier_trunk_id,
@@ -36,11 +55,12 @@ def create_routing_rule(
 
 
 def update_routing_rule(
-    db: Session, routing_rule_id: int, routing_rule: schema.RoutingRuleUpdate
+    db: Session,
+    principal: Principal,
+    routing_rule_id: int,
+    routing_rule: schema.RoutingRuleUpdate,
 ) -> RoutingRule:
-    db_routing_rule = (
-        db.query(RoutingRule).filter(RoutingRule.id == routing_rule_id).first()
-    )
+    db_routing_rule = get_routing_rule(db, principal, routing_rule_id)
     if db_routing_rule is not None:
         db_routing_rule.prefix = (
             routing_rule.prefix
@@ -72,10 +92,10 @@ def update_routing_rule(
     return db_routing_rule
 
 
-def delete_routing_rule(db: Session, routing_rule_id: int) -> RoutingRule:
-    db_routing_rule = (
-        db.query(RoutingRule).filter(RoutingRule.id == routing_rule_id).first()
-    )
+def delete_routing_rule(
+    db: Session, principal: Principal, routing_rule_id: int
+) -> RoutingRule:
+    db_routing_rule = get_routing_rule(db, principal, routing_rule_id)
     if db_routing_rule is not None:
         db.delete(db_routing_rule)
         db.commit()

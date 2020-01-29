@@ -1,5 +1,0 @@
-version: '2'
-services:
-  wazo-auth:
-      image: 'wazopbx/wazo-auth-mock'
-      command: ["/usr/local/bin/wazo-auth-mock.py", "9497", "/api/auth"]

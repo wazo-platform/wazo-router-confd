@@ -2,20 +2,25 @@ version: '2'
 services:
   consul:
     image: consul:1.6
+    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
     ports:
       - '8300:8300'
       - '8500:8500'
       - '8600:8600'
-    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
   postgresql:
     image: postgres:11
-    ports:
-      - "${POSTGRES_PORT}:5432"
     environment:
       POSTGRES_USER: wazo
       POSTGRES_PASSWORD: wazo
       POSTGRES_DB: wazo
+    ports:
+      - "${POSTGRES_PORT}:5432"
   redis:
     image: redis:5.0-alpine
     ports:
       - '6379:6379'
+  wazo-auth:
+    image: 'wazopbx/wazo-auth-mock'
+    command: ["/usr/local/bin/wazo-auth-mock.py", "9497", "/api/auth"]
+    ports:
+      - '9497:9497'

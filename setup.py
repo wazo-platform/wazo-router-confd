@@ -22,6 +22,7 @@ setup(
     license=license,
     url='http://www.wazo-platform.org/',
     install_requires=[
+        'aiohttp',
         'aiopg',
         'aioredis',
         'alembic',

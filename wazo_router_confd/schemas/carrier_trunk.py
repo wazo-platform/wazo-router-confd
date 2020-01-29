@@ -29,7 +29,7 @@ class CarrierTrunk(BaseModel):
 
 class CarrierTrunkRead(BaseModel):
     id: int
-    tenant_uuid: UUID4
+    tenant_uuid: Optional[UUID4]
     carrier_id: int
     normalization_profile_id: Optional[int] = None
     name: constr(max_length=256)  # type: ignore
@@ -49,7 +49,7 @@ class CarrierTrunkRead(BaseModel):
 
 
 class CarrierTrunkCreate(BaseModel):
-    tenant_uuid: UUID4
+    tenant_uuid: Optional[UUID4]
     carrier_id: int
     normalization_profile_id: Optional[int] = None
     name: str

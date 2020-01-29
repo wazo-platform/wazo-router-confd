@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-def test_kamailio_routing_domain_with_single_ipbx_and_auth(app, client):
+def test_kamailio_routing_domain_with_single_ipbx_and_auth(
+    app_auth, client_auth_with_token
+):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
@@ -11,7 +13,7 @@ def test_kamailio_routing_domain_with_single_ipbx_and_auth(app, client):
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.models.normalization import NormalizationProfile
 
-    session = SessionLocal(bind=app.engine)
+    session = SessionLocal(bind=app_auth.engine)
     tenant = Tenant(name='fabio', uuid='0839cb47-5d31-4b5e-8c5b-a2481f9e212a')
     domain = Domain(domain='testdomain.com', tenant=tenant)
     normalization_profile = NormalizationProfile(
@@ -44,7 +46,7 @@ def test_kamailio_routing_domain_with_single_ipbx_and_auth(app, client):
         sip_proxy='proxy.somedomain.com',
         ip_address="10.0.0.1",
     )
-    session = SessionLocal(bind=app.engine)
+    session = SessionLocal(bind=app_auth.engine)
     session.add_all(
         [tenant, domain, normalization_profile, ipbx, carrier, carrier_trunk]
     )
@@ -57,7 +59,7 @@ def test_kamailio_routing_domain_with_single_ipbx_and_auth(app, client):
     request_to_uri = "sip:200@testdomain.com"
     request_to_tag = "to_tag"
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/routing",
         json={
             "event": "sip-routing",

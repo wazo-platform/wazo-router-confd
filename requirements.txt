@@ -1,3 +1,4 @@
+aiohttp==3.5.1
 aiopg==0.15.0
 aioredis==1.2.0
 alembic==1.0.0
@@ -11,12 +12,13 @@ certifi==2018.8.24
 chardet==3.0.4
 Click==7.0
 coverage==4.5.4
+dnspython==1.16.0
 email-validator==1.0.4
 entrypoints==0.3
 fastapi==0.39.0
 filelock==3.0.12
-flake8-colors==0.1.6
 flake8==3.7.8
+flake8-colors==0.1.6
 h11==0.8.1
 hiredis==0.3.1
 httptools==0.0.11
@@ -28,11 +30,11 @@ Mako==1.0.7
 MarkupSafe==1.1.0
 mccabe==0.6.1
 more-itertools==4.2.0
+multidict==4.7.4
 mypy==0.720
 mypy-extensions==0.4.1
 packaging==19.1
 pluggy==0.8.0
-psycopg2-binary==2.8.4
 psycopg2==2.7.7
 py==1.7.0
 pycodestyle==2.5.0
@@ -40,16 +42,16 @@ pydantic==0.32.2
 pyflakes==2.1.1
 pylint==2.3.1
 pyparsing==2.4.2
-pytest-asyncio==0.10.0
 pytest==3.10.1
+pytest-asyncio==0.10.0
 python-consul==1.1.0
 python-dateutil==2.7.3
 python-editor==1.0.3
 requests==2.21.0
 six==1.12.0
+SQLAlchemy==1.2.18
 sqlalchemy-stubs==0.2
 SQLAlchemy-Utils==0.32.21
-SQLAlchemy==1.2.18
 starlette==0.12.8
 tenacity==4.12.0
 toml==0.10.0
@@ -63,4 +65,5 @@ virtualenv==16.7.5
 wcwidth==0.1.7
 websockets==7.0
 wrapt==1.11.2
+yarl==1.4.2
 zipp==0.6.0

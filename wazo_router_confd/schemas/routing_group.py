@@ -8,21 +8,21 @@ from pydantic import BaseModel, UUID4
 
 class RoutingGroup(BaseModel):
     id: int
-    tenant_uuid: UUID4
-    routing_rule: Optional[int] = None
+    tenant_uuid: Optional[UUID4]
+    routing_rule_id: Optional[int] = None
 
     class Config:
         orm_mode = True
 
 
 class RoutingGroupCreate(BaseModel):
-    tenant_uuid: UUID4
-    routing_rule: Optional[int] = None
+    tenant_uuid: Optional[UUID4]
+    routing_rule_id: Optional[int] = None
 
 
 class RoutingGroupUpdate(BaseModel):
-    tenant_uuid: UUID4
-    routing_rule: Optional[int] = None
+    tenant_uuid: Optional[UUID4]
+    routing_rule_id: Optional[int] = None
 
 
 class RoutingGroupList(BaseModel):

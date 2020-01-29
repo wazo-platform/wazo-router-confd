@@ -3,30 +3,48 @@
 
 from sqlalchemy.orm import Session
 
+from wazo_router_confd.auth import Principal
 from wazo_router_confd.models.carrier_trunk import CarrierTrunk
 from wazo_router_confd.schemas import carrier_trunk as schema
 from wazo_router_confd.services import password as password_service
+from wazo_router_confd.services import tenant as tenant_service
 
 
-def get_carrier_trunk(db: Session, carrier_trunk_id: int) -> CarrierTrunk:
-    return db.query(CarrierTrunk).filter(CarrierTrunk.id == carrier_trunk_id).first()
+def get_carrier_trunk(
+    db: Session, principal: Principal, carrier_trunk_id: int
+) -> CarrierTrunk:
+    db_carrier_trunk = db.query(CarrierTrunk).filter(
+        CarrierTrunk.id == carrier_trunk_id
+    )
+    if principal is not None and principal.tenant_uuids:
+        db_carrier_trunk = db_carrier_trunk.filter(
+            CarrierTrunk.tenant_uuid.in_(principal.tenant_uuids)
+        )
+    return db_carrier_trunk.first()
 
 
-def get_carrier_trunk_by_name(db: Session, name: str) -> CarrierTrunk:
+def get_carrier_trunk_by_name(
+    db: Session, principal: Principal, name: str
+) -> CarrierTrunk:
     return db.query(CarrierTrunk).filter(CarrierTrunk.name == name).first()
 
 
 def get_carrier_trunks(
-    db: Session, offset: int = 0, limit: int = 100
+    db: Session, principal: Principal, offset: int = 0, limit: int = 100
 ) -> schema.CarrierTrunkList:
-    return schema.CarrierTrunkList(
-        items=db.query(CarrierTrunk).offset(offset).limit(limit).all()
-    )
+    items = db.query(CarrierTrunk)
+    if principal is not None and principal.tenant_uuid:
+        items = items.filter(CarrierTrunk.tenant_uuid == principal.tenant_uuid)
+    items = items.offset(offset).limit(limit).all()
+    return schema.CarrierTrunkList(items=items)
 
 
 def create_carrier_trunk(
-    db: Session, carrier_trunk: schema.CarrierTrunkCreate
+    db: Session, principal: Principal, carrier_trunk: schema.CarrierTrunkCreate
 ) -> CarrierTrunk:
+    carrier_trunk.tenant_uuid = tenant_service.get_uuid(
+        principal, db, carrier_trunk.tenant_uuid
+    )
     db_carrier_trunk = CarrierTrunk(
         tenant_uuid=carrier_trunk.tenant_uuid,
         carrier_id=carrier_trunk.carrier_id,
@@ -51,11 +69,12 @@ def create_carrier_trunk(
 
 
 def update_carrier_trunk(
-    db: Session, carrier_trunk_id: int, carrier_trunk: schema.CarrierTrunkUpdate
+    db: Session,
+    principal: Principal,
+    carrier_trunk_id: int,
+    carrier_trunk: schema.CarrierTrunkUpdate,
 ) -> CarrierTrunk:
-    db_carrier_trunk = (
-        db.query(CarrierTrunk).filter(CarrierTrunk.id == carrier_trunk_id).first()
-    )
+    db_carrier_trunk = get_carrier_trunk(db, principal, carrier_trunk_id)
     if db_carrier_trunk is not None:
         db_carrier_trunk.name = (
             carrier_trunk.name
@@ -126,10 +145,10 @@ def update_carrier_trunk(
     return db_carrier_trunk
 
 
-def delete_carrier_trunk(db: Session, carrier_trunk_id: int) -> CarrierTrunk:
-    db_carrier_trunk = (
-        db.query(CarrierTrunk).filter(CarrierTrunk.id == carrier_trunk_id).first()
-    )
+def delete_carrier_trunk(
+    db: Session, principal: Principal, carrier_trunk_id: int
+) -> CarrierTrunk:
+    db_carrier_trunk = get_carrier_trunk(db, principal, carrier_trunk_id)
     if db_carrier_trunk is not None:
         db.delete(db_carrier_trunk)
         db.commit()

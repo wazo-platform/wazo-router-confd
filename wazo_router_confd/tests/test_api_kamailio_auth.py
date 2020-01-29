@@ -2,15 +2,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-def test_kamailio_auth_username(app, client):
+def test_kamailio_auth_username(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -25,7 +25,7 @@ def test_kamailio_auth_username(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user"}
     )
     assert response.status_code == 200
@@ -40,15 +40,15 @@ def test_kamailio_auth_username(app, client):
     }
 
 
-def test_kamailio_auth_username_password(app, client):
+def test_kamailio_auth_username_password(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -63,7 +63,7 @@ def test_kamailio_auth_username_password(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth",
         json={"source_ip": "10.0.0.1", "username": "user", "password": "password"},
     )
@@ -79,15 +79,15 @@ def test_kamailio_auth_username_password(app, client):
     }
 
 
-def test_kamailio_auth_username_domain(app, client):
+def test_kamailio_auth_username_domain(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -102,7 +102,7 @@ def test_kamailio_auth_username_domain(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth",
         json={"source_ip": "10.0.0.1", "username": "user", "domain": "testdomain.com"},
     )
@@ -118,15 +118,15 @@ def test_kamailio_auth_username_domain(app, client):
     }
 
 
-def test_kamailio_auth_username_fails(app, client):
+def test_kamailio_auth_username_fails(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -140,7 +140,7 @@ def test_kamailio_auth_username_fails(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth",
         json={"source_ip": "10.0.0.1", "username": "user_is_wrong"},
     )
@@ -156,15 +156,15 @@ def test_kamailio_auth_username_fails(app, client):
     }
 
 
-def test_kamailio_auth_username_domain_fails(app, client):
+def test_kamailio_auth_username_domain_fails(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -179,7 +179,7 @@ def test_kamailio_auth_username_domain_fails(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth",
         json={
             "source_ip": "10.0.0.1",
@@ -199,15 +199,15 @@ def test_kamailio_auth_username_domain_fails(app, client):
     }
 
 
-def test_kamailio_auth_ip_address_username(app, client):
+def test_kamailio_auth_ip_address_username(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -223,7 +223,7 @@ def test_kamailio_auth_ip_address_username(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": "user"}
     )
     assert response.status_code == 200
@@ -238,15 +238,15 @@ def test_kamailio_auth_ip_address_username(app, client):
     }
 
 
-def test_kamailio_auth_ip_address_username_fails(app, client):
+def test_kamailio_auth_ip_address_username_fails(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -261,7 +261,7 @@ def test_kamailio_auth_ip_address_username_fails(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth",
         json={
             "source_ip": "10.0.0.1",
@@ -281,14 +281,14 @@ def test_kamailio_auth_ip_address_username_fails(app, client):
     }
 
 
-def test_kamailio_auth_ip_address(app, client):
+def test_kamailio_auth_ip_address(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -304,7 +304,7 @@ def test_kamailio_auth_ip_address(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
     )
     assert response.status_code == 200
@@ -319,15 +319,15 @@ def test_kamailio_auth_ip_address(app, client):
     }
 
 
-def test_kamailio_auth_ip_address_fails(app, client):
+def test_kamailio_auth_ip_address_fails(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -342,7 +342,7 @@ def test_kamailio_auth_ip_address_fails(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
     )
     assert response.status_code == 200
@@ -357,15 +357,15 @@ def test_kamailio_auth_ip_address_fails(app, client):
     }
 
 
-def test_kamailio_auth_ip_address_disabled(app, client):
+def test_kamailio_auth_ip_address_disabled(app_auth, client_auth_with_token):
     from wazo_router_confd.database import SessionLocal
     from wazo_router_confd.models.tenant import Tenant
     from wazo_router_confd.models.domain import Domain
     from wazo_router_confd.models.ipbx import IPBX
     from wazo_router_confd.services import password
 
-    session = SessionLocal(bind=app.engine)
-    tenant = Tenant(name='fabio', uuid='5a6c0c40-b481-41bb-a41a-75d1cc25ff34')
+    session = SessionLocal(bind=app_auth.engine)
+    tenant = Tenant(name='fabio', uuid="ffffffff-ffff-4c1c-ad1c-ffffffffffff")
     domain = Domain(domain='testdomain.com', tenant=tenant)
     ipbx = IPBX(
         customer=1,
@@ -380,7 +380,7 @@ def test_kamailio_auth_ip_address_disabled(app, client):
     session.add_all([tenant, domain, ipbx])
     session.commit()
     #
-    response = client.post(
+    response = client_auth_with_token.post(
         "/1.0/kamailio/auth", json={"source_ip": "10.0.0.1", "username": ""}
     )
     assert response.status_code == 200

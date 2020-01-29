@@ -11,6 +11,7 @@ from .base import Base
 
 if TYPE_CHECKING:  # pragma: no cover
     from .tenant import Tenant  # noqa
+    from .routing_rule import RoutingRule  # noqa
 
 
 class RoutingGroup(Base):
@@ -21,6 +22,7 @@ class RoutingGroup(Base):
         UUIDType(), ForeignKey('tenants.uuid', ondelete='CASCADE'), nullable=False
     )
     tenant = relationship('Tenant')
-    routing_rule = Column(
+    routing_rule_id = Column(
         Integer, ForeignKey('routing_rules.id', ondelete='CASCADE'), nullable=True
     )
+    routing_rule = relationship('RoutingRule')

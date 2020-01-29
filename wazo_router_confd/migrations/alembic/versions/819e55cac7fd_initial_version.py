@@ -221,9 +221,9 @@ def upgrade():
         'routing_groups',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('tenant_uuid', UUIDType(), nullable=False),
-        sa.Column('routing_rule', sa.Integer(), nullable=True),
+        sa.Column('routing_rule_id', sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
-            ['routing_rule'], ['routing_rules.id'], ondelete='CASCADE'
+            ['routing_rule_id'], ['routing_rules.id'], ondelete='CASCADE'
         ),
         sa.ForeignKeyConstraint(['tenant_uuid'], ['tenants.uuid'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
