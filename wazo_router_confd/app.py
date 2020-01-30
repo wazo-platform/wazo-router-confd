@@ -51,6 +51,8 @@ def get_app(config: dict):
     app.include_router(routing_group.router, prefix="/1.0", tags=['routing'])
     app.include_router(tenants.router, prefix="/1.0", tags=['tenants'])
 
+    app = setup_auth(app, config)
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -58,7 +60,5 @@ def get_app(config: dict):
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    app = setup_auth(app, config)
 
     return app

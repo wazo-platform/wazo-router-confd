@@ -56,3 +56,11 @@ coverage:
 .PHONY: dockerfile
 dockerfile:
 	docker build -t wazopbx/wazo-router-confd:latest .
+
+.PHONY: start-auth
+start-auth:
+	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.yaml up -d
+
+.PHONY: stop-auth
+stop-auth:
+	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.yaml down
