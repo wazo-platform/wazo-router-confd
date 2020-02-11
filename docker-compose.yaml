@@ -19,8 +19,3 @@ services:
     image: redis:5.0-alpine
     ports:
       - '6379:6379'
-  wazo-auth:
-    image: 'wazopbx/wazo-auth-mock:latest'
-    command: ["/usr/local/bin/wazo-auth-mock.py", "9497", "/api/auth"]
-    ports:
-      - '9497:9497'
