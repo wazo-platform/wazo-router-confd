@@ -4,7 +4,7 @@
 from sqlalchemy.orm import Session
 
 from wazo_router_confd.auth import Principal
-from wazo_router_confd.models.routing_group import RoutingGroup
+from wazo_router_confd.models.ipbx import IPBX
 from wazo_router_confd.models.routing_rule import RoutingRule
 from wazo_router_confd.schemas import routing_rule as schema
 from wazo_router_confd.services import carrier_trunk as carrier_trunk_service
@@ -15,8 +15,8 @@ def get_routing_rule(
 ) -> RoutingRule:
     db_routing_rule = db.query(RoutingRule).filter(RoutingRule.id == routing_rule_id)
     if principal is not None and principal.tenant_uuids:
-        db_routing_rule = db_routing_rule.join(RoutingGroup).filter(
-            RoutingGroup.tenant_uuid.in_(principal.tenant_uuids)
+        db_routing_rule = db_routing_rule.join(IPBX).filter(
+            IPBX.tenant_uuid.in_(principal.tenant_uuids)
         )
     return db_routing_rule.first()
 
@@ -26,8 +26,8 @@ def get_routing_rules(
 ) -> schema.RoutingRuleList:
     items = db.query(RoutingRule)
     if principal is not None and principal.tenant_uuid:
-        items = items.join(RoutingGroup).filter(
-            RoutingGroup.tenant_uuid == principal.tenant_uuid
+        items = items.join(IPBX).filter(
+            IPBX.tenant_uuid == principal.tenant_uuid
         )
     items = items.offset(offset).limit(limit).all()
     return schema.RoutingRuleList(items=items)
