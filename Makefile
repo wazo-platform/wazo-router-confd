@@ -61,6 +61,10 @@ dockerfile:
 start-auth:
 	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.yaml up -d
 
+.PHONY: setup-auth
+setup-auth:
+	python3 scripts/wazo-auth-setup.py
+
 .PHONY: stop-auth
 stop-auth:
 	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.yaml down

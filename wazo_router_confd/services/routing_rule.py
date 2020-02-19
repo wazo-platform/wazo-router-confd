@@ -26,9 +26,7 @@ def get_routing_rules(
 ) -> schema.RoutingRuleList:
     items = db.query(RoutingRule)
     if principal is not None and principal.tenant_uuid:
-        items = items.join(IPBX).filter(
-            IPBX.tenant_uuid == principal.tenant_uuid
-        )
+        items = items.join(IPBX).filter(IPBX.tenant_uuid == principal.tenant_uuid)
     items = items.offset(offset).limit(limit).all()
     return schema.RoutingRuleList(items=items)
 

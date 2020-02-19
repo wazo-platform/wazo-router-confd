@@ -5,8 +5,6 @@ services:
       ports:
       - "80:80"
       - "443:443"
-      volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
   wazo-auth:
     image: 'wazopbx/wazo-auth-mock:latest'
     command: ["/usr/local/bin/wazo-auth-mock.py", "9497", "/api/auth"]
