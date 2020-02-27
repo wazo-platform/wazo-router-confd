@@ -1,6 +1,6 @@
 # wazo-router-confd
 
-wazo-router-confd provides REST API for the C4 infrastructure.
+wazo-router-confd provides REST API for the C4 platform.
 
 ## Installing wazo-router-confd
 
