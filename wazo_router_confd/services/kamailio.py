@@ -484,6 +484,7 @@ async def dbtext_uacreg(pool: aiopg.Pool) -> schema.DBText:
     content.append(
         " ".join(
             [
+                "id(int)",
                 "l_uuid(string)",
                 "l_username(string)",
                 "l_domain(string)",
@@ -496,6 +497,7 @@ async def dbtext_uacreg(pool: aiopg.Pool) -> schema.DBText:
                 "expires(int)",
                 "flags(int)",
                 "reg_delay(int)",
+                "socket(string)",
             ]
         )
         + "\n"
@@ -503,7 +505,7 @@ async def dbtext_uacreg(pool: aiopg.Pool) -> schema.DBText:
     async with pool.acquire() as conn:
         async with conn.cursor(cursor_factory=DictCursor) as cur:
             await cur.execute(
-                "SELECT * FROM carrier_trunks WHERE registered = true ORDER BY id;"
+                "SELECT row_number() OVER () AS carrier_id, * FROM carrier_trunks WHERE registered = true ORDER BY id;"
             )
             async for carrier_trunk in cur:
                 content.append(
@@ -511,6 +513,7 @@ async def dbtext_uacreg(pool: aiopg.Pool) -> schema.DBText:
                         map(
                             lambda x: x.replace(":", "\\:"),
                             [
+                                carrier_trunk["carrier_id"],
                                 "%s" % carrier_trunk['id'],
                                 carrier_trunk['auth_username'],
                                 carrier_trunk['from_domain'],
@@ -523,6 +526,7 @@ async def dbtext_uacreg(pool: aiopg.Pool) -> schema.DBText:
                                 str(carrier_trunk['expire_seconds']),
                                 "16",
                                 "0",
+                                "",
                             ],
                         )
                     )
