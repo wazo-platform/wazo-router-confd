@@ -513,7 +513,7 @@ async def dbtext_uacreg(pool: aiopg.Pool) -> schema.DBText:
                         map(
                             lambda x: x.replace(":", "\\:"),
                             [
-                                carrier_trunk["carrier_id"],
+                                "%s" % carrier_trunk["carrier_id"],
                                 "%s" % carrier_trunk['id'],
                                 carrier_trunk['auth_username'],
                                 carrier_trunk['from_domain'],
