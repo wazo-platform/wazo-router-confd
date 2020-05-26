@@ -33,11 +33,11 @@ def test_kamailio_dbtext_uacreg(app, client):
     assert response.status_code == 200
     assert response.json() == {
         "content": (
-            "id(init) l_uuid(string) l_username(string) l_domain(string) "
+            "id(int) l_uuid(string) l_username(string) l_domain(string) "
             "r_username(string) r_domain(string) realm(string) "
             "auth_username(string) auth_password(string) auth_proxy(string) "
-            "expires(int) flags(int) reg_delay(int)\n"
-            "%s:username:domain.com:username:domain.com:realm:username:password:sip\\:registrar:300:16:0:\n"
+            "expires(int) flags(int) reg_delay(int) socket(string)\n"
+            "%s:%s:username:domain.com:username:domain.com:realm:username:password:sip\\:registrar:300:16:0:\n"
         )
-        % carrier_trunk.id
+        % (carrier_trunk.carrier_id, carrier_trunk.id)
     }
