@@ -12,7 +12,6 @@ response = requests.post(
         },
         "token": "valid-token-multitenant"
     },
-    verify=False,
 )
 assert response.status_code == 204
 
@@ -35,6 +34,5 @@ response = requests.post(
             "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee3"
         }
     ],
-    verify=False,
 )
 assert response.status_code == 204
