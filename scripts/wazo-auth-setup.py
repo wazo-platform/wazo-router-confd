@@ -2,7 +2,7 @@ import requests
 
 
 response = requests.post(
-    "https://localhost:9497/api/auth/_set_token",
+    "http://localhost:9497/api/auth/_set_token",
     json={
         "auth_id": "uuid-multitenant",
         "metadata": {
@@ -12,12 +12,11 @@ response = requests.post(
         },
         "token": "valid-token-multitenant"
     },
-    verify=False,
 )
 assert response.status_code == 204
 
 response = requests.post(
-    "https://localhost:9497/api/auth/_set_tenants",
+    "http://localhost:9497/api/auth/_set_tenants",
     json=[
         {
             "name": "valid-tenant1",
@@ -35,6 +34,5 @@ response = requests.post(
             "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee3"
         }
     ],
-    verify=False,
 )
 assert response.status_code == 204

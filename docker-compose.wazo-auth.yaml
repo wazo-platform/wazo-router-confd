@@ -21,6 +21,6 @@ services:
         --database-uri postgresql://wazo:wazo@postgresql:5432/wazo \
         --redis-uri redis://redis \
         --wazo-auth \
-        --wazo-auth-url https://wazo-auth:9497/api/auth/0.1"
+        --wazo-auth-url http://wazo-auth:9497/api/auth/0.1"
     ports:
     - 9600:9600

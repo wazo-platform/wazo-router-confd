@@ -67,7 +67,7 @@ def client(app):
 @pytest.fixture(scope="session")
 def wazo_auth_mock():
     response = requests.post(
-        "https://localhost:9497/api/auth/_set_token",
+        "http://localhost:9497/api/auth/_set_token",
         json={
             'auth_id': 'uuid',
             'token': 'wazo-router-confd',
@@ -77,12 +77,11 @@ def wazo_auth_mock():
                 'tenant_uuid': 'ffffffff-ffff-4c1c-ad1c-ffffffffffff',
             },
         },
-        verify=False,
     )
     assert response.status_code == 204
     #
     response = requests.post(
-        "https://localhost:9497/api/auth/_set_token",
+        "http://localhost:9497/api/auth/_set_token",
         json={
             'auth_id': 'uuid',
             'token': 'wazo-router-confd-no-tenant',
@@ -92,14 +91,12 @@ def wazo_auth_mock():
                 'tenant_uuid': 'ffffffff-ffff-4c1c-ad1c-eeeeeeeeeeee',
             },
         },
-        verify=False,
     )
     assert response.status_code == 204
     #
     response = requests.post(
-        "https://localhost:9497/api/auth/_set_tenants",
+        "http://localhost:9497/api/auth/_set_tenants",
         json=[{'uuid': 'ffffffff-ffff-4c1c-ad1c-ffffffffffff'}],
-        verify=False,
     )
     assert response.status_code == 204
 
@@ -114,7 +111,7 @@ def app_auth(request, database_uri, wazo_auth_mock):
         database_upgrade=True,
         debug=True,
         wazo_auth=True,
-        wazo_auth_url="https://localhost:9497/api/auth/0.1",
+        wazo_auth_url="http://localhost:9497/api/auth/0.1",
         wazo_auth_cert=None,
     )
     app = get_app(config)
