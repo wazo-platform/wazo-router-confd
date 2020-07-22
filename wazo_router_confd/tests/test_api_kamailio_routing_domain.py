@@ -72,7 +72,7 @@ def test_kamailio_routing_domain_with_single_ipbx(app, client):
                     "headers": {
                         "from": {"display": request_from_name, "uri": request_from_uri},
                         "to": {"display": request_to_name, "uri": request_to_uri},
-                        "extra": "",
+                        "extra": "P-Asserted-Identity: <sip:" + request.from_name + "@" + request_from_uri + ">\r\n",
                     },
                     "branch_flags": 8,
                     "fr_timer": 5000,
@@ -189,7 +189,7 @@ def test_kamailio_routing_domain_with_single_authenticated_ipbx(app, client):
                     "headers": {
                         "from": {"display": request_from_name, "uri": request_from_uri},
                         "to": {"display": request_to_name, "uri": request_to_uri},
-                        "extra": "",
+                        "extra": "P-Asserted-Identity: <sip:" + request.from_name + "@" + request_from_uri + ">\r\n",
                     },
                     "branch_flags": 8,
                     "fr_timer": 5000,
