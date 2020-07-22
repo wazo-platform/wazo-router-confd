@@ -100,7 +100,7 @@ def test_kamailio_routing_outbound_with_single_ipbx_authenticated(
                     "headers": {
                         "from": {"display": request_from_name, "uri": request_from_uri},
                         "to": {"display": request_to_name, "uri": request_to_uri},
-                        "extra": "P-Asserted-Identity: <sip:" + request.from_name + "@" + request_from_uri + ">\r\n",
+                        "extra": "P-Asserted-Identity: <sip:" + request_from_name + "@" + request_from_uri + ">\r\n",
                     },
                     "branch_flags": 8,
                     "fr_timer": 5000,
