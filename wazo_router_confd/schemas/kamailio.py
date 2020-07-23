@@ -45,7 +45,7 @@ class RoutingRequest(BaseModel):
     domain: Optional[str] = None
     username: Optional[str] = None
     call_id: Optional[str] = None
-    from_name: Optional[str] = None
+    from_name: str
     from_uri: str
     from_tag: Optional[str] = None
     to_uri: str
