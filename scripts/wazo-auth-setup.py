@@ -8,9 +8,9 @@ response = requests.post(
         "metadata": {
             "pbx_user_uuid": "uuid-multitenant",
             "tenant_uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
-            "uuid": "uuid-multitenant"
+            "uuid": "uuid-multitenant",
         },
-        "token": "valid-token-multitenant"
+        "token": "valid-token-multitenant",
     },
 )
 assert response.status_code == 204
@@ -21,18 +21,18 @@ response = requests.post(
         {
             "name": "valid-tenant1",
             "parent_uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
-            "uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff"
+            "uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
         },
         {
             "name": "valid-tenant2",
             "parent_uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
-            "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee2"
+            "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee2",
         },
         {
             "name": "valid-tenant3",
             "parent_uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
-            "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee3"
-        }
+            "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee3",
+        },
     ],
 )
 assert response.status_code == 204

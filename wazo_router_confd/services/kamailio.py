@@ -1,4 +1,4 @@
-# Copyright 2019 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2019-2020 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import re
@@ -238,7 +238,11 @@ async def routing(
                                 "display": request.to_name,
                                 "uri": normalized_to_uri,
                             },
-                            "extra": "",
+                            "extra": "P-Asserted-Identity: <sip:"
+                            + request.from_name
+                            + "@"
+                            + normalized_from_uri
+                            + ">\r\n",
                         },
                         "branch_flags": 8,
                         "fr_timer": 5000,
@@ -321,7 +325,11 @@ async def routing(
                                     "display": request.to_name,
                                     "uri": normalized_to_uri,
                                 },
-                                "extra": "",
+                                "extra": "P-Asserted-Identity: <sip:"
+                                + request.from_name
+                                + "@"
+                                + normalized_from_uri
+                                + ">\r\n",
                             },
                             "branch_flags": 8,
                             "fr_timer": 5000,

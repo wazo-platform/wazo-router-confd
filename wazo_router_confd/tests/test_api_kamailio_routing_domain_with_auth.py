@@ -1,4 +1,4 @@
-# Copyright 2019 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2019-2020 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
@@ -98,7 +98,11 @@ def test_kamailio_routing_domain_with_single_ipbx_and_auth(
                     "headers": {
                         "from": {"display": request_from_name, "uri": request_from_uri},
                         "to": {"display": request_to_name, "uri": request_to_uri},
-                        "extra": "",
+                        "extra": "P-Asserted-Identity: <sip:"
+                        + request_from_name
+                        + "@"
+                        + request_from_uri
+                        + ">\r\n",
                     },
                     "branch_flags": 8,
                     "fr_timer": 5000,
