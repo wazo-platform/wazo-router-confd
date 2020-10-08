@@ -55,7 +55,7 @@ coverage:
 
 .PHONY: dockerfile
 dockerfile:
-	docker build -t wazopbx/wazo-router-confd:latest .
+	docker build -t wazoplatform/wazo-router-confd:latest .
 
 .PHONY: start-auth
 start-auth:

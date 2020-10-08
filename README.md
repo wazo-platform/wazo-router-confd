@@ -28,7 +28,7 @@ $ tox --recreate -e py37
 
 ## Docker
 
-The official docker image for this service is `wazopbx/wazo-router-confd`.
+The official docker image for this service is `wazoplatform/wazo-router-confd`.
 
 
 ### Getting the image
@@ -36,13 +36,13 @@ The official docker image for this service is `wazopbx/wazo-router-confd`.
 To download the latest image from the docker hub
 
 ```sh
-docker pull wazopbx/wazo-router-confd
+docker pull wazoplatform/wazo-router-confd
 ```
 
 ### Running wazo-router-confd
 
 ```sh
-docker run wazopbx/wazo-router-confd
+docker run wazoplatform/wazo-router-confd
 ```
 
 ### Building the image
@@ -50,6 +50,6 @@ docker run wazopbx/wazo-router-confd
 Building the docker image:
 
 ```sh
-docker build -t wazopbx/wazo-router-confd .
+docker build -t wazoplatform/wazo-router-confd .
 ```
 

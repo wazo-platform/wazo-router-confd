@@ -1,7 +1,7 @@
 version: '2'
 services:
   wazo-router-confd:
-    image: wazopbx/wazo-router-confd:latest
+    image: wazoplatform/wazo-router-confd:latest
     command: "wazo-router-confd \
         --host 0.0.0.0 \
         --port 9600 \
