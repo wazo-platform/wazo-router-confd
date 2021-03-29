@@ -33,7 +33,7 @@ setup(
         'python-dateutil',
         'psycopg2',
         'requests',
-        'SQLAlchemy',
+        'SQLAlchemy<1.4',
         'SQLAlchemy_Utils',
         'tenacity',
         'uvicorn',
