@@ -9,13 +9,17 @@ Please refer to [the documentation](http://documentation.wazo.community/en/stabl
 further details on installing one.
 
 ## Running with wazo-auth
+
 ```
 $ make start-auth
 ```
+
 Will start all the needed components to use confd with portal UI.
+
 ```
 $ make setup-auth
 ```
+
 Will insert the needed tenant uuids to use with wazo-auth and portal.
 
 ## Tests
@@ -23,7 +27,7 @@ Will insert the needed tenant uuids to use with wazo-auth and portal.
 ### Running unit tests
 
 ```
-$ tox --recreate -e py37
+tox --recreate -e py37
 ```
 
 ## Docker
