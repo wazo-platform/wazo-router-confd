@@ -2,5 +2,5 @@
     templates:
       - wazo-c4-docker-build-test-template
       - wazo-tox-linters
-      - wazo-tox-py37-vm
+      - wazo-tox-py37
       - debian-packaging-template
